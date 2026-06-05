@@ -8,13 +8,75 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0f172a; font-family: 'Be Vietnam Pro', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .auth-card { background: #fff; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); overflow: hidden; }
-        .auth-header { background: #1e293b; color: white; text-align: center; padding: 25px; }
-        .form-control { border-radius: 8px; padding: 10px 15px; }
-        .btn-primary { background-color: #2563eb; border: none; border-radius: 8px; padding: 12px; font-weight: 600; }
-        .back-btn { position: absolute; top: 20px; left: 20px; color: white; text-decoration: none; }
+        :root {
+            --primary: #006389;
+            --text-color: #333333;
+            --text-muted: #6c757d;
+        }
+        body { 
+            background: #f8f9fa;
+            font-family: 'Inter', 'Be Vietnam Pro', sans-serif; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            color: var(--text-color);
+        }
+        .auth-card { 
+            background: #ffffff; 
+            border: 1px solid #eaeaea;
+            border-radius: 12px; 
+            width: 100%; 
+            max-width: 400px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            overflow: hidden; 
+        }
+        .auth-header { 
+            background: #ffffff; 
+            color: var(--text-color); 
+            text-align: center; 
+            padding: 25px; 
+            border-bottom: 1px solid #eaeaea;
+        }
+        .form-control { 
+            border-radius: 8px; 
+            padding: 10px 15px; 
+            border: 1px solid #eaeaea;
+            background-color: #ffffff;
+            color: var(--text-color);
+        }
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(0,99,137,0.25);
+            color: var(--text-color);
+        }
+        .btn-primary { 
+            background-color: var(--primary); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 12px; 
+            font-weight: 600; 
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #004c6b;
+            color: white;
+        }
+        .back-btn { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            color: var(--text-color); 
+            text-decoration: none; 
+            font-weight: 500;
+        }
+        .back-btn:hover {
+            color: var(--primary);
+        }
     </style>
+    <jsp:include page="/WEB-INF/views/components/dark-mode.jsp" />
 </head>
 <body>
     <a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Quay lại</a>

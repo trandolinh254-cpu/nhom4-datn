@@ -16,50 +16,43 @@
 
     <style>
         :root {
-            --primary-navy: #0f172a; /* Navy đậm sang trọng */
-            --secondary-navy: #1e293b;
-            --accent-blue: #3b82f6; /* Xanh điểm nhấn */
-            --light-bg: #f1f5f9; /* Nền xám xanh nhẹ */
-            --text-dark: #334155;
-            --text-light: #94a3b8;
-            --white: #ffffff;
-            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --primary: #006389;
+            --text-color: #333333;
+            --text-muted: #6c757d;
         }
 
-       /* Trong phần <style> */
 body {
-    /* Đổi tên font ở đây */
-    font-family: 'Be Vietnam Pro', sans-serif; 
-    
-    /* Các thuộc tính khác giữ nguyên */
-    background-color: var(--light-bg);
-    color: var(--text-dark);
+    font-family: 'Inter', 'Be Vietnam Pro', sans-serif; 
+    background: #f8f9fa;
+    color: var(--text-color);
     overflow-x: hidden;
+    min-height: 100vh;
 }
 
         /* ======== SIDEBAR ======== */
         .sidebar {
-            background: var(--primary-navy);
+            background: #ffffff;
+            border-right: 1px solid #eaeaea;
             min-height: 100vh;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
             z-index: 1000;
+            color: var(--text-color);
         }
 
         .sidebar h5 {
             font-weight: 700;
             letter-spacing: 0.5px;
-            color: var(--white);
+            color: var(--text-color);
             padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid #eaeaea;
             margin-bottom: 20px;
         }
 
         .sidebar .nav-link {
-            color: #cbd5e1;
+            color: var(--text-color);
             padding: 14px 20px;
             margin-bottom: 8px;
-            border-radius: 12px;
+            border-radius: 8px;
             font-size: 0.95rem;
             font-weight: 500;
             display: flex;
@@ -76,19 +69,18 @@ body {
         }
 
         .sidebar .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--white);
+            background: #f8f9fa;
+            color: var(--primary);
             transform: translateX(5px);
         }
 
         .sidebar .nav-link.active {
-            background: linear-gradient(90deg, var(--accent-blue), #2563eb);
-            color: var(--white);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            background: var(--primary);
+            color: #ffffff !important;
         }
 
         .sidebar hr {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: #eaeaea;
             opacity: 1;
         }
 
@@ -98,45 +90,46 @@ body {
         }
 
         .navbar-admin {
-            background: var(--white);
+            background: #ffffff;
             padding: 1rem 2rem;
-            box-shadow: var(--shadow-soft);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin-bottom: 2rem;
-            border-radius: 0 0 20px 20px; /* Bo góc dưới */
+            border-bottom: 1px solid #eaeaea;
         }
 
         .navbar-admin h4 {
-            color: var(--primary-navy);
+            color: var(--text-color);
             font-weight: 700;
             font-size: 1.5rem;
         }
 
         .user-profile-badge {
-            background: var(--light-bg);
+            background: #f8f9fa;
             padding: 8px 16px;
             border-radius: 50px;
             display: flex;
             align-items: center;
             gap: 10px;
-            color: var(--primary-navy);
+            color: var(--text-color);
             font-weight: 600;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #eaeaea;
         }
 
         .user-profile-badge i {
-            color: var(--accent-blue);
+            color: var(--primary);
             font-size: 1.2rem;
         }
 
-        /* ======== STAT CARDS (Premium Gradients) ======== */
+        /* ======== STAT CARDS ======== */
         .stat-card {
-            border-radius: 20px;
+            border-radius: 12px;
             padding: 1.8rem;
-            color: white;
+            color: var(--text-color);
             position: relative;
             overflow: hidden;
-            border: none;
-            box-shadow: var(--shadow-soft);
+            border: 1px solid #eaeaea;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
             height: 100%;
         }
@@ -148,14 +141,14 @@ body {
             right: -20%;
             width: 150px;
             height: 150px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.02);
             border-radius: 50%;
             pointer-events: none;
         }
 
         .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
         }
 
         .stat-card h3 {
@@ -174,37 +167,37 @@ body {
 
         .stat-icon {
             font-size: 3rem;
-            opacity: 0.3;
+            opacity: 0.1;
             position: absolute;
             right: 20px;
             bottom: 20px;
         }
 
-        /* Card Colors */
-        .stat-card.primary { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); } /* Navy */
-        .stat-card.success { background: linear-gradient(135deg, #059669 0%, #10b981 100%); } /* Emerald */
-        .stat-card.warning { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); } /* Amber */
-        .stat-card.info { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); } /* Royal Blue */
-
+        /* Card Colors - Light style */
+        .stat-card.primary { border-bottom: 4px solid var(--primary); } 
+        .stat-card.success { border-bottom: 4px solid #10b981; } 
+        .stat-card.warning { border-bottom: 4px solid #f59e0b; } 
+        .stat-card.info { border-bottom: 4px solid #3b82f6; } 
 
         /* ======== TABLES & CARDS ======== */
         .card {
-            border: none;
-            border-radius: 20px;
-            background: var(--white);
-            box-shadow: var(--shadow-soft);
+            border: 1px solid #eaeaea;
+            border-radius: 12px;
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             margin-bottom: 2rem;
+            color: var(--text-color);
         }
 
         .card-header {
-            background: var(--white);
-            border-bottom: 1px solid #e2e8f0;
+            background: #ffffff;
+            border-bottom: 1px solid #eaeaea;
             padding: 1.5rem;
-            border-radius: 20px 20px 0 0 !important;
+            border-radius: 12px 12px 0 0 !important;
         }
 
         .card-header h5 {
-            color: var(--primary-navy);
+            color: var(--text-color);
             font-weight: 700;
             font-size: 1.1rem;
             margin: 0;
@@ -214,29 +207,30 @@ body {
         }
 
         .card-header h5 i {
-            color: var(--accent-blue);
+            color: var(--primary);
         }
 
         .table {
             margin-bottom: 0;
             vertical-align: middle;
+            color: var(--text-color);
         }
 
         .table thead th {
-            background: #f8fafc;
-            color: #64748b;
+            background: #f8f9fa;
+            color: var(--text-color);
             font-weight: 600;
             text-transform: uppercase;
             font-size: 0.75rem;
             letter-spacing: 0.5px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 1px solid #eaeaea;
             padding: 1rem;
         }
 
         .table tbody td {
             padding: 1rem;
-            color: var(--text-dark);
-            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-color);
+            border-bottom: 1px solid #eaeaea;
             font-size: 0.95rem;
         }
 
@@ -274,51 +268,15 @@ body {
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
     </style>
+    <jsp:include page="/WEB-INF/views/components/dark-mode.jsp" />
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-3 col-lg-2 px-0 sidebar position-fixed">
-                <div class="p-3">
-                    <h5 class="text-white text-center mt-2">
-                        <i class="fas fa-layer-group me-2"></i>XYZ ADMIN
-                    </h5>
-
-                    <nav class="nav flex-column mt-4">
-                        <a class="nav-link active" href="${pageContext.request.contextPath}/admin">
-                            <i class="fas fa-chart-pie"></i> Dashboard
-                        </a>
-                        <a class="nav-link" href="${pageContext.request.contextPath}/admin/news">
-                            <i class="fas fa-file-alt"></i> Quản lý tin tức
-                        </a>
-                        <c:if test="${sessionScope.currentUser.admin}">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/admin/categories">
-                                <i class="fas fa-folder-open"></i> Quản lý chuyên mục
-                            </a>
-                            <a class="nav-link" href="${pageContext.request.contextPath}/admin/users">
-                                <i class="fas fa-users-cog"></i> Quản lý người dùng
-                            </a>
-
-                            <a class="nav-link" href="${pageContext.request.contextPath}/admin/comments">
-                                <i class="fas fa-comments"></i> Quản lý bình luận
-                            </a>
-
-                            <a class="nav-link" href="${pageContext.request.contextPath}/admin/newsletters">
-                                <i class="fas fa-envelope-open-text"></i> Newsletter
-                            </a>
-                        </c:if>
-                        <hr>
-                        <a class="nav-link" href="${pageContext.request.contextPath}/">
-                            <i class="fas fa-external-link-alt"></i> Xem trang chủ
-                        </a>
-                        
-                        <a class="nav-link" href="${pageContext.request.contextPath}/logout">
-                            <i class="fas fa-sign-out-alt"></i> Đăng xuất
-                        </a>
-                    </nav>
-                </div>
-            </div>
+            <jsp:include page="/WEB-INF/views/admin/components/admin-sidebar.jsp">
+                <jsp:param name="activeMenu" value="dashboard" />
+            </jsp:include>
 
             <div class="col-md-9 col-lg-10 ms-auto main-content">
                 <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
@@ -392,6 +350,72 @@ body {
                                     <p class="mb-0">Đăng ký tin</p>
                                 </div>
                                 <i class="fas fa-envelope stat-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- THỐNG KÊ QUẢNG CÁO -->
+                    <h5 class="mb-3 mt-4 text-muted fw-bold"><i class="fas fa-bullhorn me-2"></i>Tổng quan Quảng Cáo</h5>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-4">
+                            <div class="stat-card warning">
+                                <div class="d-flex flex-column position-relative z-1">
+                                    <h3 class="mb-0 text-warning">${empty pendingAdsCount ? '0' : pendingAdsCount}</h3>
+                                    <p class="mb-0">Yêu cầu chờ duyệt</p>
+                                </div>
+                                <i class="fas fa-inbox stat-icon text-warning"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card success">
+                                <div class="d-flex flex-column position-relative z-1">
+                                    <h3 class="mb-0 text-success">${empty runningAdsCount ? '0' : runningAdsCount}</h3>
+                                    <p class="mb-0">Đang chạy</p>
+                                </div>
+                                <i class="fas fa-play-circle stat-icon text-success"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card primary">
+                                <div class="d-flex flex-column position-relative z-1">
+                                    <h3 class="mb-0 text-primary">
+                                        <c:choose>
+                                            <c:when test="${not empty revenueThisMonth}">
+                                                <fmt:formatNumber value="${revenueThisMonth}" pattern="#,###"/> đ
+                                            </c:when>
+                                            <c:otherwise>0 đ</c:otherwise>
+                                        </c:choose>
+                                    </h3>
+                                    <p class="mb-0">Doanh thu tháng</p>
+                                </div>
+                                <i class="fas fa-money-bill-wave stat-icon text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- KHU VỰC BIỂU ĐỒ THỐNG KÊ -->
+                    <div class="row g-4 mb-4">
+                        <!-- Chart 1: News Category (Doughnut) -->
+                        <div class="col-md-5">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Tỷ lệ bài viết theo chuyên mục</h5>
+                                </div>
+                                <div class="card-body d-flex justify-content-center align-items-center">
+                                    <canvas id="categoryChart" style="max-height: 300px; width: 100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chart 2: Ads Revenue (Bar) -->
+                        <div class="col-md-7">
+                            <div class="card h-100">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Doanh thu quảng cáo năm ${currentYear}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="revenueChart" style="max-height: 300px; width: 100%;"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -484,12 +508,135 @@ body {
                             </div>
                         </div>
                     </div>
+
+                    <!-- BẢNG QUẢNG CÁO MỚI NHẤT -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header text-danger">
+                                    <h5 class="mb-0">
+                                        <i class="fas fa-bell"></i> Yêu cầu đặt chỗ mới nhất
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive"> 
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="ps-4">Khách hàng</th>
+                                                    <th>Chiến dịch</th>
+                                                    <th>Ngân sách</th>
+                                                    <th>Trạng thái</th>
+                                                    <th class="text-end pe-4">Hành động</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:choose>
+                                                    <c:when test="${not empty recentAdRequests}">
+                                                        <c:forEach var="req" items="${recentAdRequests}">
+                                                            <tr>
+                                                                <td class="ps-4">
+                                                                    <div class="fw-bold text-dark">${req.contract.contactName}</div>
+                                                                    <div class="text-muted small">${req.contract.email}</div>
+                                                                </td>
+                                                                <td>${req.campaignName}</td>
+                                                                <td class="fw-bold text-primary">
+                                                                    <fmt:formatNumber value="${req.contract.totalPrice}" pattern="#,###"/> đ
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Chờ duyệt</span>
+                                                                </td>
+                                                                <td class="text-end pe-4">
+                                                                    <a href="${pageContext.request.contextPath}/admin/ads/requests" class="btn btn-sm btn-outline-primary">Xem</a>
+                                                                </td>
+                                                            </tr>
+                                                        </c:forEach>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <tr>
+                                                            <td colspan="5" class="text-center py-5 text-muted">
+                                                                <i class="fas fa-database fa-2x mb-2 opacity-25 d-block"></i>
+                                                                Chưa có yêu cầu mới
+                                                            </td>
+                                                        </tr>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Thêm thư viện Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dữ liệu biểu đồ từ Java truyền sang
+        const categoryLabels = ${empty chartCategoryLabels ? '[]' : chartCategoryLabels};
+        const categoryData = ${empty chartCategoryData ? '[]' : chartCategoryData};
+        
+        const revenueLabels = ${empty chartRevenueLabels ? '[]' : chartRevenueLabels};
+        const revenueData = ${empty chartRevenueData ? '[]' : chartRevenueData};
+
+        // Render Biểu đồ tròn
+        const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+        new Chart(ctxCategory, {
+            type: 'doughnut',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    data: categoryData,
+                    backgroundColor: ['#006389', '#10b981', '#f59e0b', '#3b82f6', '#ef4444', '#8b5cf6', '#ec4899', '#14b8a6'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // Render Biểu đồ cột
+        const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctxRevenue, {
+            type: 'bar',
+            data: {
+                labels: revenueLabels,
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: revenueData,
+                    backgroundColor: 'rgba(0, 99, 137, 0.7)',
+                    borderColor: '#006389',
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN') + ' đ';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

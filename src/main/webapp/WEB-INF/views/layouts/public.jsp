@@ -42,7 +42,7 @@
         /* Áp dụng Gradient Navy và Shadow */
         background: linear-gradient(135deg, var(--navy), var(--navy-light)) !important;
         box-shadow: var(--shadow-navbar); 
-        position: sticky; /* Đặt sticky/fixed nếu cần, mặc định giữ sticky */
+        position: sticky; /* Đặt sticky/ed nếu cần, mặc định giữ sticky */
         top: 0;
         z-index: 1030;
     }
@@ -188,6 +188,22 @@
                                 </c:forEach>
                             </ul>
 
+                            <%-- Search form cố định trong navbar để tránh nav-item xuống dòng --%>
+                            <form class="d-flex me-3" action="${pageContext.request.contextPath}/news" method="get">
+                                <input type="hidden" name="action" value="search">
+                                <div class="input-group" style="width: 220px;">
+                                    <input class="form-control form-control-sm"
+                                           type="search" name="keyword"
+                                           placeholder="Tìm kiếm bài viết..."
+                                           value="${searchKeyword}"
+                                           style="background:rgba(255,255,255,0.15); border-color:rgba(255,255,255,0.3); color:white;">
+                                    <button class="btn btn-sm" type="submit"
+                                            style="background:var(--accent); border:none; color:white;">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+
                             <ul class="navbar-nav">
                                 <c:choose>
                                     <c:when test="${sessionScope.currentUser.admin || sessionScope.currentUser.reporter}">
@@ -198,9 +214,19 @@
                                             </a>
                                             <ul class="dropdown-menu">
                                                 <li><a class="dropdown-item"
-                                                        href="${pageContext.request.contextPath}/admin">
-                                                        <i class="fas fa-tachometer-alt"></i> Quản trị
+                                                        href="${pageContext.request.contextPath}/profile">
+                                                        <i class="fas fa-user me-2"></i> Hồ sơ
                                                     </a></li>
+                                                <li><a class="dropdown-item"
+                                                        href="${pageContext.request.contextPath}${sessionScope.currentUser.admin ? '/admin/news' : '/reporter/news'}">
+                                                        <i class="fas fa-list-alt me-2"></i> Bài viết của tôi
+                                                    </a></li>
+                                                <c:if test="${sessionScope.currentUser.admin}">
+                                                    <li><a class="dropdown-item"
+                                                            href="${pageContext.request.contextPath}/admin">
+                                                            <i class="fas fa-tachometer-alt"></i> Quản trị
+                                                        </a></li>
+                                                </c:if>
                                                 <li>
                                                     <hr class="dropdown-divider">
                                                 </li>

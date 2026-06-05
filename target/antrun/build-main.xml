@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <copy file="C:\Users\Acer Nitro 5\Downloads\Asm-new-main\target/asm-news-1.0.0.war" todir="D:/apache-tomcat-10.1.20-windows-x64/apache-tomcat-10.1.20/webapps" overwrite="true" />
+  </target>
+</project>
