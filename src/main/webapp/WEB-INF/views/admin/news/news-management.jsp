@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -501,7 +502,14 @@
                                                                 <td>
                                                                     <c:choose>
                                                                         <c:when test="${not empty news.image}">
-                                                                            <img src="${pageContext.request.contextPath}/upload/${news.image}" class="news-image-preview" alt="${news.title}">
+                                                                            <c:choose>
+                                                                                <c:when test="${fn:startsWith(news.image, 'http')}">
+                                                                                    <img src="${news.image}" class="news-image-preview" alt="${news.title}"> <%-- // FIX --%>
+                                                                                </c:when>
+                                                                                <c:otherwise>
+                                                                                    <img src="${pageContext.request.contextPath}/images/${news.image}" class="news-image-preview" alt="${news.title}"> <%-- // FIX --%>
+                                                                                </c:otherwise>
+                                                                            </c:choose>
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <div class="bg-light p-2 rounded text-center">

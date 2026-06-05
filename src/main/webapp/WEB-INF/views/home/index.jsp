@@ -132,23 +132,7 @@
         <div class="col-span-12 lg:col-span-4">
             <div class="border border-gray-200 p-5 rounded h-full flex flex-col">
                 
-                <%-- Widget theo dõi trạng thái Quảng Cáo (Chỉ hiện khi đăng nhập) --%>
-                <c:if test="${sessionScope.currentUser != null}">
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <h4 class="font-bold text-primary text-[13px] mb-1 uppercase tracking-wide">
-                                    <i class="fas fa-bullhorn mr-1"></i> Quảng cáo của bạn
-                                </h4>
-                                <p class="text-xs text-gray-600 m-0">Chiến dịch gần nhất đang <strong class="text-yellow-600">Chờ duyệt</strong></p>
-                            </div>
-                            <a href="${pageContext.request.contextPath}/profile" class="text-[11px] font-bold bg-white border border-primary text-primary px-3 py-1.5 rounded hover:bg-primary hover:text-white transition-colors no-underline whitespace-nowrap">
-                                Chi tiết
-                            </a>
-                        </div>
-                    </div>
-                </c:if>
+
 
                 <div class="flex gap-5 border-b border-gray-200 mb-4 pb-2">
                     <button class="font-bold text-[13px] text-primary border-b-2 border-primary pb-2 -mb-[10px] uppercase">Tin mới</button>
