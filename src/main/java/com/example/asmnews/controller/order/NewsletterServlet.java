@@ -149,8 +149,12 @@ public class NewsletterServlet extends BaseServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        // Chuyển hướng GET requests về trang chủ
-        redirect(response, request.getContextPath() + "/");
+        String action = getParameter(request, "action", ""); // -- FIX
+        if ("unsubscribe".equals(action)) { // -- FIX
+            handleUnsubscribe(request, response); // -- FIX
+        } else { // -- FIX
+            // Chuyển hướng GET requests về trang chủ
+            redirect(response, request.getContextPath() + "/");
+        } // -- FIX
     }
 }

@@ -142,6 +142,30 @@
                                 <textarea name="bio" rows="3" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" placeholder="Giới thiệu một chút về bản thân bạn...">${sessionScope.currentUser.bio}</textarea>
                             </div>
                         </c:if>
+
+                        <!-- Newsletter Registration Status (RQ23) -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 md:col-span-2 flex flex-wrap justify-between items-center gap-4 mt-2">
+                            <div class="text-left">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                    <i class="fas fa-envelope-open-text text-gray-400"></i> Trạng thái nhận bản tin (Newsletter)
+                                </div>
+                                <p class="text-sm font-semibold ${isSubscribedNewsletter ? 'text-emerald-600' : 'text-gray-500'}">
+                                    ${isSubscribedNewsletter ? 'Đã đăng ký nhận bản tin định kỳ' : 'Chưa đăng ký nhận bản tin'}
+                                </p>
+                            </div>
+                            <c:choose>
+                                <c:when test="${isSubscribedNewsletter}">
+                                    <button type="button" onclick="unsubscribeNewsletter('${sessionScope.currentUser.email}')" class="px-4 py-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg text-xs font-bold transition cursor-pointer border-none shadow-sm">
+                                        Hủy đăng ký nhận tin
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="button" onclick="subscribeNewsletter('${sessionScope.currentUser.email}')" class="px-4 py-2 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-lg text-xs font-bold transition cursor-pointer border-none shadow-sm">
+                                        Đăng ký nhận tin
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
 
                     <!-- Actions -->
@@ -163,8 +187,271 @@
                         </a>
                     </div>
                 </form>
+
+                <%-- Tab hiển thị Bookmarks & Lịch sử đọc tin --%>
+                <div class="w-full border-t border-gray-100 mt-8 pt-8 px-8 pb-8">
+                    <!-- Tab Headers -->
+                    <div class="flex border-b border-gray-200 mb-6">
+                        <button class="tab-btn px-6 py-2.5 font-bold text-sm border-b-2 border-primary text-primary focus:outline-none cursor-pointer" onclick="openTab(event, 'bookmark-tab')">
+                            <i class="fas fa-bookmark me-2"></i> Bài viết đã lưu (${bookmarkList.size()})
+                        </button>
+                        <button class="tab-btn px-6 py-2.5 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer" onclick="openTab(event, 'history-tab')">
+                            <i class="fas fa-history me-2"></i> Lịch sử đọc tin (${readingHistoryList.size()})
+                        </button>
+                        <button class="tab-btn px-6 py-2.5 font-bold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 focus:outline-none cursor-pointer" onclick="openTab(event, 'following-tab')">
+                            <i class="fas fa-user-check me-2"></i> Tác giả đã theo dõi (${followingAuthorsList.size()})
+                        </button>
+                    </div>
+
+                    <!-- Tab Contents -->
+                    <div id="bookmark-tab" class="tab-content text-left">
+                        <c:choose>
+                            <c:when test="${empty bookmarkList}">
+                                <div class="text-center py-10">
+                                    <i class="far fa-bookmark text-4xl text-gray-300 mb-3 block"></i>
+                                    <span class="text-gray-500 font-medium text-sm">Bạn chưa lưu bài viết nào.</span>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <c:forEach var="newsItem" items="${bookmarkList}">
+                                        <div class="flex gap-4 p-3 border border-gray-100 rounded-xl hover:shadow-md transition bg-gray-50/50" id="bookmark-item-${newsItem.id}">
+                                            <div class="w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                                                <img src="${newsItem.image.startsWith('http') ? newsItem.image : pageContext.request.contextPath.concat('/images/').concat(newsItem.image)}" class="w-full h-full object-cover">
+                                            </div>
+                                            <div class="flex-grow min-w-0 flex flex-col justify-between">
+                                                <a href="${pageContext.request.contextPath}/news?action=detail&id=${newsItem.id}" class="text-gray-900 hover:text-primary font-bold text-sm line-clamp-2 no-underline leading-snug">
+                                                    ${newsItem.title}
+                                                </a>
+                                                <div class="flex justify-between items-center mt-1">
+                                                    <span class="text-[11px] text-gray-400 font-medium">
+                                                        <fmt:formatDate value="${newsItem.postedDate}" pattern="dd/MM/yyyy" />
+                                                    </span>
+                                                    <button type="button" onclick="removeBookmark('${newsItem.id}')" class="text-xs text-red-500 hover:text-red-700 font-bold border-none bg-transparent cursor-pointer">
+                                                        <i class="far fa-trash-can"></i> Bỏ lưu
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <div id="history-tab" class="tab-content text-left hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs text-gray-500 font-medium">Lưu tối đa 50 bài viết gần nhất</span>
+                            <c:if test="${not empty readingHistoryList}">
+                                <button type="button" onclick="clearReadingHistory()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold border-none cursor-pointer">
+                                    <i class="fas fa-trash-alt me-1"></i> Xóa lịch sử đọc
+                                </button>
+                            </c:if>
+                        </div>
+                        <c:choose>
+                            <c:when test="${empty readingHistoryList}">
+                                <div class="text-center py-10">
+                                    <i class="fas fa-history text-4xl text-gray-300 mb-3 block"></i>
+                                    <span class="text-gray-500 font-medium text-sm">Lịch sử đọc tin trống.</span>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="history-list-container">
+                                    <c:forEach var="newsItem" items="${readingHistoryList}">
+                                        <div class="flex gap-4 p-3 border border-gray-100 rounded-xl hover:shadow-md transition bg-gray-50/50">
+                                            <div class="w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                                                <img src="${newsItem.image.startsWith('http') ? newsItem.image : pageContext.request.contextPath.concat('/images/').concat(newsItem.image)}" class="w-full h-full object-cover">
+                                            </div>
+                                            <div class="flex-grow min-w-0 flex flex-col justify-between">
+                                                <a href="${pageContext.request.contextPath}/news?action=detail&id=${newsItem.id}" class="text-gray-900 hover:text-primary font-bold text-sm line-clamp-2 no-underline leading-snug">
+                                                    ${newsItem.title}
+                                                </a>
+                                                <span class="text-[11px] text-gray-400 font-medium mt-1">
+                                                    <fmt:formatDate value="${newsItem.postedDate}" pattern="dd/MM/yyyy" />
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <!-- Tab Tác giả đã theo dõi -->
+                    <div id="following-tab" class="tab-content text-left hidden">
+                        <c:choose>
+                            <c:when test="${empty followingAuthorsList}">
+                                <div class="text-center py-10">
+                                    <i class="fas fa-users text-4xl text-gray-300 mb-3 block"></i>
+                                    <span class="text-gray-500 font-medium text-sm">Bạn chưa theo dõi tác giả nào.</span>
+                                </div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="following-list-container">
+                                    <c:forEach var="author" items="${followingAuthorsList}">
+                                        <div class="flex gap-4 p-3 border border-gray-100 rounded-xl hover:shadow-md transition bg-gray-50/50" id="author-item-${author.id}">
+                                            <div class="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center border border-gray-200">
+                                                <c:choose>
+                                                    <c:when test="${not empty author.avatar}">
+                                                        <img src="${pageContext.request.contextPath}/images/${author.avatar}" class="w-full h-full object-cover">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div class="w-full h-full bg-primary text-white flex items-center justify-center text-xl font-bold">
+                                                            ${author.fullname.substring(0, 1).toUpperCase()}
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                            <div class="flex-grow min-w-0 flex flex-col justify-between">
+                                                <div>
+                                                    <h6 class="text-gray-900 font-bold text-sm truncate m-0 leading-tight">
+                                                        ${author.fullname}
+                                                    </h6>
+                                                    <p class="text-xs text-gray-400 m-0 mt-1 truncate">
+                                                        ${not empty author.penName ? author.penName : 'Phóng viên'}
+                                                    </p>
+                                                </div>
+                                                <div class="flex justify-end items-center">
+                                                    <button type="button" onclick="unfollowAuthor('${author.id}')" class="text-xs text-red-500 hover:text-red-700 font-bold border-none bg-transparent cursor-pointer">
+                                                        <i class="fas fa-user-minus"></i> Hủy theo dõi
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:forEach>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <script>
+            // Xử lý chuyển đổi tab (Bookmarks / Lịch sử đọc)
+            function openTab(evt, tabId) {
+                const tabContents = document.getElementsByClassName("tab-content");
+                for (let i = 0; i < tabContents.length; i++) {
+                    tabContents[i].classList.add("hidden");
+                }
+                
+                const tabBtns = document.getElementsByClassName("tab-btn");
+                for (let i = 0; i < tabBtns.length; i++) {
+                    tabBtns[i].classList.remove("border-primary", "text-primary");
+                    tabBtns[i].classList.add("border-transparent", "text-gray-500");
+                }
+                
+                document.getElementById(tabId).classList.remove("hidden");
+                evt.currentTarget.classList.remove("border-transparent", "text-gray-500");
+                evt.currentTarget.classList.add("border-primary", "text-primary");
+            }
+
+            // Hủy đăng ký newsletter nhanh
+            function unsubscribeNewsletter(email) {
+                if (confirm("Bạn có chắc chắn muốn hủy đăng ký nhận bản tin?")) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = '${pageContext.request.contextPath}/newsletter';
+                    
+                    const actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'unsubscribe';
+                    
+                    const emailInput = document.createElement('input');
+                    emailInput.type = 'hidden';
+                    emailInput.name = 'email';
+                    emailInput.value = email;
+                    
+                    form.appendChild(actionInput);
+                    form.appendChild(emailInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            }
+
+            // Đăng ký newsletter nhanh
+            function subscribeNewsletter(email) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '${pageContext.request.contextPath}/newsletter';
+                
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'subscribe';
+                
+                const emailInput = document.createElement('input');
+                emailInput.type = 'hidden';
+                emailInput.name = 'email';
+                emailInput.value = email;
+                
+                form.appendChild(actionInput);
+                form.appendChild(emailInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            // Bỏ lưu bài viết ngay tại profile
+            function removeBookmark(newsId) {
+                if (confirm("Bạn muốn bỏ lưu bài viết này?")) {
+                    fetch('${pageContext.request.contextPath}/news?action=unbookmark&newsId=' + newsId, { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const item = document.getElementById('bookmark-item-' + newsId);
+                                if (item) {
+                                    item.remove();
+                                }
+                                window.location.reload(); // Reload để cập nhật số đếm tiêu đề tab
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+
+            // Xóa lịch sử đọc bài
+            function clearReadingHistory() {
+                if (confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử đọc tin tức?")) {
+                    fetch('${pageContext.request.contextPath}/news?action=clearHistory', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const container = document.getElementById('history-list-container');
+                                if (container) {
+                                    container.innerHTML = '<div class="text-center py-10"><i class="fas fa-history text-4xl text-gray-300 mb-3 block"></i><span class="text-gray-500 font-medium text-sm">Lịch sử đọc tin trống.</span></div>';
+                                }
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+
+            // Hủy theo dõi tác giả tại profile
+            function unfollowAuthor(authorId) {
+                if (confirm("Bạn muốn hủy theo dõi tác giả này?")) {
+                    fetch('${pageContext.request.contextPath}/news?action=unfollow&authorId=' + authorId, { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                const item = document.getElementById('author-item-' + authorId);
+                                if (item) {
+                                    item.remove();
+                                }
+                                window.location.reload();
+                            } else {
+                                alert(data.message);
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            }
+        </script>
     </main>
 
     <jsp:include page="../public/components/footer.jsp" />

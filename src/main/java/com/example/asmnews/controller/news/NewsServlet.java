@@ -15,9 +15,13 @@ import com.example.asmnews.repository.news.NewsDAO;
 // VỊ TRÍ 1: Import ReactionDAO
 import com.example.asmnews.repository.news.ReactionDAO;
 import com.example.asmnews.repository.news.commentDAO;
+import com.example.asmnews.repository.news.FollowDAO; // 
+import com.example.asmnews.repository.news.BookmarkDAO; // 
+import com.example.asmnews.repository.news.ReadingHistoryDAO; // 
 import com.example.asmnews.entity.news.Category;
 import com.example.asmnews.entity.news.Comment;
 import com.example.asmnews.entity.news.News;
+import com.example.asmnews.entity.auth.User; // 
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -40,6 +44,9 @@ public class NewsServlet extends BaseServlet {
     private commentDAO commentDAO = new commentDAO();
     // VỊ TRÍ 2: Khởi tạo ReactionDAO
     private ReactionDAO reactionDAO = new ReactionDAO();
+    private FollowDAO followDAO = new FollowDAO(); // 
+    private BookmarkDAO bookmarkDAO = new BookmarkDAO(); // 
+    private ReadingHistoryDAO readingHistoryDAO = new ReadingHistoryDAO(); // 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -74,6 +81,24 @@ public class NewsServlet extends BaseServlet {
                 case "suggest":
                     suggestNews(request, response);
                     break;
+                case "incrementView": // 
+                    incrementView(request, response); // 
+                    break; // 
+                case "follow": // 
+                    handleFollow(request, response); // 
+                    break; // 
+                case "unfollow": // 
+                    handleUnfollow(request, response); // 
+                    break; // 
+                case "bookmark": // 
+                    handleBookmark(request, response); // 
+                    break; // 
+                case "unbookmark": // 
+                    handleUnbookmark(request, response); // 
+                    break; // 
+                case "clearHistory": // 
+                    handleClearHistory(request, response); // 
+                    break; // 
                 case "list":
                 default:
                     showAllNews(request, response);
@@ -170,9 +195,26 @@ public class NewsServlet extends BaseServlet {
             return;
         }
 
-        // Tăng lượt xem
-        newsDAO.updateViewCount(newsId);
-        news.increaseViewCount();
+        // Tăng lượt xem (Đã chuyển sang cơ chế trì hoãn 10s AJAX - RQ03) 
+        // newsDAO.updateViewCount(newsId); 
+        // news.increaseViewCount(); 
+
+        // Lưu lịch sử đọc & Kiểm tra follow/bookmark 
+        User currentUser = getCurrentUser(request); 
+        boolean isFollowing = false; 
+        boolean isBookmarked = false; 
+
+        if (currentUser != null) { 
+            // Tự động lưu lịch sử đọc tin (RQ25) 
+            readingHistoryDAO.addRecord(currentUser.getId(), newsId); 
+            // Kiểm tra theo dõi tác giả (RQ22) 
+            isFollowing = followDAO.isFollowing(currentUser.getId(), news.getAuthor()); 
+            // Kiểm tra bookmark bài viết (RQ27) 
+            isBookmarked = bookmarkDAO.isBookmarked(currentUser.getId(), newsId); 
+        } 
+
+        request.setAttribute("isFollowing", isFollowing); 
+        request.setAttribute("isBookmarked", isBookmarked); 
 
         // Lấy danh sách bình luận từ DB
         List<Comment> comments = commentDAO.findByNewsId(newsId);
@@ -279,4 +321,199 @@ public class NewsServlet extends BaseServlet {
                     .replace("\r", "\\r")
                     .replace("\t", "\\t");
     }
+
+    /**
+     * AJAX action: Tăng lượt xem bài viết sau 10 giây (RQ03)
+     * 
+     */
+    private void incrementView(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException { 
+        response.setContentType("application/json"); 
+        response.setCharacterEncoding("UTF-8"); 
+        PrintWriter out = response.getWriter(); 
+
+        String newsId = getParameter(request, "id", ""); 
+        if (!newsId.isEmpty() && newsDAO.updateViewCount(newsId)) { 
+            out.print("{\"status\":\"success\", \"message\":\"Lượt xem đã tăng\"}"); 
+        } else { 
+            out.print("{\"status\":\"error\", \"message\":\"Không thể tăng lượt xem\"}"); 
+        } 
+        out.flush(); 
+    } 
+
+    /**
+     * AJAX/POST action: Theo dõi tác giả (RQ22)
+     * 
+     */
+    private void handleFollow(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException { 
+        response.setContentType("application/json"); 
+        response.setCharacterEncoding("UTF-8"); 
+        PrintWriter out = response.getWriter(); 
+
+        User currentUser = getCurrentUser(request); 
+        if (currentUser == null) { 
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+            out.print("{\"status\":\"error\", \"message\":\"Vui lòng đăng nhập để theo dõi tác giả!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        String authorId = getParameter(request, "authorId", ""); 
+        if (authorId.isEmpty()) { 
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+            out.print("{\"status\":\"error\", \"message\":\"Thiếu thông tin tác giả!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        if (currentUser.getId().equals(authorId)) { 
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+            out.print("{\"status\":\"error\", \"message\":\"Bạn không thể theo dõi chính mình!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        if (followDAO.follow(currentUser.getId(), authorId)) { 
+            out.print("{\"status\":\"success\", \"message\":\"Đã theo dõi tác giả\"}"); 
+        } else { 
+            out.print("{\"status\":\"error\", \"message\":\"Lỗi hệ thống khi theo dõi tác giả\"}"); 
+        } 
+        out.flush(); 
+    } 
+
+    /**
+     * AJAX/POST action: Hủy theo dõi tác giả (RQ22)
+     * 
+     */
+    private void handleUnfollow(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException { 
+        response.setContentType("application/json"); 
+        response.setCharacterEncoding("UTF-8"); 
+        PrintWriter out = response.getWriter(); 
+
+        User currentUser = getCurrentUser(request); 
+        if (currentUser == null) { 
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+            out.print("{\"status\":\"error\", \"message\":\"Vui lòng đăng nhập!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        String authorId = getParameter(request, "authorId", ""); 
+        if (authorId.isEmpty()) { 
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+            out.print("{\"status\":\"error\", \"message\":\"Thiếu thông tin tác giả!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        if (followDAO.unfollow(currentUser.getId(), authorId)) { 
+            out.print("{\"status\":\"success\", \"message\":\"Đã hủy theo dõi tác giả\"}"); 
+        } else { 
+            out.print("{\"status\":\"error\", \"message\":\"Lỗi hệ thống khi hủy theo dõi\"}"); 
+        } 
+        out.flush(); 
+    } 
+
+    /**
+     * AJAX/POST action: Lưu bài viết (RQ27)
+     * 
+     */
+    private void handleBookmark(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException { 
+        response.setContentType("application/json"); 
+        response.setCharacterEncoding("UTF-8"); 
+        PrintWriter out = response.getWriter(); 
+
+        User currentUser = getCurrentUser(request); 
+        if (currentUser == null) { 
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+            out.print("{\"status\":\"error\", \"message\":\"Vui lòng đăng nhập để lưu bài viết!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        String newsId = getParameter(request, "newsId", ""); 
+        if (newsId.isEmpty()) { 
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+            out.print("{\"status\":\"error\", \"message\":\"Thiếu thông tin bài viết!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        if (bookmarkDAO.bookmark(currentUser.getId(), newsId)) { 
+            out.print("{\"status\":\"success\", \"message\":\"Đã lưu bài viết thành công\"}"); 
+        } else { 
+            out.print("{\"status\":\"error\", \"message\":\"Lỗi hệ thống khi lưu bài viết\"}"); 
+        } 
+        out.flush(); 
+    } 
+
+    /**
+     * AJAX/POST action: Bỏ lưu bài viết (RQ27)
+     * 
+     */
+    private void handleUnbookmark(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException { 
+        response.setContentType("application/json"); 
+        response.setCharacterEncoding("UTF-8"); 
+        PrintWriter out = response.getWriter(); 
+
+        User currentUser = getCurrentUser(request); 
+        if (currentUser == null) { 
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+            out.print("{\"status\":\"error\", \"message\":\"Vui lòng đăng nhập!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        String newsId = getParameter(request, "newsId", ""); 
+        if (newsId.isEmpty()) { 
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); 
+            out.print("{\"status\":\"error\", \"message\":\"Thiếu thông tin bài viết!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        if (bookmarkDAO.unbookmark(currentUser.getId(), newsId)) { 
+            out.print("{\"status\":\"success\", \"message\":\"Đã bỏ lưu bài viết\"}"); 
+        } else { 
+            out.print("{\"status\":\"error\", \"message\":\"Lỗi hệ thống khi bỏ lưu\"}"); 
+        } 
+        out.flush(); 
+    } 
+
+    /**
+     * AJAX/POST action: Xóa lịch sử đọc tin (RQ25)
+     * 
+     */
+    private void handleClearHistory(HttpServletRequest request, HttpServletResponse response) 
+            throws IOException { 
+        response.setContentType("application/json"); 
+        response.setCharacterEncoding("UTF-8"); 
+        PrintWriter out = response.getWriter(); 
+
+        User currentUser = getCurrentUser(request); 
+        if (currentUser == null) { 
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+            out.print("{\"status\":\"error\", \"message\":\"Vui lòng đăng nhập!\"}"); 
+            out.flush(); 
+            return; 
+        } 
+
+        if (readingHistoryDAO.clearAll(currentUser.getId())) { 
+            out.print("{\"status\":\"success\", \"message\":\"Lịch sử đọc tin đã được xóa sạch\"}"); 
+        } else { 
+            out.print("{\"status\":\"error\", \"message\":\"Lỗi khi xóa lịch sử\"}"); 
+        } 
+        out.flush(); 
+    } 
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 }
+

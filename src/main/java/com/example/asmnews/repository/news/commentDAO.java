@@ -192,10 +192,47 @@ public class commentDAO {
     }
 
     /**
-     * Tăng số lượt báo cáo của một bình luận lên 1
+     * Tìm bình luận theo ID
+     * 
+     */
+    public Comment findById(int commentId) { 
+        String sql = "SELECT CommentId, Content, CreatedDate, UserId, NewsId, IFNULL(ParentId, 0) AS ParentId, " 
+                + "IFNULL(IsPinned, 0) AS IsPinned, IFNULL(IsHidden, 0) AS IsHidden, IFNULL(ReportCount, 0) AS ReportCount " 
+                + "FROM Comments WHERE CommentId = ?"; 
+        try (Connection conn = DatabaseUtils.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql)) { 
+            stmt.setInt(1, commentId); 
+            try (ResultSet rs = stmt.executeQuery()) { 
+                if (rs.next()) { 
+                    Comment comment = new Comment(); 
+                    comment.setId(rs.getInt("CommentId")); 
+                    comment.setContent(rs.getString("Content")); 
+                    Timestamp ts = rs.getTimestamp("CreatedDate"); 
+                    if (ts != null) { 
+                        comment.setCreatedDate(new java.util.Date(ts.getTime())); 
+                    } 
+                    comment.setUserId(rs.getString("UserId")); 
+                    comment.setNewsId(rs.getString("NewsId")); 
+                    comment.setParentId(rs.getInt("ParentId")); 
+                    comment.setIsPinned(rs.getBoolean("IsPinned")); 
+                    comment.setIsHidden(rs.getBoolean("IsHidden")); 
+                    comment.setReportCount(rs.getInt("ReportCount")); 
+                    return comment; 
+                } 
+            } 
+        } catch (SQLException e) { 
+            System.err.println("Lỗi findById Comment: " + e.getMessage()); 
+        } 
+        return null; 
+    } 
+
+    /**
+     * Tăng số lượt báo cáo của một bình luận lên 1 và tự động ẩn nếu >= 10 lượt report
      */
     public boolean reportComment(int commentId) {
-        String sql = "UPDATE Comments SET ReportCount = IFNULL(ReportCount, 0) + 1 WHERE CommentId = ?";
+        String sql = "UPDATE Comments SET ReportCount = IFNULL(ReportCount, 0) + 1, " 
+                + "IsHidden = CASE WHEN IFNULL(ReportCount, 0) + 1 >= 10 THEN 1 ELSE IsHidden END " 
+                + "WHERE CommentId = ?"; 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, commentId);

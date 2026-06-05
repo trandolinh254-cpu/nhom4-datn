@@ -91,11 +91,18 @@
                                     <h1 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 leading-tight mb-6">${news.title}</h1>
 
                                     <div class="bg-gray-50 border-l-4 border-primary p-4 rounded-lg flex flex-wrap items-center gap-x-6 gap-y-3 mb-8 text-sm font-medium text-gray-600">
-                                        <span class="flex items-center gap-2"><i class="fas fa-user text-primary"></i> ${news.authorName}</span>
+                                        <span class="flex items-center gap-2">
+                                            <i class="fas fa-user text-primary"></i> ${news.authorName}
+                                            <c:if test="${sessionScope.currentUser != null && sessionScope.currentUser.id != news.author}">
+                                                <button type="button" id="followBtn" class="ms-2 px-2.5 py-0.5 rounded text-xs font-bold transition ${isFollowing ? 'bg-blue-100 text-blue-700 hover:bg-blue-200' : 'bg-blue-600 text-white hover:bg-blue-700'}" onclick="toggleFollow('${news.author}')">
+                                                    ${isFollowing ? 'Đang theo dõi' : 'Theo dõi'}
+                                                </button>
+                                            </c:if>
+                                        </span>
                                         <span class="hidden md:inline text-gray-300">|</span>
                                         <span class="flex items-center gap-2"><i class="fas fa-calendar-alt text-primary"></i> <fmt:formatDate value="${news.postedDate}" pattern="dd/MM/yyyy HH:mm" /></span>
                                         <span class="hidden md:inline text-gray-300">|</span>
-                                        <span class="flex items-center gap-2"><i class="fas fa-eye text-primary"></i> ${news.viewCount} lượt xem</span>
+                                         <span class="flex items-center gap-2"><i class="fas fa-eye text-primary"></i> <span id="viewCountSpan">${news.viewCount}</span> lượt xem</span>
                                         <span class="hidden md:inline text-gray-300">|</span>
                                         <span class="flex items-center gap-2"><i class="fas fa-tags text-primary"></i> ${news.categoryName}</span>
                                     </div>
@@ -129,6 +136,9 @@
                                         </button>
                                         <button type="button" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 hover:bg-gray-800 hover:text-white rounded-full font-bold text-sm transition-colors border border-transparent" onclick="toggleCommentSection()">
                                             <i class="far fa-comment-dots"></i> Bình luận <span id="totalCommentBadge" class="bg-gray-800 text-white rounded-full px-2 py-0.5 text-xs">${news.commentCount != null ? news.commentCount : 0}</span>
+                                        </button>
+                                        <button type="button" id="bookmarkBtn" class="flex items-center gap-2 px-4 py-2 ${isBookmarked ? 'bg-amber-100 text-amber-600 hover:bg-amber-200' : 'bg-gray-100 text-gray-700 hover:bg-amber-500 hover:text-white'} rounded-full font-bold text-sm transition-colors border border-transparent" onclick="toggleBookmark('${news.id}')">
+                                            <i class="${isBookmarked ? 'fas' : 'far'} fa-bookmark"></i> <span id="bookmarkText">${isBookmarked ? 'Đã lưu' : 'Lưu bài viết'}</span>
                                         </button>
                                     </div>
 
@@ -618,20 +628,30 @@
 
                                     // Hiện khối reply-list và chèn reply mới vào
                                     let replyList = document.getElementById('replies-' + parentId);
-                                    replyList.classList.remove('d-none');
+                                    replyList.classList.remove('hidden');
 
                                     let letter = data.fullname.substring(0, 1).toUpperCase();
+                                    let isAuthor = data.userId === '${news.author}';
+                                    let authorBadgeHtml = isAuthor ?
+                                        ` <span class="inline-flex items-center gap-1 ml-1 px-1.5 py-0.2 rounded text-[10px] font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                                            <i class="fas fa-pen-nib text-[8px]"></i> Tác giả
+                                          </span>` : '';
 
-                                    let newReplyHtml =
-                                        '<div class="reply-item d-flex gap-2">' +
-                                        '<div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0"' +
-                                        ' style="width:32px;height:32px;font-size:0.9rem;">' + letter + '</div>' +
-                                        '<div>' +
-                                        '<span class="fw-semibold text-dark" style="font-size:0.9rem;">' + data.fullname + '</span>' +
-                                        '<span class="badge bg-success ms-2" style="font-size:0.7em;">Vừa xong</span>' +
-                                        '<p class="mb-0 text-secondary mt-1" style="font-size:0.92rem;white-space:pre-wrap;">' + data.content + '</p>' +
-                                        '</div>' +
-                                        '</div>';
+                                    let newReplyHtml = `
+                                        <div class="flex gap-3 bg-gray-50 rounded-xl p-3">
+                                            <div class="w-8 h-8 bg-cyan-600 text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0">
+                                                \${letter}
+                                            </div>
+                                            <div>
+                                                <div class="flex items-baseline gap-2">
+                                                    <span class="font-bold text-gray-900 text-sm">
+                                                        \${data.fullname}\${authorBadgeHtml}
+                                                    </span>
+                                                    <small class="text-gray-500 text-xs">Vừa xong</small>
+                                                </div>
+                                                <p class="mt-1 mb-0 text-gray-700 text-sm whitespace-pre-wrap">\${data.content}</p>
+                                            </div>
+                                        </div>`;
 
                                     replyList.insertAdjacentHTML('beforeend', newReplyHtml);
                                 } else {
@@ -640,12 +660,98 @@
                             });
                     }
                     function toggleCommentSection() {
-        const commentSection = document.getElementById('comment-section');
-        if (commentSection) {
-            // Sử dụng classList.toggle của Tailwind để bật/tắt class 'hidden'
-            commentSection.classList.toggle('hidden');
-        }
-    }
+                        const commentSection = document.getElementById('comment-section');
+                        if (commentSection) {
+                            // Sử dụng classList.toggle của Tailwind để bật/tắt class 'hidden'
+                            commentSection.classList.toggle('hidden');
+                        }
+                    }
+
+                    // Trì hoãn 10 giây trước khi tăng View Count (RQ03)
+                    setTimeout(function() {
+                        fetch('${pageContext.request.contextPath}/news?action=incrementView&id=${news.id}')
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status === 'success') {
+                                    console.log("Đã tăng lượt xem!");
+                                    const viewCountSpan = document.getElementById('viewCountSpan');
+                                    if (viewCountSpan) {
+                                        viewCountSpan.innerText = parseInt(viewCountSpan.innerText) + 1;
+                                    }
+                                }
+                            })
+                            .catch(err => console.error("Lỗi tăng view:", err));
+                    }, 10000);
+
+                    // Xử lý theo dõi tác giả (RQ22)
+                    function toggleFollow(authorId) {
+                        const followBtn = document.getElementById('followBtn');
+                        if (!followBtn) return;
+                        
+                        const isFollowing = followBtn.innerText.trim() === 'Đang theo dõi';
+                        const action = isFollowing ? 'unfollow' : 'follow';
+                        
+                        fetch('${pageContext.request.contextPath}/news?action=' + action + '&authorId=' + authorId, { method: 'POST' })
+                            .then(response => {
+                                if (response.status === 401) {
+                                    alert("Vui lòng đăng nhập để thực hiện chức năng này!");
+                                    window.location.href = '${pageContext.request.contextPath}/login';
+                                    return null;
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data && data.status === 'success') {
+                                    if (action === 'follow') {
+                                        followBtn.innerText = 'Đang theo dõi';
+                                        followBtn.className = 'ms-2 px-2.5 py-0.5 rounded text-xs font-bold transition bg-blue-100 text-blue-700 hover:bg-blue-200';
+                                    } else {
+                                        followBtn.innerText = 'Theo dõi';
+                                        followBtn.className = 'ms-2 px-2.5 py-0.5 rounded text-xs font-bold transition bg-blue-600 text-white hover:bg-blue-700';
+                                    }
+                                } else if (data) {
+                                    alert(data.message);
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    }
+
+                    // Xử lý lưu bài viết (RQ27)
+                    function toggleBookmark(newsId) {
+                        const bookmarkBtn = document.getElementById('bookmarkBtn');
+                        const bookmarkText = document.getElementById('bookmarkText');
+                        if (!bookmarkBtn || !bookmarkText) return;
+                        
+                        const isBookmarked = bookmarkText.innerText.trim() === 'Đã lưu';
+                        const action = isBookmarked ? 'unbookmark' : 'bookmark';
+                        
+                        fetch('${pageContext.request.contextPath}/news?action=' + action + '&newsId=' + newsId, { method: 'POST' })
+                            .then(response => {
+                                if (response.status === 401) {
+                                    alert("Vui lòng đăng nhập để lưu bài viết!");
+                                    window.location.href = '${pageContext.request.contextPath}/login';
+                                    return null;
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data && data.status === 'success') {
+                                    const icon = bookmarkBtn.querySelector('i');
+                                    if (action === 'bookmark') {
+                                        bookmarkText.innerText = 'Đã lưu';
+                                        bookmarkBtn.className = 'flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-600 hover:bg-amber-200 rounded-full font-bold text-sm transition-colors border border-transparent';
+                                        icon.className = 'fas fa-bookmark';
+                                    } else {
+                                        bookmarkText.innerText = 'Lưu bài viết';
+                                        bookmarkBtn.className = 'flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 hover:bg-amber-500 hover:text-white rounded-full font-bold text-sm transition-colors border border-transparent';
+                                        icon.className = 'far fa-bookmark';
+                                    }
+                                } else if (data) {
+                                    alert(data.message);
+                                }
+                            })
+                            .catch(err => console.error(err));
+                    }
                 </script>
             </body>
 

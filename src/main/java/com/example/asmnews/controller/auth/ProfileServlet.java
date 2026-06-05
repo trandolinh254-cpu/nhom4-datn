@@ -12,6 +12,12 @@ import java.io.IOException;
 
 import com.example.asmnews.repository.auth.UserDAO;
 import com.example.asmnews.entity.auth.User;
+import com.example.asmnews.repository.news.BookmarkDAO; // -- FIX
+import com.example.asmnews.repository.news.ReadingHistoryDAO; // -- FIX
+import com.example.asmnews.repository.order.NewsletterDAO; // -- FIX
+import com.example.asmnews.entity.news.News; // -- FIX
+import java.util.List; // -- FIX
+import com.example.asmnews.repository.news.FollowDAO; // -- FIX
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -28,6 +34,10 @@ import jakarta.servlet.http.Part;
 public class ProfileServlet extends BaseServlet {
 
     private UserDAO userDAO = new UserDAO();
+    private BookmarkDAO bookmarkDAO = new BookmarkDAO(); // -- FIX
+    private ReadingHistoryDAO readingHistoryDAO = new ReadingHistoryDAO(); // -- FIX
+    private NewsletterDAO newsletterDAO = new NewsletterDAO(); // -- FIX
+    private FollowDAO followDAO = new FollowDAO(); // -- FIX
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,6 +46,20 @@ public class ProfileServlet extends BaseServlet {
             redirect(response, request.getContextPath() + "/login");
             return;
         }
+        User currentUser = getCurrentUser(request); // -- FIX
+        String email = currentUser.getEmail(); // -- FIX
+
+        // Nạp các dữ liệu bổ sung cho Độc giả -- FIX
+        boolean isSubscribed = email != null && newsletterDAO.isActive(email); // -- FIX
+        List<News> bookmarks = bookmarkDAO.findByUserId(currentUser.getId()); // -- FIX
+        List<News> history = readingHistoryDAO.findByUserId(currentUser.getId()); // -- FIX
+        List<User> followingAuthors = followDAO.getFollowingAuthors(currentUser.getId()); // -- FIX
+
+        request.setAttribute("isSubscribedNewsletter", isSubscribed); // -- FIX
+        request.setAttribute("bookmarkList", bookmarks); // -- FIX
+        request.setAttribute("readingHistoryList", history); // -- FIX
+        request.setAttribute("followingAuthorsList", followingAuthors); // -- FIX
+
         forward(request, response, "/WEB-INF/views/auth/profile.jsp");
     }
 

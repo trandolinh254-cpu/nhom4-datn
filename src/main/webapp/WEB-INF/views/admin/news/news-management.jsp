@@ -423,13 +423,9 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <%-- // FIX: Loại bỏ sidebar hardcode tĩnh, thay thế bằng component dùng chung --%>
-            <%-- // FIX: Truyền tham số activeMenu là 'news' để điều hướng sáng đúng danh mục --%>
             <jsp:include page="/WEB-INF/views/admin/components/admin-sidebar.jsp">
                 <jsp:param name="activeMenu" value="news" />
             </jsp:include>
-
-            <%-- // FIX: Cấu trúc lại class Grid sang 'ms-auto' để đồng bộ layout hiển thị với Dashboard --%>
             <div class="col-md-9 col-lg-10 ms-auto main-content">
                 <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
                     <div class="container-fluid">
@@ -541,6 +537,9 @@
                                                                         </c:when>
                                                                         <c:when test="${news.status == 2}">
                                                                             <span class="badge bg-danger">Từ chối</span>
+                                                                        </c:when>
+                                                                        <c:when test="${news.status == 3}">
+                                                                            <span class="badge bg-secondary">Bản nháp</span>
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <span class="badge bg-warning text-dark">Chờ duyệt</span>

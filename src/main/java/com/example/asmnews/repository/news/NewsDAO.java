@@ -869,4 +869,27 @@ public class NewsDAO {
         }
         return list;
     }
+
+    /**
+     * Lấy danh sách các bài viết đang chờ duyệt (Status = 0 hoặc null)
+     * 
+     */
+    public List<News> findPendingNews() { 
+        List<News> list = new ArrayList<>(); 
+        String sql = "SELECT NewsId, Title, Author FROM News WHERE (Status = 0 OR Status IS NULL) AND (IsDeleted = 0 OR IsDeleted IS NULL)"; 
+        try (Connection conn = DatabaseUtils.getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement(sql); 
+             ResultSet rs = stmt.executeQuery()) { 
+            while (rs.next()) { 
+                News news = new News(); 
+                news.setId(rs.getString("NewsId")); 
+                news.setTitle(rs.getString("Title")); 
+                news.setAuthor(rs.getString("Author")); 
+                list.add(news); 
+            } 
+        } catch (SQLException e) { 
+            System.err.println("Lỗi findPendingNews: " + e.getMessage()); 
+        } 
+        return list; 
+    } 
 }

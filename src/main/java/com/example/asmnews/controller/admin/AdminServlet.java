@@ -19,6 +19,8 @@ import com.example.asmnews.repository.news.NewsDAO;
 import com.example.asmnews.repository.order.NewsletterDAO;
 import com.example.asmnews.util.DatabaseUtils;
 import com.example.asmnews.repository.auth.UserDAO;
+import com.example.asmnews.repository.news.FollowDAO; // 
+import com.example.asmnews.util.EmailUtils; // 
 import com.example.asmnews.entity.news.Category;
 import com.example.asmnews.entity.news.News;
 import com.example.asmnews.entity.order.Newsletter;
@@ -49,6 +51,7 @@ public class AdminServlet extends BaseServlet {
     private UserDAO userDAO = new UserDAO();
     private NewsletterDAO newsletterDAO = new NewsletterDAO();
     private AdCampaignDAO adCampaignDAO = new AdCampaignDAO();
+    private FollowDAO followDAO = new FollowDAO(); // 
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -725,6 +728,42 @@ public class AdminServlet extends BaseServlet {
             setErrorMessage(request, "Thiếu thông tin bài viết.");
         } else if (newsDAO.updateStatus(newsId, status, rejectReason)) {
             setSuccessMessage(request, status == 1 ? "Đã duyệt bài viết thành công!" : "Đã từ chối bài viết!");
+
+            // Gửi email thông báo cho những người theo dõi tác giả bài viết khi được duyệt (status = 1) 
+            if (status == 1) { 
+                News news = newsDAO.findById(newsId); 
+                if (news != null) { 
+                    List<String> followerEmails = followDAO.getFollowerEmails(news.getAuthor()); 
+                    User author = userDAO.findById(news.getAuthor()); 
+                    String authorName = (author != null) ? (author.getPenName() != null ? author.getPenName() : author.getFullname()) : "Nhà báo"; 
+
+                    String scheme = request.getScheme(); 
+                    String serverName = request.getServerName(); 
+                    int serverPort = request.getServerPort(); 
+                    String contextPath = request.getContextPath(); 
+                    String articleLink = scheme + "://" + serverName + ":" + serverPort + contextPath + "/news?action=detail&id=" + news.getId(); 
+
+                    new Thread(() -> { 
+                        // 1. Gửi cho các độc giả đang theo dõi tác giả
+                        if (followerEmails != null && !followerEmails.isEmpty()) { 
+                            for (String email : followerEmails) { 
+                                EmailUtils.sendNewArticleNotification(email, authorName, news.getTitle(), articleLink); 
+                            } 
+                        } 
+                        // 2. Gửi cho chính tác giả bài viết
+                        if (author != null && author.getEmail() != null && !author.getEmail().trim().isEmpty()) { 
+                            EmailUtils.sendArticleApprovedNotification(author.getEmail(), author.getFullname(), news.getTitle(), articleLink); 
+                        } 
+                        // 3. Gửi bản tin cho những người đăng ký nhận tin (Newsletter) -- FIX
+                        List<com.example.asmnews.entity.order.Newsletter> activeNewsletters = newsletterDAO.findActive(); // // FIX
+                        if (activeNewsletters != null && !activeNewsletters.isEmpty()) { // // FIX
+                            for (com.example.asmnews.entity.order.Newsletter nl : activeNewsletters) { // // FIX
+                                EmailUtils.sendNewsletterNotification(nl.getEmail(), news.getTitle(), articleLink); // // FIX
+                            } // // FIX
+                        } // // FIX
+                    }).start(); 
+                } 
+            } 
         } else {
             setErrorMessage(request, "Có lỗi xảy ra khi cập nhật trạng thái bài viết.");
         }
@@ -742,8 +781,46 @@ public class AdminServlet extends BaseServlet {
         if (!checkAdminAccess(request, response))
             return;
 
+        // Lấy danh sách bài viết đang chờ duyệt trước khi duyệt 
+        List<News> pendingNews = newsDAO.findPendingNews(); 
+
         if (newsDAO.approveAllPendingNews()) {
             setSuccessMessage(request, "Đã duyệt toàn bộ bài viết chờ duyệt thành công!");
+
+            // Gửi email thông báo cho những người theo dõi các tác giả bài viết được duyệt hàng loạt 
+            if (pendingNews != null && !pendingNews.isEmpty()) { 
+                new Thread(() -> { 
+                    for (News news : pendingNews) { 
+                        List<String> followerEmails = followDAO.getFollowerEmails(news.getAuthor()); 
+                        User author = userDAO.findById(news.getAuthor()); 
+                        String authorName = (author != null) ? (author.getPenName() != null ? author.getPenName() : author.getFullname()) : "Nhà báo"; 
+
+                        String scheme = request.getScheme(); 
+                        String serverName = request.getServerName(); 
+                        int serverPort = request.getServerPort(); 
+                        String contextPath = request.getContextPath(); 
+                        String articleLink = scheme + "://" + serverName + ":" + serverPort + contextPath + "/news?action=detail&id=" + news.getId(); 
+
+                        // 1. Gửi cho các độc giả đang theo dõi
+                        if (followerEmails != null && !followerEmails.isEmpty()) { 
+                            for (String email : followerEmails) { 
+                                EmailUtils.sendNewArticleNotification(email, authorName, news.getTitle(), articleLink); 
+                            } 
+                        }
+                        // 2. Gửi cho chính tác giả bài viết
+                        if (author != null && author.getEmail() != null && !author.getEmail().trim().isEmpty()) { 
+                            EmailUtils.sendArticleApprovedNotification(author.getEmail(), author.getFullname(), news.getTitle(), articleLink); 
+                        } 
+                        // 3. Gửi bản tin cho những người đăng ký nhận tin (Newsletter) -- FIX
+                        List<com.example.asmnews.entity.order.Newsletter> activeNewsletters = newsletterDAO.findActive(); // // FIX
+                        if (activeNewsletters != null && !activeNewsletters.isEmpty()) { // // FIX
+                            for (com.example.asmnews.entity.order.Newsletter nl : activeNewsletters) { // // FIX
+                                EmailUtils.sendNewsletterNotification(nl.getEmail(), news.getTitle(), articleLink); // // FIX
+                            } // // FIX
+                        } // // FIX
+                    } 
+                }).start(); 
+            } 
         } else {
             setErrorMessage(request, "Không có bài viết nào cần duyệt hoặc có lỗi xảy ra.");
         }

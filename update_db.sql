@@ -35,4 +35,34 @@ ALTER TABLE Users ADD COLUMN LockoutTime DATETIME NULL; -- Thời điểm khóa 
 -- Bổ sung cột Ghim và Ẩn bình luận vào bảng Comments (Đáp ứng RQ46)
 ALTER TABLE Comments ADD COLUMN IsPinned TINYINT(1) DEFAULT 0; -- Ghim bình luận lên đầu
 ALTER TABLE Comments ADD COLUMN IsHidden TINYINT(1) DEFAULT 0; -- Ẩn bình luận khỏi độc giả
+ALTER TABLE Comments ADD COLUMN ReportCount INT DEFAULT 0; -- -- FIX: Đếm số lượt bị báo cáo (RQ18)
 
+-- Bảng Follows (Theo dõi tác giả - RQ22) -- FIX
+CREATE TABLE IF NOT EXISTS Follows ( -- FIX
+    FollowerId VARCHAR(100), -- FIX
+    AuthorId VARCHAR(100), -- FIX
+    CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP, -- FIX
+    PRIMARY KEY (FollowerId, AuthorId), -- FIX
+    FOREIGN KEY (FollowerId) REFERENCES Users(UserId) ON DELETE CASCADE, -- FIX
+    FOREIGN KEY (AuthorId) REFERENCES Users(UserId) ON DELETE CASCADE -- FIX
+); -- FIX
+
+-- Bảng Bookmarks (Lưu bài viết - RQ27) -- FIX
+CREATE TABLE IF NOT EXISTS Bookmarks ( -- FIX
+    UserId VARCHAR(100), -- FIX
+    NewsId VARCHAR(100), -- FIX
+    CreatedDate DATETIME DEFAULT CURRENT_TIMESTAMP, -- FIX
+    PRIMARY KEY (UserId, NewsId), -- FIX
+    FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE, -- FIX
+    FOREIGN KEY (NewsId) REFERENCES News(NewsId) ON DELETE CASCADE -- FIX
+); -- FIX
+
+-- Bảng ReadingHistory (Lịch sử đọc tin - RQ25) -- FIX
+CREATE TABLE IF NOT EXISTS ReadingHistory ( -- FIX
+    UserId VARCHAR(100), -- FIX
+    NewsId VARCHAR(100), -- FIX
+    ReadDate DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- FIX
+    PRIMARY KEY (UserId, NewsId), -- FIX
+    FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE, -- FIX
+    FOREIGN KEY (NewsId) REFERENCES News(NewsId) ON DELETE CASCADE -- FIX
+); -- FIX
