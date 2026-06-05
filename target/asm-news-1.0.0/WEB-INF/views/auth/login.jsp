@@ -174,7 +174,7 @@
                         <h3 class="mb-0">
                             <i class="fas fa-layer-group me-2"></i> XYZ ADMIN
                         </h3>
-                        <p class="mb-0 mt-2">Hệ thống quản trị nội dung</p>
+                        <p class="mb-0 mt-2">Hi</p>
                     </div>
 
                     <div class="login-body">
@@ -248,7 +248,7 @@
 </div>
 
                         <div class="text-center mt-4">
-                            <small class="text-muted">© 2025 XYZ News. All rights reserved.</small>
+                            <small class="text-muted">© 2025 XYZ News. All rights reserved<a href="${pageContext.request.contextPath}/admin/login" style="color: inherit; text-decoration: none; cursor: default;">.</a></small>
                         </div>
                     </div>
                 </div>
