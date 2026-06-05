@@ -25,11 +25,12 @@ public class commentDAO {
         List<Comment> allReplies = new ArrayList<>();
 
         String sql = "SELECT c.CommentId, c.Content, c.CreatedDate, c.UserId, c.NewsId, "
-                + "IFNULL(c.ParentId, 0) AS ParentId, u.Fullname AS UserFullName "
+                + "IFNULL(c.ParentId, 0) AS ParentId, COALESCE(NULLIF(u.PenName, ''), u.Fullname) AS UserFullName, "
+                + "IFNULL(c.IsPinned, 0) AS IsPinned, IFNULL(c.IsHidden, 0) AS IsHidden "
                 + "FROM Comments c "
                 + "INNER JOIN Users u ON c.UserId = u.UserId "
-                + "WHERE c.NewsId = ? "
-                + "ORDER BY IFNULL(c.ParentId, 0) ASC, c.CreatedDate ASC";
+                + "WHERE c.NewsId = ? AND (c.IsHidden = 0 OR c.IsHidden IS NULL) "
+                + "ORDER BY c.IsPinned DESC, IFNULL(c.ParentId, 0) ASC, c.CreatedDate ASC";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -51,6 +52,11 @@ public class commentDAO {
                     comment.setNewsId(rs.getString("NewsId"));
                     comment.setParentId(rs.getInt("ParentId"));
                     comment.setUserFullName(rs.getString("UserFullName"));
+
+                    try {
+                        comment.setIsPinned(rs.getBoolean("IsPinned"));
+                        comment.setIsHidden(rs.getBoolean("IsHidden"));
+                    } catch (SQLException e) {}
 
                     if (comment.getParentId() == 0) {
                         parentMap.put(comment.getId(), comment);
@@ -80,7 +86,7 @@ public class commentDAO {
     /** Fallback: query không dùng ParentId (dùng khi cột ParentId chưa có trong DB) */
     private List<Comment> findByNewsIdFallback(String newsId) {
         List<Comment> list = new ArrayList<>();
-        String sql = "SELECT c.CommentId, c.Content, c.CreatedDate, c.UserId, c.NewsId, u.Fullname AS UserFullName "
+        String sql = "SELECT c.CommentId, c.Content, c.CreatedDate, c.UserId, c.NewsId, COALESCE(NULLIF(u.PenName, ''), u.Fullname) AS UserFullName "
                 + "FROM Comments c "
                 + "INNER JOIN Users u ON c.UserId = u.UserId "
                 + "WHERE c.NewsId = ? "
@@ -246,5 +252,157 @@ public class commentDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /**
+     * // FIX: Lấy danh sách bình luận trên các bài viết của một phóng viên (RQ46)
+     */
+    public List<Comment> findByAuthor(String authorId) {
+        List<Comment> list = new ArrayList<>();
+        String sql = "SELECT c.CommentId, c.Content, c.CreatedDate, c.UserId, c.NewsId, "
+                + "IFNULL(c.ParentId, 0) AS ParentId, IFNULL(c.IsPinned, 0) AS IsPinned, IFNULL(c.IsHidden, 0) AS IsHidden, "
+                + "COALESCE(NULLIF(u.PenName, ''), u.Fullname) AS UserFullName, n.Title AS NewsTitle "
+                + "FROM Comments c "
+                + "INNER JOIN Users u ON c.UserId = u.UserId "
+                + "INNER JOIN News n ON c.NewsId = n.NewsId "
+                + "WHERE n.Author = ? "
+                + "ORDER BY c.CreatedDate DESC";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, authorId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Comment comment = new Comment();
+                    comment.setId(rs.getInt("CommentId"));
+                    comment.setContent(rs.getString("Content"));
+
+                    Timestamp timestamp = rs.getTimestamp("CreatedDate");
+                    if (timestamp != null) {
+                        comment.setCreatedDate(new java.util.Date(timestamp.getTime()));
+                    }
+
+                    comment.setUserId(rs.getString("UserId"));
+                    comment.setNewsId(rs.getString("NewsId"));
+                    comment.setParentId(rs.getInt("ParentId"));
+                    comment.setUserFullName(rs.getString("UserFullName"));
+                    comment.setNewsTitle(rs.getString("NewsTitle"));
+                    
+                    try {
+                        comment.setIsPinned(rs.getBoolean("IsPinned"));
+                        comment.setIsHidden(rs.getBoolean("IsHidden"));
+                    } catch (SQLException e) {}
+
+                    list.add(comment);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi load Comments theo tác giả: " + e.getMessage());
+            return findByAuthorFallback(authorId);
+        }
+        return list;
+    }
+
+    /** Fallback khi các cột mới chưa tồn tại */
+    private List<Comment> findByAuthorFallback(String authorId) {
+        List<Comment> list = new ArrayList<>();
+        String sql = "SELECT c.CommentId, c.Content, c.CreatedDate, c.UserId, c.NewsId, "
+                + "IFNULL(c.ParentId, 0) AS ParentId, COALESCE(NULLIF(u.PenName, ''), u.Fullname) AS UserFullName, n.Title AS NewsTitle "
+                + "FROM Comments c "
+                + "INNER JOIN Users u ON c.UserId = u.UserId "
+                + "INNER JOIN News n ON c.NewsId = n.NewsId "
+                + "WHERE n.Author = ? "
+                + "ORDER BY c.CreatedDate DESC";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, authorId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Comment comment = new Comment();
+                    comment.setId(rs.getInt("CommentId"));
+                    comment.setContent(rs.getString("Content"));
+                    Timestamp ts = rs.getTimestamp("CreatedDate");
+                    if (ts != null) comment.setCreatedDate(new java.util.Date(ts.getTime()));
+                    comment.setUserId(rs.getString("UserId"));
+                    comment.setNewsId(rs.getString("NewsId"));
+                    comment.setParentId(rs.getInt("ParentId"));
+                    comment.setUserFullName(rs.getString("UserFullName"));
+                    comment.setNewsTitle(rs.getString("NewsTitle"));
+                    list.add(comment);
+                }
+            }
+        } catch (SQLException e2) {
+            System.err.println("Lỗi fallback Comments tác giả: " + e2.getMessage());
+        }
+        return list;
+    }
+
+    /**
+     * // FIX: Cập nhật trạng thái Ghim của bình luận (RQ46)
+     */
+    public boolean updatePinStatus(int commentId, boolean isPinned) {
+        String sql = "UPDATE Comments SET IsPinned = ? WHERE CommentId = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isPinned);
+            stmt.setInt(2, commentId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi ghim bình luận: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * // FIX: Cập nhật trạng thái Ghim của bình luận bảo mật theo Tác giả bài viết
+     */
+    public boolean updatePinStatusByAuthor(int commentId, boolean isPinned, String authorId) {
+        String sql = "UPDATE Comments c INNER JOIN News n ON c.NewsId = n.NewsId SET c.IsPinned = ? WHERE c.CommentId = ? AND n.Author = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isPinned);
+            stmt.setInt(2, commentId);
+            stmt.setString(3, authorId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi ghim bình luận theo tác giả: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * // FIX: Cập nhật trạng thái Ẩn của bình luận (RQ46)
+     */
+    public boolean updateHiddenStatus(int commentId, boolean isHidden) {
+        String sql = "UPDATE Comments SET IsHidden = ? WHERE CommentId = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isHidden);
+            stmt.setInt(2, commentId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi ẩn bình luận: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * // FIX: Cập nhật trạng thái Ẩn của bình luận bảo mật theo Tác giả bài viết
+     */
+    public boolean updateHiddenStatusByAuthor(int commentId, boolean isHidden, String authorId) {
+        String sql = "UPDATE Comments c INNER JOIN News n ON c.NewsId = n.NewsId SET c.IsHidden = ? WHERE c.CommentId = ? AND n.Author = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setBoolean(1, isHidden);
+            stmt.setInt(2, commentId);
+            stmt.setString(3, authorId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi ẩn bình luận theo tác giả: " + e.getMessage());
+            return false;
+        }
     }
 }

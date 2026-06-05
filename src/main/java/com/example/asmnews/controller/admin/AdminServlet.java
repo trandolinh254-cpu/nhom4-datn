@@ -719,10 +719,11 @@ public class AdminServlet extends BaseServlet {
 
         String newsId = getParameter(request, "id", "");
         int status = Integer.parseInt(getParameter(request, "status", "0"));
+        String rejectReason = getParameter(request, "rejectReason", "");
 
         if (newsId.isEmpty()) {
             setErrorMessage(request, "Thiếu thông tin bài viết.");
-        } else if (newsDAO.updateStatus(newsId, status)) {
+        } else if (newsDAO.updateStatus(newsId, status, rejectReason)) {
             setSuccessMessage(request, status == 1 ? "Đã duyệt bài viết thành công!" : "Đã từ chối bài viết!");
         } else {
             setErrorMessage(request, "Có lỗi xảy ra khi cập nhật trạng thái bài viết.");

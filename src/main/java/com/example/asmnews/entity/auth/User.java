@@ -32,6 +32,13 @@ public class User {
 
     private String avatar;
 
+    // Các trường mới phục vụ Bút danh, Tiểu sử, Khóa tài khoản do sai mật khẩu
+    private String penName;
+    private String bio;
+    private Integer failedLoginAttempts = 0;
+    private Date lockoutTime;
+
+
     public String getAvatar() {
         return avatar;
     }
@@ -179,4 +186,37 @@ public class User {
     public void setActive(boolean active) {
         isActive = active;
     }
+
+    public String getPenName() {
+        return penName;
+    }
+
+    public void setPenName(String penName) {
+        this.penName = penName;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public Integer getFailedLoginAttempts() {
+        return failedLoginAttempts;
+    }
+
+    public void setFailedLoginAttempts(Integer failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts != null ? failedLoginAttempts : 0;
+    }
+
+    public Date getLockoutTime() {
+        return lockoutTime;
+    }
+
+    public void setLockoutTime(Date lockoutTime) {
+        this.lockoutTime = lockoutTime;
+    }
 }
+

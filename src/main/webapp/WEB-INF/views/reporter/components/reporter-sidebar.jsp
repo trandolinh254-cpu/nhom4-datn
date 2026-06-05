@@ -67,7 +67,12 @@
         <a class="nav-link ${param.activeMenu == 'news' ? 'active' : ''}" href="${pageContext.request.contextPath}/reporter/news">
             <i class="fas fa-file-alt main-icon text-info"></i> Quản lý bài viết cá nhân
         </a>
-        
+        <a class="nav-link ${param.activeMenu == 'comments' ? 'active' : ''}" href="${pageContext.request.contextPath}/reporter/comments">
+            <i class="fas fa-comments main-icon text-warning"></i> Quản lý bình luận
+        </a>
+        <a class="nav-link ${param.activeMenu == 'analytics' ? 'active' : ''}" href="${pageContext.request.contextPath}/reporter/analytics">
+            <i class="fas fa-chart-bar main-icon text-success"></i> Thống kê bài viết
+        </a>
         <hr>
         
         <a class="nav-link" href="${pageContext.request.contextPath}/profile">

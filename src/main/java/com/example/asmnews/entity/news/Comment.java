@@ -30,6 +30,8 @@ public class Comment {
     private String userFullName;
     private int parentId;                         // 0 = bình luận gốc, >0 = reply
     private List<Comment> replies = new ArrayList<>(); // Danh sách reply (không lưu DB)
+    private Boolean isPinned = false;              // // FIX: Trạng thái ghim bình luận (RQ46)
+    private Boolean isHidden = false;              // // FIX: Trạng thái ẩn bình luận (RQ46)
 
     public Comment() {
     }
@@ -132,5 +134,23 @@ public class Comment {
 
     public void setReplies(List<Comment> replies) {
         this.replies = replies;
+    }
+
+    // // FIX: Getter/Setter cho trạng thái ghim bình luận (RQ46)
+    public Boolean getIsPinned() {
+        return isPinned != null ? isPinned : false;
+    }
+
+    public void setIsPinned(Boolean isPinned) {
+        this.isPinned = isPinned;
+    }
+
+    // // FIX: Getter/Setter cho trạng thái ẩn bình luận (RQ46)
+    public Boolean getIsHidden() {
+        return isHidden != null ? isHidden : false;
+    }
+
+    public void setIsHidden(Boolean isHidden) {
+        this.isHidden = isHidden;
     }
 }

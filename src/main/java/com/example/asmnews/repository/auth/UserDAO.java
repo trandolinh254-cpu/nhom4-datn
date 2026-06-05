@@ -20,6 +20,10 @@ import com.example.asmnews.util.DatabaseUtils;
  * Thực hiện các thao tác CRUD với bảng Users
  */
 public class UserDAO {
+    private static final String SELECT_USER_FIELDS = 
+        "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar, " +
+        "PenName, Bio, FailedLoginAttempts, LockoutTime ";
+
 
     /**
      * Lấy tất cả users
@@ -28,8 +32,7 @@ public class UserDAO {
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         // : Thêm Avatar vào câu SELECT
-        String sql = "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar " +
-                "FROM Users ORDER BY Fullname";
+        String sql = SELECT_USER_FIELDS + "FROM Users ORDER BY Fullname";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -52,8 +55,7 @@ public class UserDAO {
      */
     public User findById(String id) {
         // : Thêm IsActive, Avatar vào câu SELECT
-        String sql = "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar " +
-                "FROM Users WHERE UserId = ?";
+        String sql = SELECT_USER_FIELDS + "FROM Users WHERE UserId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -80,8 +82,7 @@ public class UserDAO {
      */
     public User findByEmail(String email) {
         // : Thêm IsActive, Avatar vào câu SELECT
-        String sql = "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar " +
-                "FROM Users WHERE Email = ?";
+        String sql = SELECT_USER_FIELDS + "FROM Users WHERE Email = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -110,8 +111,7 @@ public class UserDAO {
     public User login(String id, String password) {
         // : Thêm Avatar vào câu SELECT (QUAN TRỌNG NHẤT ĐỂ KHÔNG BỊ MẤT ẢNH KHI ĐĂNG
         // NHẬP)
-        String sql = "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar " +
-                "FROM Users WHERE UserId = ? AND Password = ?";
+        String sql = SELECT_USER_FIELDS + "FROM Users WHERE UserId = ? AND Password = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -134,8 +134,7 @@ public class UserDAO {
     public List<User> findReporters() {
         List<User> reporters = new ArrayList<>();
         // : Thêm IsActive, Avatar vào câu SELECT
-        String sql = "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar " +
-                "FROM Users WHERE Role = 0 ORDER BY Fullname";
+        String sql = SELECT_USER_FIELDS + "FROM Users WHERE Role = 0 ORDER BY Fullname";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -154,9 +153,8 @@ public class UserDAO {
     }
 
     public boolean insert(User user) {
-        // FIX: Thêm cột IsActive vào câu INSERT để tránh lỗi NOT NULL
-        String sql = "INSERT INTO Users (UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar, PenName, Bio, FailedLoginAttempts, LockoutTime) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -169,22 +167,27 @@ public class UserDAO {
             ps.setString(6, user.getMobile());
             ps.setString(7, user.getEmail());
             ps.setInt(8, user.getRole());
-            ps.setBoolean(9, true); // FIX: Mặc định user mới là active
+            ps.setBoolean(9, user.isActive());
+            ps.setString(10, user.getAvatar());
+            ps.setString(11, user.getPenName());
+            ps.setString(12, user.getBio());
+            ps.setInt(13, user.getFailedLoginAttempts() != null ? user.getFailedLoginAttempts() : 0);
+            ps.setTimestamp(14, user.getLockoutTime() != null ? new java.sql.Timestamp(user.getLockoutTime().getTime()) : null);
 
             int result = ps.executeUpdate();
             return result > 0;
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi thêm user: " + e.getMessage());
-            e.printStackTrace(); // FIX: In stack trace để debug
+            e.printStackTrace();
             return false;
         }
     }
 
     public boolean update(User user) {
-        // FIX: Đổi WHERE Id thành WHERE UserId
         String sql = "UPDATE Users SET Password = ?, Fullname = ?, Birthday = ?, Gender = ?, " +
-                "Mobile = ?, Email = ?, Role = ? WHERE UserId = ?";
+                "Mobile = ?, Email = ?, Role = ?, IsActive = ?, Avatar = ?, PenName = ?, Bio = ?, " +
+                "FailedLoginAttempts = ?, LockoutTime = ? WHERE UserId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -196,7 +199,13 @@ public class UserDAO {
             ps.setString(5, user.getMobile());
             ps.setString(6, user.getEmail());
             ps.setInt(7, user.getRole());
-            ps.setString(8, user.getId());
+            ps.setBoolean(8, user.isActive());
+            ps.setString(9, user.getAvatar());
+            ps.setString(10, user.getPenName());
+            ps.setString(11, user.getBio());
+            ps.setInt(12, user.getFailedLoginAttempts() != null ? user.getFailedLoginAttempts() : 0);
+            ps.setTimestamp(13, user.getLockoutTime() != null ? new java.sql.Timestamp(user.getLockoutTime().getTime()) : null);
+            ps.setString(14, user.getId());
 
             int result = ps.executeUpdate();
             return result > 0;
@@ -225,7 +234,6 @@ public class UserDAO {
     }
 
     public boolean exists(String id) {
-        // FIX: Đổi WHERE Id thành WHERE UserId
         String sql = "SELECT COUNT(*) FROM Users WHERE UserId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -295,8 +303,19 @@ public class UserDAO {
             // Bỏ qua nếu query không lấy cột Avatar
         }
 
+        // Đọc các thông tin mới từ Database
+        try {
+            user.setPenName(rs.getString("PenName"));
+            user.setBio(rs.getString("Bio"));
+            user.setFailedLoginAttempts(rs.getInt("FailedLoginAttempts"));
+            user.setLockoutTime(rs.getTimestamp("LockoutTime"));
+        } catch (SQLException e) {
+            // Bỏ qua nếu query chưa có các cột này
+        }
+
         return user;
     }
+
 
     public boolean changePassword(String userId, String oldPassword, String newPassword) {
         // FIX: Đổi Id thành UserId
@@ -397,6 +416,73 @@ public class UserDAO {
             
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Tăng số lần đăng nhập sai. Nếu đạt đến 5, khóa tài khoản và lưu thời gian khóa.
+     * 
+     * @param userId ID người dùng
+     * @return true nếu thực hiện thành công
+     */
+    public boolean incrementFailedAttempts(String userId) {
+        String updateAttemptsSql = "UPDATE Users SET FailedLoginAttempts = FailedLoginAttempts + 1 WHERE UserId = ?";
+        String selectAttemptsSql = "SELECT FailedLoginAttempts FROM Users WHERE UserId = ?";
+        String lockUserSql = "UPDATE Users SET IsActive = 0, LockoutTime = ? WHERE UserId = ?";
+
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement ps = conn.prepareStatement(updateAttemptsSql)) {
+                    ps.setString(1, userId);
+                    ps.executeUpdate();
+                }
+
+                int attempts = 0;
+                try (PreparedStatement ps = conn.prepareStatement(selectAttemptsSql)) {
+                    ps.setString(1, userId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            attempts = rs.getInt(1);
+                        }
+                    }
+                }
+
+                if (attempts >= 5) {
+                    try (PreparedStatement ps = conn.prepareStatement(lockUserSql)) {
+                        ps.setTimestamp(1, new java.sql.Timestamp(System.currentTimeMillis()));
+                        ps.setString(2, userId);
+                        ps.executeUpdate();
+                    }
+                }
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi xử lý tăng số lần đăng nhập sai: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Đặt lại số lần đăng nhập sai về 0 và kích hoạt lại tài khoản.
+     * 
+     * @param userId ID người dùng
+     * @return true nếu thành công
+     */
+    public boolean resetFailedAttempts(String userId) {
+        String sql = "UPDATE Users SET FailedLoginAttempts = 0, LockoutTime = NULL, IsActive = 1 WHERE UserId = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi đặt lại số lần đăng nhập sai: " + e.getMessage());
             return false;
         }
     }

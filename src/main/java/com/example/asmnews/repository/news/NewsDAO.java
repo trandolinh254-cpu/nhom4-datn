@@ -20,6 +20,12 @@ import com.example.asmnews.util.DatabaseUtils;
  * Thực hiện các thao tác CRUD với bảng News
  */
 public class NewsDAO {
+    private static final String SELECT_NEWS_FIELDS = 
+        "SELECT n.NewsId, n.Title, n.Summary, n.Content, n.Image, n.PostedDate, n.Author, " +
+        "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, " +
+        "n.MetaTitle, n.MetaDescription, n.Slug, n.ScheduledDate, n.RejectReason, n.LastModified, n.IsDeleted, " +
+        "c.Name as CategoryName, COALESCE(NULLIF(u.PenName, ''), u.Fullname) as AuthorName ";
+
 
     /**
      * Lấy tất cả tin tức với thông tin category và author
@@ -29,12 +35,11 @@ public class NewsDAO {
     public List<News> findAll() {
         List<News> newsList = new ArrayList<>();
         // : Thêm n.Status vào câu SELECT
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
+                "WHERE (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -52,13 +57,11 @@ public class NewsDAO {
     // : THÊM MỚI HÀM NÀY DÀNH RIÊNG CHO ĐỘC GIẢ (Chỉ lấy bài đã duyệt)
     public List<News> findAllApproved() {
         List<News> newsList = new ArrayList<>();
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Status = 1 " +
+                "WHERE n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC LIMIT 100";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -76,13 +79,11 @@ public class NewsDAO {
     public List<News> findHomeNews() {
         List<News> newsList = new ArrayList<>();
         // : Thêm n.Status vào SELECT và n.Status = 1 vào WHERE
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Home = 1 AND n.Status = 1 " +
+                "WHERE n.Home = 1 AND n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC LIMIT 15";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -100,13 +101,11 @@ public class NewsDAO {
     public List<News> findTop5MostViewed() {
         List<News> newsList = new ArrayList<>();
         // : Thêm n.Status vào SELECT và WHERE n.Status = 1
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Status = 1 " +
+                "WHERE n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.ViewCount DESC LIMIT 5";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -124,11 +123,11 @@ public class NewsDAO {
     // : Hàm lấy Top 5 bài viết có lượt xem cao nhất
     public List<News> findTopViewedNews() {
         List<News> list = new ArrayList<>();
-        String sql = "SELECT n.*, c.Name as CategoryName, u.Fullname as AuthorName " +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Status = 1 " +
+                "WHERE n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.ViewCount DESC LIMIT 5";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -146,13 +145,11 @@ public class NewsDAO {
     public List<News> findTop5Latest() {
         List<News> newsList = new ArrayList<>();
         // : Thêm n.Status vào SELECT và WHERE n.Status = 1
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Status = 1 " +
+                "WHERE n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC LIMIT 5";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -170,13 +167,11 @@ public class NewsDAO {
     public List<News> findByCategory(String categoryId) {
         List<News> newsList = new ArrayList<>();
         // : Thêm n.Status vào SELECT và AND n.Status = 1 vào WHERE
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.CategoryId = ? AND n.Status = 1 " +
+                "WHERE n.CategoryId = ? AND n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC LIMIT 50";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -196,13 +191,11 @@ public class NewsDAO {
         List<News> newsList = new ArrayList<>();
         // : Thêm n.Status vào SELECT (Bỏ qua WHERE n.Status = 1 vì Admin/Tác giả cần
         // xem hết)
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Author = ? " +
+                "WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -220,13 +213,11 @@ public class NewsDAO {
 
     public News findById(String id) {
         // : Thêm n.Status vào SELECT
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.NewsId = ?";
+                "WHERE n.NewsId = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL)";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -248,23 +239,31 @@ public class NewsDAO {
      * @return true nếu thành công
      */
     public boolean insert(News news) {
-        String sql = "INSERT INTO News (NewsId, Title, Content, Image, PostedDate, Author, ViewCount, CategoryId, Home, SubCategory) "
-                +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO News (NewsId, Title, Summary, Content, Image, PostedDate, Author, ViewCount, CategoryId, Home, SubCategory, " +
+                "MetaTitle, MetaDescription, Slug, ScheduledDate, RejectReason, LastModified, IsDeleted) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, news.getId());
             ps.setString(2, news.getTitle());
-            ps.setString(3, news.getContent());
-            ps.setString(4, news.getImage());
-            ps.setDate(5, new java.sql.Date(news.getPostedDate().getTime()));
-            ps.setString(6, news.getAuthor());
-            ps.setInt(7, news.getViewCount());
-            ps.setString(8, news.getCategoryId());
-            ps.setBoolean(9, news.getHome());
-            ps.setString(10, news.getSubCategory());
+            ps.setString(3, news.getSummary());
+            ps.setString(4, news.getContent());
+            ps.setString(5, news.getImage());
+            ps.setDate(6, news.getPostedDate() != null ? new java.sql.Date(news.getPostedDate().getTime()) : null);
+            ps.setString(7, news.getAuthor());
+            ps.setInt(8, news.getViewCount());
+            ps.setString(9, news.getCategoryId());
+            ps.setBoolean(10, news.getHome());
+            ps.setString(11, news.getSubCategory());
+            ps.setString(12, news.getMetaTitle());
+            ps.setString(13, news.getMetaDescription());
+            ps.setString(14, news.getSlug());
+            ps.setTimestamp(15, news.getScheduledDate() != null ? new java.sql.Timestamp(news.getScheduledDate().getTime()) : null);
+            ps.setString(16, news.getRejectReason());
+            ps.setTimestamp(17, news.getLastModified() != null ? new java.sql.Timestamp(news.getLastModified().getTime()) : null);
+            ps.setBoolean(18, news.getIsDeleted() != null ? news.getIsDeleted() : false);
 
             int result = ps.executeUpdate();
             return result > 0;
@@ -282,22 +281,32 @@ public class NewsDAO {
      * @return true nếu thành công
      */
     public boolean update(News news) {
-        String sql = "UPDATE News SET Title = ?, Content = ?, Image = ?, PostedDate = ?, " +
-                "Author = ?, ViewCount = ?, CategoryId = ?, Home = ?, SubCategory = ? WHERE NewsId = ?";
+        String sql = "UPDATE News SET Title = ?, Summary = ?, Content = ?, Image = ?, PostedDate = ?, " +
+                "Author = ?, ViewCount = ?, CategoryId = ?, Home = ?, SubCategory = ?, " +
+                "MetaTitle = ?, MetaDescription = ?, Slug = ?, ScheduledDate = ?, RejectReason = ?, LastModified = ?, IsDeleted = ? " +
+                "WHERE NewsId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, news.getTitle());
-            ps.setString(2, news.getContent());
-            ps.setString(3, news.getImage());
-            ps.setDate(4, new java.sql.Date(news.getPostedDate().getTime()));
-            ps.setString(5, news.getAuthor());
-            ps.setInt(6, news.getViewCount());
-            ps.setString(7, news.getCategoryId());
-            ps.setBoolean(8, news.getHome());
-            ps.setString(9, news.getSubCategory());
-            ps.setString(10, news.getId());
+            ps.setString(2, news.getSummary());
+            ps.setString(3, news.getContent());
+            ps.setString(4, news.getImage());
+            ps.setDate(5, news.getPostedDate() != null ? new java.sql.Date(news.getPostedDate().getTime()) : null);
+            ps.setString(6, news.getAuthor());
+            ps.setInt(7, news.getViewCount());
+            ps.setString(8, news.getCategoryId());
+            ps.setBoolean(9, news.getHome());
+            ps.setString(10, news.getSubCategory());
+            ps.setString(11, news.getMetaTitle());
+            ps.setString(12, news.getMetaDescription());
+            ps.setString(13, news.getSlug());
+            ps.setTimestamp(14, news.getScheduledDate() != null ? new java.sql.Timestamp(news.getScheduledDate().getTime()) : null);
+            ps.setString(15, news.getRejectReason());
+            ps.setTimestamp(16, news.getLastModified() != null ? new java.sql.Timestamp(news.getLastModified().getTime()) : null);
+            ps.setBoolean(17, news.getIsDeleted() != null ? news.getIsDeleted() : false);
+            ps.setString(18, news.getId());
 
             int result = ps.executeUpdate();
             return result > 0;
@@ -332,13 +341,13 @@ public class NewsDAO {
     }
 
     /**
-     * Xóa tin tức
+     * Xóa mềm tin tức
      * 
      * @param id ID của tin tức cần xóa
      * @return true nếu thành công
      */
     public boolean delete(String id) {
-        String sql = "DELETE FROM News WHERE NewsId = ?";
+        String sql = "UPDATE News SET IsDeleted = 1 WHERE NewsId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -349,7 +358,7 @@ public class NewsDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa tin tức: " + e.getMessage());
+            System.err.println("Lỗi khi xóa mềm tin tức: " + e.getMessage());
             return false;
         }
     }
@@ -361,7 +370,7 @@ public class NewsDAO {
      * @return true nếu tồn tại
      */
     public boolean exists(String id) {
-        String sql = "SELECT COUNT(*) FROM News WHERE NewsId = ?";
+        String sql = "SELECT COUNT(*) FROM News WHERE NewsId = ? AND (IsDeleted = 0 OR IsDeleted IS NULL)";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -384,13 +393,11 @@ public class NewsDAO {
     public List<News> findByCategoryAndSubCategory(String categoryId, String subCategory) {
         List<News> newsList = new ArrayList<>();
         // Nhớ đảm bảo câu lệnh này có n.SubCategory ở phần SELECT
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.CategoryId = ? AND n.SubCategory = ? AND n.Status = 1 " +
+                "WHERE n.CategoryId = ? AND n.SubCategory = ? AND n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC LIMIT 50";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -440,17 +447,32 @@ public class NewsDAO {
             // Bỏ qua nếu câu query cũ chưa có cột này
         }
 
+        // Ánh xạ các trường mới của News
+        try {
+            news.setSummary(rs.getString("Summary"));
+            news.setMetaTitle(rs.getString("MetaTitle"));
+            news.setMetaDescription(rs.getString("MetaDescription"));
+            news.setSlug(rs.getString("Slug"));
+            news.setScheduledDate(rs.getTimestamp("ScheduledDate"));
+            news.setRejectReason(rs.getString("RejectReason"));
+            news.setLastModified(rs.getTimestamp("LastModified"));
+            news.setIsDeleted(rs.getBoolean("IsDeleted"));
+        } catch (SQLException e) {
+            // Bỏ qua nếu query chưa có các cột này
+        }
+
         return news;
     }
 
-    // : Thêm hàm cập nhật trạng thái bài viết dành cho Admin
-    public boolean updateStatus(String id, int status) {
-        String sql = "UPDATE News SET Status = ? WHERE NewsId = ?";
+    // : Thêm hàm cập nhật trạng thái bài viết và lý do từ chối dành cho Admin
+    public boolean updateStatus(String id, int status, String rejectReason) {
+        String sql = "UPDATE News SET Status = ?, RejectReason = ? WHERE NewsId = ?";
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, status);
-            stmt.setString(2, id);
+            stmt.setString(2, (status == 2 && rejectReason != null) ? rejectReason.trim() : null);
+            stmt.setString(3, id);
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
@@ -462,13 +484,11 @@ public class NewsDAO {
     // : Thêm hàm tìm kiếm tin tức theo từ khóa (Chỉ lấy bài đã duyệt Status = 1)
     public List<News> searchByKeyword(String keyword) {
         List<News> newsList = new ArrayList<>();
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName "
-                +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Status = 1 AND (n.Title LIKE ? OR n.Content LIKE ?) " +
+                "WHERE n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) AND (n.Title LIKE ? OR n.Content LIKE ?) " +
                 "ORDER BY n.PostedDate DESC";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -492,12 +512,11 @@ public class NewsDAO {
     public List<News> searchForSuggestion(String keyword, int limit) {
         List<News> newsList = new ArrayList<>();
         // Tìm kiếm giới hạn số lượng, ưu tiên theo Ngày đăng mới nhất
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName " +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Status = 1 AND (n.Title LIKE ? OR n.Content LIKE ?) " +
+                "WHERE n.Status = 1 AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) AND (n.Title LIKE ? OR n.Content LIKE ?) " +
                 "ORDER BY n.PostedDate DESC LIMIT " + limit;
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -516,6 +535,7 @@ public class NewsDAO {
         }
         return newsList;
     }
+
 
     // : Hàm duyệt hàng loạt tất cả các bài viết đang chờ (Status = 0)
     public boolean approveAllPendingNews() {
@@ -549,7 +569,7 @@ public class NewsDAO {
         }
     }
     public int countAll() {
-        String sql = "SELECT COUNT(*) FROM News";
+        String sql = "SELECT COUNT(*) FROM News WHERE (IsDeleted = 0 OR IsDeleted IS NULL)";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -566,11 +586,11 @@ public class NewsDAO {
      */
     public List<News> findAllWithPagination(int offset, int limit) {
         List<News> newsList = new ArrayList<>();
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName " +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
+                "WHERE (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC " +
                 "LIMIT ?, ?";
         try (Connection conn = DatabaseUtils.getConnection();
@@ -590,7 +610,7 @@ public class NewsDAO {
      * Đếm tổng số bài viết của một tác giả cụ thể
      */
     public int countByAuthor(String authorId) {
-        String sql = "SELECT COUNT(*) FROM News WHERE Author = ?";
+        String sql = "SELECT COUNT(*) FROM News WHERE Author = ? AND (IsDeleted = 0 OR IsDeleted IS NULL)";
         try (Connection conn = DatabaseUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
@@ -610,12 +630,11 @@ public class NewsDAO {
      */
     public List<News> findByAuthorWithPagination(String authorId, int offset, int limit) {
         List<News> newsList = new ArrayList<>();
-        String sql = "SELECT n.NewsId, n.Title, n.Content, n.Image, n.PostedDate, n.Author, " +
-                "n.ViewCount, n.CategoryId, n.Home, n.Status, n.SubCategory, c.Name as CategoryName, u.Fullname as AuthorName " +
+        String sql = SELECT_NEWS_FIELDS +
                 "FROM News n " +
                 "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
                 "LEFT JOIN Users u ON n.Author = u.UserId " +
-                "WHERE n.Author = ? " +
+                "WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
                 "ORDER BY n.PostedDate DESC " +
                 "LIMIT ?, ?";
                 
@@ -634,5 +653,218 @@ public class NewsDAO {
             System.err.println("Lỗi khi lấy tin tức theo tác giả có phân trang: " + e.getMessage());
         }
         return newsList;
+    }
+
+    /**
+     * // FIX: Đếm tổng số bài viết của tác giả có lọc và tìm kiếm (Phóng viên)
+     */
+    public int countByAuthorWithFilters(String authorId, String search, Integer status, String categoryId, java.util.Date dateFrom, java.util.Date dateTo) {
+        // // FIX: Xây dựng câu SQL động tùy thuộc vào các tham số lọc được truyền vào
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM News n WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL)");
+        List<Object> params = new ArrayList<>();
+        params.add(authorId);
+
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append(" AND n.Title LIKE ?");
+            params.add("%" + search.trim() + "%");
+        }
+        if (status != null) {
+            sql.append(" AND n.Status = ?");
+            params.add(status);
+        }
+        if (categoryId != null && !categoryId.isEmpty()) {
+            sql.append(" AND n.CategoryId = ?");
+            params.add(categoryId);
+        }
+        if (dateFrom != null) {
+            sql.append(" AND n.PostedDate >= ?");
+            params.add(new java.sql.Date(dateFrom.getTime()));
+        }
+        if (dateTo != null) {
+            sql.append(" AND n.PostedDate <= ?");
+            params.add(new java.sql.Date(dateTo.getTime()));
+        }
+
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            // // FIX: Đặt các tham số động vào PreparedStatement
+            for (int i = 0; i < params.size(); i++) {
+                Object p = params.get(i);
+                if (p instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(i + 1, (java.sql.Date) p);
+                } else {
+                    ps.setString(i + 1, (String) p);
+                }
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi đếm số lượng tin tức theo bộ lọc: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    /**
+     * // FIX: Lấy danh sách tin tức của tác giả có lọc, tìm kiếm và phân trang (Phóng viên)
+     */
+    public List<News> findByAuthorWithFiltersAndPagination(String authorId, String search, Integer status, String categoryId, java.util.Date dateFrom, java.util.Date dateTo, int offset, int limit) {
+        List<News> newsList = new ArrayList<>();
+        // // FIX: Xây dựng câu SQL truy vấn các trường đầy đủ cùng bộ lọc động
+        StringBuilder sql = new StringBuilder(SELECT_NEWS_FIELDS);
+        sql.append("FROM News n ");
+        sql.append("LEFT JOIN Categories c ON n.CategoryId = c.CategoryId ");
+        sql.append("LEFT JOIN Users u ON n.Author = u.UserId ");
+        sql.append("WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL)");
+        
+        List<Object> params = new ArrayList<>();
+        params.add(authorId);
+
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append(" AND n.Title LIKE ?");
+            params.add("%" + search.trim() + "%");
+        }
+        if (status != null) {
+            sql.append(" AND n.Status = ?");
+            params.add(status);
+        }
+        if (categoryId != null && !categoryId.isEmpty()) {
+            sql.append(" AND n.CategoryId = ?");
+            params.add(categoryId);
+        }
+        if (dateFrom != null) {
+            sql.append(" AND n.PostedDate >= ?");
+            params.add(new java.sql.Date(dateFrom.getTime()));
+        }
+        if (dateTo != null) {
+            sql.append(" AND n.PostedDate <= ?");
+            params.add(new java.sql.Date(dateTo.getTime()));
+        }
+
+        sql.append(" ORDER BY n.PostedDate DESC LIMIT ?, ?");
+        params.add(offset);
+        params.add(limit);
+
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            // // FIX: Đặt các tham số động cùng offset, limit
+            for (int i = 0; i < params.size(); i++) {
+                Object p = params.get(i);
+                if (p instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) p);
+                } else if (p instanceof java.sql.Date) {
+                    ps.setDate(i + 1, (java.sql.Date) p);
+                } else {
+                    ps.setString(i + 1, (String) p);
+                }
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    newsList.add(mapResultSetToNews(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi lấy danh sách tin tức theo bộ lọc: " + e.getMessage());
+        }
+        return newsList;
+    }
+
+    /**
+     * // FIX: Thống kê số lượng bài viết, tổng lượt xem và tổng bình luận của một tác giả (RQ48)
+     */
+    public java.util.Map<String, Object> getAuthorStats(String authorId) {
+        java.util.Map<String, Object> stats = new java.util.HashMap<>();
+        stats.put("totalArticles", 0);
+        stats.put("totalViews", 0);
+        stats.put("totalComments", 0);
+
+        String sql1 = "SELECT COUNT(*), SUM(IFNULL(ViewCount, 0)) FROM News WHERE Author = ? AND (IsDeleted = 0 OR IsDeleted IS NULL)";
+        String sql2 = "SELECT COUNT(c.CommentId) FROM Comments c INNER JOIN News n ON c.NewsId = n.NewsId WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL)";
+
+        try (Connection conn = DatabaseUtils.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(sql1)) {
+                ps.setString(1, authorId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        stats.put("totalArticles", rs.getInt(1));
+                        stats.put("totalViews", rs.getInt(2));
+                    }
+                }
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sql2)) {
+                ps.setString(1, authorId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        stats.put("totalComments", rs.getInt(1));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi lấy thống kê tác giả: " + e.getMessage());
+        }
+        return stats;
+    }
+
+    /**
+     * // FIX: Lấy top bài viết có lượt xem cao nhất của tác giả (RQ48)
+     */
+    public List<News> findTopViewsByAuthor(String authorId, int limit) {
+        List<News> list = new ArrayList<>();
+        String sql = SELECT_NEWS_FIELDS +
+                "FROM News n " +
+                "LEFT JOIN Categories c ON n.CategoryId = c.CategoryId " +
+                "LEFT JOIN Users u ON n.Author = u.UserId " +
+                "WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
+                "ORDER BY n.ViewCount DESC " +
+                "LIMIT ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, authorId);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSetToNews(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi lấy top views bài viết: " + e.getMessage());
+        }
+        return list;
+    }
+
+    /**
+     * // FIX: Lấy top bài viết có lượt bình luận cao nhất của tác giả (RQ48)
+     */
+    public List<java.util.Map<String, Object>> findTopCommentsByAuthor(String authorId, int limit) {
+        List<java.util.Map<String, Object>> list = new ArrayList<>();
+        String sql = "SELECT n.NewsId, n.Title, n.ViewCount, COUNT(c.CommentId) AS CommentCount " +
+                "FROM News n " +
+                "LEFT JOIN Comments c ON n.NewsId = c.NewsId " +
+                "WHERE n.Author = ? AND (n.IsDeleted = 0 OR n.IsDeleted IS NULL) " +
+                "GROUP BY n.NewsId, n.Title, n.ViewCount " +
+                "ORDER BY CommentCount DESC, n.ViewCount DESC " +
+                "LIMIT ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, authorId);
+            ps.setInt(2, limit);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    java.util.Map<String, Object> map = new java.util.HashMap<>();
+                    map.put("id", rs.getString("NewsId"));
+                    map.put("title", rs.getString("Title"));
+                    map.put("views", rs.getInt("ViewCount"));
+                    map.put("comments", rs.getInt("CommentCount"));
+                    list.add(map);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi lấy top comments bài viết: " + e.getMessage());
+        }
+        return list;
     }
 }

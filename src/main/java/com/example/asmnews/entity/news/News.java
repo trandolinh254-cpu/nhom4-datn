@@ -26,6 +26,17 @@ public class News {
     private String categoryName;
     private String authorName;
 
+    // Các trường mới phục vụ Mô tả ngắn, SEO, Lên lịch, Xóa mềm và Lý do từ chối
+    private String summary;
+    private String metaTitle;
+    private String metaDescription;
+    private String slug;
+    private Date scheduledDate;
+    private String rejectReason;
+    private Date lastModified;
+    private Boolean isDeleted = false;
+
+
     // Constructor mặc định
     public News() {
         this.viewCount = 0;
@@ -224,4 +235,69 @@ public class News {
     public void setSubCategory(String subCategory) {
         this.subCategory = subCategory;
     }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+
+    public void setMetaTitle(String metaTitle) {
+        this.metaTitle = metaTitle;
+    }
+
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public Date getScheduledDate() {
+        return scheduledDate;
+    }
+
+    public void setScheduledDate(Date scheduledDate) {
+        this.scheduledDate = scheduledDate;
+    }
+
+    public String getRejectReason() {
+        return rejectReason;
+    }
+
+    public void setRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted != null ? isDeleted : false;
+    }
 }
+

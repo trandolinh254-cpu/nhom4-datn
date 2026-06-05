@@ -237,7 +237,7 @@
             border: 1px solid #e2e8f0;
         }
 
-        .bg-light {
+        .no-image-placeholder {
             /* Placeholder no image */
             width: 80px;
             height: 60px;
@@ -248,7 +248,7 @@
             background: #f8fafc !important;
         }
 
-        .bg-light i {
+        .no-image-placeholder i {
             font-size: 1.2rem;
         }
 
@@ -462,10 +462,63 @@
                     </c:if>
 
                     <div class="row mb-4">
-                        <div class="col-12">
+                        <div class="col-12 d-flex justify-content-between align-items-center">
                             <a href="${pageContext.request.contextPath}/reporter/news/add" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Thêm tin tức mới
                             </a>
+                        </div>
+                    </div>
+
+                    <%-- // FIX: Thêm bộ lọc bài viết theo từ khóa, trạng thái, chuyên mục và thời gian đăng --%>
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0 text-dark"><i class="fas fa-filter me-2 text-primary"></i>Bộ lọc & Tìm kiếm</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="GET" action="${pageContext.request.contextPath}/reporter/news" class="row g-3">
+                                <div class="col-md-3">
+                                    <label for="search" class="form-label fw-bold">Tìm kiếm tiêu đề</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
+                                        <input type="text" class="form-control" id="search" name="search" placeholder="Nhập tiêu đề tin tức..." value="${search}">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="status" class="form-label fw-bold">Trạng thái</label>
+                                    <select class="form-select" id="status" name="status">
+                                        <option value="all" ${status == null || status == 'all' ? 'selected' : ''}>Tất cả trạng thái</option>
+                                        <option value="0" ${status == '0' ? 'selected' : ''}>Chờ duyệt</option>
+                                        <option value="1" ${status == '1' ? 'selected' : ''}>Đã duyệt</option>
+                                        <option value="2" ${status == '2' ? 'selected' : ''}>Từ chối</option>
+                                        <option value="3" ${status == '3' ? 'selected' : ''}>Bản nháp</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="categoryId" class="form-label fw-bold">Chuyên mục</label>
+                                    <select class="form-select" id="categoryId" name="categoryId">
+                                        <option value="" ${empty selectedCategoryId ? 'selected' : ''}>Tất cả chuyên mục</option>
+                                        <c:forEach var="cat" items="${categories}">
+                                            <option value="${cat.id}" ${selectedCategoryId == cat.id ? 'selected' : ''}>${cat.name}</option>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateFrom" class="form-label fw-bold">Từ ngày</label>
+                                    <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="${dateFrom}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="dateTo" class="form-label fw-bold">Đến ngày</label>
+                                    <input type="date" class="form-control" id="dateTo" name="dateTo" value="${dateTo}">
+                                </div>
+                                <div class="col-12 d-flex justify-content-end gap-2 mt-3">
+                                    <a href="${pageContext.request.contextPath}/reporter/news" class="btn btn-outline-secondary">
+                                        <i class="fas fa-redo me-1"></i> Xóa bộ lọc
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search-plus me-1"></i> Tìm kiếm
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
 
@@ -503,9 +556,9 @@
                                                                             <img src="${pageContext.request.contextPath}/upload/${news.image}" class="news-image-preview" alt="${news.title}">
                                                                         </c:when>
                                                                         <c:otherwise>
-                                                                            <div class="bg-light p-2 rounded text-center">
-                                                                                <i class="fas fa-image text-muted"></i>
-                                                                            </div>
+                                                                             <div class="no-image-placeholder p-2 rounded text-center">
+                                                                                 <i class="fas fa-image text-muted"></i>
+                                                                             </div>
                                                                         </c:otherwise>
                                                                     </c:choose>
                                                                 </td>
@@ -536,6 +589,16 @@
                                                                         </c:when>
                                                                         <c:when test="${news.status == 2}">
                                                                             <span class="badge bg-danger">Từ chối</span>
+                                                                            <%-- // FIX: Hiển thị lý do từ chối bài viết từ Admin dưới dạng nhãn nhỏ --%>
+                                                                            <c:if test="${not empty news.rejectReason}">
+                                                                                <br>
+                                                                                <small class="text-danger d-block mt-1" style="max-width: 150px; font-size: 0.8rem; cursor: help;" title="${news.rejectReason}">
+                                                                                    <i class="fas fa-info-circle me-1"></i>Lý do: ${news.rejectReason}
+                                                                                </small>
+                                                                            </c:if>
+                                                                        </c:when>
+                                                                        <c:when test="${news.status == 3}">
+                                                                            <span class="badge bg-secondary">Bản nháp</span>
                                                                         </c:when>
                                                                         <c:otherwise>
                                                                             <span class="badge bg-warning text-dark">Chờ duyệt</span>
@@ -545,7 +608,7 @@
 
                                                                 <td class="text-end">
                                                                     <div class="btn-group" role="group">
-                                                                        <a href="${pageContext.request.contextPath}/news?action=detail&id=${news.id}" class="btn btn-sm btn-outline-info" target="_blank" title="Xem">
+                                                                        <a href="${pageContext.request.contextPath}/news?action=detail&id=${news.id}" class="btn btn-sm btn-outline-info" title="Xem">
                                                                             <i class="fas fa-eye"></i>
                                                                         </a>
 
@@ -565,6 +628,8 @@
                                             </div>
 
                                             <c:if test="${totalPages > 1}">
+                                                <%-- // FIX: Lưu trữ chuỗi các tham số lọc để truyền nối tiếp qua các liên kết phân trang --%>
+                                                <c:set var="filterParams" value="&search=${search}&status=${status}&categoryId=${selectedCategoryId}&dateFrom=${dateFrom}&dateTo=${dateTo}" />
                                                 <nav aria-label="Page navigation" class="mt-4 mb-5 d-flex justify-content-center">
                                                     <ul class="custom-pagination">
                                                         <c:set var="startPage" value="${currentPage - 2}" />
@@ -578,10 +643,10 @@
                                                         </c:if>
 
                                                         <li>
-                                                            <a class="page-btn dark-btn ${currentPage == 1 ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${currentPage - 1}">&lt; Trở về</a>
+                                                            <a class="page-btn dark-btn ${currentPage == 1 ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${currentPage - 1}${filterParams}">&lt; Trở về</a>
                                                         </li>
                                                         <li>
-                                                            <a class="page-btn dark-btn ${currentPage == 1 ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=1">Đầu</a>
+                                                            <a class="page-btn dark-btn ${currentPage == 1 ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=1${filterParams}">Đầu</a>
                                                         </li>
 
                                                         <c:if test="${startPage > 1}">
@@ -590,7 +655,7 @@
 
                                                         <c:forEach begin="${startPage}" end="${endPage}" var="i">
                                                             <li>
-                                                                <a class="page-btn num-btn ${currentPage == i ? 'active' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${i}">${i}</a>
+                                                                <a class="page-btn num-btn ${currentPage == i ? 'active' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${i}${filterParams}">${i}</a>
                                                             </li>
                                                         </c:forEach>
 
@@ -599,10 +664,10 @@
                                                         </c:if>
 
                                                         <li>
-                                                            <a class="page-btn dark-btn ${currentPage == totalPages ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${totalPages}">Cuối</a>
+                                                            <a class="page-btn dark-btn ${currentPage == totalPages ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${totalPages}${filterParams}">Cuối</a>
                                                         </li>
                                                         <li>
-                                                            <a class="page-btn dark-btn ${currentPage == totalPages ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${currentPage + 1}">Tiếp theo &gt;</a>
+                                                            <a class="page-btn dark-btn ${currentPage == totalPages ? 'disabled' : ''}" href="${pageContext.request.contextPath}/reporter/news?page=${currentPage + 1}${filterParams}">Tiếp theo &gt;</a>
                                                         </li>
                                                     </ul>
                                                 </nav>

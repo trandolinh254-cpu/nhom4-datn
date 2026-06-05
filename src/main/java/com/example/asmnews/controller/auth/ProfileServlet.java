@@ -48,31 +48,75 @@ public class ProfileServlet extends BaseServlet {
         }
 
         User currentUser = getCurrentUser(request);
+        String action = getParameter(request, "action", "");
 
         try {
-            Part filePart = request.getPart("avatar");
-            if (filePart != null && filePart.getSize() > 0) {
-                String fileName = "AVT_" + currentUser.getId() + "_" + filePart.getSubmittedFileName();
+            if ("updateProfile".equals(action)) {
+                // Đọc thông tin cá nhân từ form
+                String fullname = getParameter(request, "fullname", "").trim();
+                String email = getParameter(request, "email", "").trim();
+                String mobile = getParameter(request, "mobile", "").trim();
+                String genderStr = getParameter(request, "gender", "true");
+                String birthdayStr = getParameter(request, "birthday", "");
+                String penName = getParameter(request, "penName", "").trim();
+                String bio = getParameter(request, "bio", "").trim();
 
-                String savePath = request.getServletContext().getRealPath("") + File.separator + "images";
-                File fileSaveDir = new File(savePath);
-                if (!fileSaveDir.exists())
-                    fileSaveDir.mkdir();
+                if (!fullname.isEmpty()) {
+                    currentUser.setFullname(fullname);
+                }
+                if (!email.isEmpty()) {
+                    currentUser.setEmail(email);
+                }
+                currentUser.setMobile(mobile.isEmpty() ? null : mobile);
+                currentUser.setGender(Boolean.parseBoolean(genderStr));
 
-                filePart.write(savePath + File.separator + fileName);
+                if (!birthdayStr.isEmpty()) {
+                    try {
+                        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                        currentUser.setBirthday(sdf.parse(birthdayStr));
+                    } catch (Exception e) {
+                        // Bỏ qua nếu lỗi định dạng ngày
+                    }
+                }
 
-                // Cập nhật DB
-                if (userDAO.updateAvatar(currentUser.getId(), fileName)) {
-                    // Cập nhật lại Session để UI đổi ảnh ngay lập tức
-                    currentUser.setAvatar(fileName);
+                // Cập nhật Bút danh và Tiểu sử cho Nhà báo / Admin
+                if (currentUser.isReporter() || currentUser.isAdmin()) {
+                    currentUser.setPenName(penName.isEmpty() ? null : penName);
+                    currentUser.setBio(bio.isEmpty() ? null : bio);
+                }
+
+                // Thực hiện lưu vào database
+                if (userDAO.update(currentUser)) {
                     request.getSession().setAttribute("currentUser", currentUser);
-                    setSuccessMessage(request, "Cập nhật ảnh đại diện thành công!");
+                    setSuccessMessage(request, "Cập nhật thông tin cá nhân thành công!");
                 } else {
-                    setErrorMessage(request, "Lỗi cập nhật CSDL!");
+                    setErrorMessage(request, "Không thể cập nhật thông tin trong cơ sở dữ liệu!");
+                }
+            } else {
+                // Xử lý upload avatar (khi bấm chọn ảnh avatar)
+                Part filePart = request.getPart("avatar");
+                if (filePart != null && filePart.getSize() > 0) {
+                    String fileName = "AVT_" + currentUser.getId() + "_" + filePart.getSubmittedFileName();
+
+                    String savePath = request.getServletContext().getRealPath("") + File.separator + "images";
+                    File fileSaveDir = new File(savePath);
+                    if (!fileSaveDir.exists())
+                        fileSaveDir.mkdir();
+
+                    filePart.write(savePath + File.separator + fileName);
+
+                    // Cập nhật DB
+                    if (userDAO.updateAvatar(currentUser.getId(), fileName)) {
+                        currentUser.setAvatar(fileName);
+                        request.getSession().setAttribute("currentUser", currentUser);
+                        setSuccessMessage(request, "Cập nhật ảnh đại diện thành công!");
+                    } else {
+                        setErrorMessage(request, "Lỗi cập nhật ảnh đại diện trong CSDL!");
+                    }
                 }
             }
         } catch (Exception e) {
-            setErrorMessage(request, "Lỗi xử lý file: " + e.getMessage());
+            setErrorMessage(request, "Lỗi xử lý hồ sơ: " + e.getMessage());
         }
 
         redirect(response, request.getContextPath() + "/profile");

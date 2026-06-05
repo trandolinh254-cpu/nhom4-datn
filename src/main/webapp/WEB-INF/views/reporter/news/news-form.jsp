@@ -16,6 +16,8 @@
                     rel="stylesheet">
                 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+                <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
+
 
                 <style>
                     /* // : SỬ DỤNG LẠI CHÍNH XÁC BỘ CSS CŨ BẠN ĐÃ CUNG CẤP */
@@ -233,9 +235,13 @@
                                                     <c:if test="${news != null}"><input type="hidden" name="id"
                                                             value="${news.id}"></c:if>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Tiêu đề</label>
+                                                        <label class="form-label">Tiêu đề <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control" name="title"
-                                                            value="${news.title}" required>
+                                                            value="${news.title}" required placeholder="Nhập tiêu đề tin tức...">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Mô tả ngắn (Summary) <span class="text-danger">*</span></label>
+                                                        <textarea class="form-control" name="summary" rows="3" required placeholder="Nhập mô tả tóm tắt ngắn của tin tức...">${news.summary}</textarea>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">Chuyên mục chính <span class="text-danger">*</span></label>
@@ -254,11 +260,45 @@
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Nội dung bài viết</label>
-                                                        <textarea class="form-control" name="content" rows="12"
+                                                        <label class="form-label">Lên lịch xuất bản (Tùy chọn)</label>
+                                                        <fmt:formatDate value="${news.scheduledDate}" pattern="yyyy-MM-dd'T'HH:mm" var="formattedScheduledDate" />
+                                                        <input type="datetime-local" class="form-control" name="scheduledDate" value="${formattedScheduledDate}">
+                                                        <small class="text-muted d-block mt-1">Lưu ý: Để trống nếu muốn tin tức xuất bản ngay khi được duyệt.</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Nội dung bài viết <span class="text-danger">*</span></label>
+                                                        <textarea class="form-control" id="content" name="content" rows="12"
                                                             required>${news.content}</textarea>
                                                     </div>
+                                                </div>
+                                            </div>
 
+                                            <!-- Card Cấu hình SEO -->
+                                            <div class="card mt-4">
+                                                <div class="card-header bg-light">
+                                                    <h5 class="mb-0 text-dark"><i class="fas fa-search"></i> Cấu hình SEO (Tùy chọn)</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">URL Slug tùy chỉnh</label>
+                                                        <input type="text" class="form-control" name="slug" value="${news.slug}" placeholder="Ví dụ: tieu-de-bai-viet (Tự động tạo nếu để trống)">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">SEO Meta Title</label>
+                                                        <input type="text" class="form-control" name="metaTitle" id="metaTitle" value="${news.metaTitle}" maxlength="65" placeholder="Tiêu đề hiển thị trên Google (Tự động điền nếu để trống)">
+                                                        <div class="progress mt-1" style="height: 5px;">
+                                                            <div id="titleProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                                        </div>
+                                                        <small class="text-muted d-block mt-1"><span id="titleCount">0</span>/65 ký tự (Khuyên dùng: 50-60 ký tự)</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">SEO Meta Description</label>
+                                                        <textarea class="form-control" name="metaDescription" id="metaDescription" rows="2" maxlength="160" placeholder="Mô tả hiển thị trên kết quả tìm kiếm (Tự động điền nếu để trống)">${news.metaDescription}</textarea>
+                                                        <div class="progress mt-1" style="height: 5px;">
+                                                            <div id="descProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                                        </div>
+                                                        <small class="text-muted d-block mt-1"><span id="descCount">0</span>/160 ký tự (Khuyên dùng: 120-150 ký tự)</small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -299,9 +339,12 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="status" id="formStatus" value="0">
                                             <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
-                                                <i class="fas fa-save me-2"></i> ${news != null ? 'CẬP NHẬT' : 'ĐĂNG
-                                                BÀI'}
+                                                <i class="fas fa-save me-2"></i> ${news != null ? 'CẬP NHẬT' : 'ĐĂNG BÀI'}
+                                            </button>
+                                            <button type="button" id="btnSaveDraft" class="btn btn-outline-secondary w-100 py-2 fw-bold mt-2">
+                                                <i class="fas fa-file-alt me-2"></i> LƯU BẢN NHÁP
                                             </button>
                                         </div>
                                     </div>
@@ -433,6 +476,186 @@
                     // Kích hoạt ngay khi vừa mở trang (để load sẵn nếu đang ở trang Sửa bài)
                     if (categorySelect.value !== "") {
                         loadSubCategories();
+                    }
+
+                    // Khởi tạo CKEditor 4 cho textarea content
+                    CKEDITOR.replace('content');
+
+                    // Bộ đếm ký tự SEO Meta Title & Meta Description
+                    function updateSEOIndicator() {
+                        const titleInput = document.getElementById('metaTitle');
+                        const descInput = document.getElementById('metaDescription');
+                        
+                        const titleCount = document.getElementById('titleCount');
+                        const titleProgress = document.getElementById('titleProgress');
+                        
+                        const descCount = document.getElementById('descCount');
+                        const descProgress = document.getElementById('descProgress');
+                        
+                        if (titleInput) {
+                            const val = titleInput.value.length;
+                            titleCount.innerText = val;
+                            const percentage = Math.min((val / 65) * 100, 100);
+                            titleProgress.style.width = percentage + '%';
+                            
+                            if (val >= 50 && val <= 60) {
+                                titleProgress.className = "progress-bar bg-success";
+                            } else if (val > 60) {
+                                titleProgress.className = "progress-bar bg-danger";
+                            } else {
+                                titleProgress.className = "progress-bar bg-warning";
+                            }
+                        }
+                        
+                        if (descInput) {
+                            const val = descInput.value.length;
+                            descCount.innerText = val;
+                            const percentage = Math.min((val / 160) * 100, 100);
+                            descProgress.style.width = percentage + '%';
+                            
+                            if (val >= 120 && val <= 150) {
+                                descProgress.className = "progress-bar bg-success";
+                            } else if (val > 150) {
+                                descProgress.className = "progress-bar bg-danger";
+                            } else {
+                                descProgress.className = "progress-bar bg-warning";
+                            }
+                        }
+                    }
+                    
+                    document.getElementById('metaTitle').addEventListener('input', updateSEOIndicator);
+                    document.getElementById('metaDescription').addEventListener('input', updateSEOIndicator);
+                    
+                    // Chạy ngay khi mở trang để hiển thị thanh đo
+                    updateSEOIndicator();
+
+                    // // FIX: Xử lý khi click nút Lưu nháp thủ công
+                    var btnSaveDraft = document.getElementById("btnSaveDraft");
+                    if (btnSaveDraft) {
+                        btnSaveDraft.addEventListener("click", function() {
+                            document.getElementById("formStatus").value = "3"; // Đặt trạng thái là Bản nháp
+                            // Loại bỏ thuộc tính required tạm thời để cho phép lưu nháp khi chưa nhập đủ
+                            document.querySelectorAll("#newsForm [required]").forEach(function(el) {
+                                el.removeAttribute("required");
+                            });
+                            document.getElementById("newsForm").submit();
+                        });
+                    }
+
+                    // // FIX: Auto-save bài viết tự động mỗi 60 giây qua Ajax
+                    setInterval(function() {
+                        autoSaveDraft();
+                    }, 60000); // 60 giây
+
+                    function autoSaveDraft() {
+                        // Lấy tiêu đề, nếu tiêu đề rỗng thì không tự động lưu để tránh rác DB
+                        var titleInput = document.querySelector('input[name="title"]');
+                        var title = titleInput ? titleInput.value.trim() : "";
+                        if (!title) {
+                            console.log("Tiêu đề trống, bỏ qua auto-save.");
+                            return;
+                        }
+
+                        // Cập nhật dữ liệu từ CKEditor vào textarea trước khi lấy giá trị
+                        if (window.CKEDITOR && CKEDITOR.instances.content) {
+                            CKEDITOR.instances.content.updateElement();
+                        }
+
+                        var idInput = document.querySelector('input[name="id"]');
+                        var id = idInput ? idInput.value : "";
+                        var content = CKEDITOR.instances.content ? CKEDITOR.instances.content.getData() : "";
+                        var summaryInput = document.querySelector('textarea[name="summary"]');
+                        var summary = summaryInput ? summaryInput.value : "";
+                        var catInput = document.querySelector('select[name="categoryId"]');
+                        var categoryId = catInput ? catInput.value : "";
+                        var subCatInput = document.querySelector('select[name="subCategoryId"]');
+                        var subCategoryId = subCatInput ? subCatInput.value : "";
+                        var slugInput = document.querySelector('input[name="slug"]');
+                        var slug = slugInput ? slugInput.value : "";
+                        var metaTitleInput = document.querySelector('input[name="metaTitle"]');
+                        var metaTitle = metaTitleInput ? metaTitleInput.value : "";
+                        var metaDescInput = document.querySelector('textarea[name="metaDescription"]');
+                        var metaDescription = metaDescInput ? metaDescInput.value : "";
+                        var dateInput = document.querySelector('input[name="scheduledDate"]');
+                        var scheduledDate = dateInput ? dateInput.value : "";
+
+                        // Hiển thị trạng thái đang lưu
+                        showAutoSaveStatus("Đang tự động lưu nháp...");
+
+                        // Gửi Ajax qua Fetch API
+                        var params = new URLSearchParams();
+                        params.append("id", id);
+                        params.append("title", title);
+                        params.append("content", content);
+                        params.append("summary", summary);
+                        params.append("categoryId", categoryId);
+                        params.append("subCategoryId", subCategoryId);
+                        params.append("slug", slug);
+                        params.append("metaTitle", metaTitle);
+                        params.append("metaDescription", metaDescription);
+                        params.append("scheduledDate", scheduledDate);
+
+                        fetch("${pageContext.request.contextPath}/reporter/news/autosave", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: params.toString()
+                        })
+                        .then(function(res) { return res.json(); })
+                        .then(function(data) {
+                            if (data.success) {
+                                // Nếu là bài viết mới và chưa có hidden input ID, tạo mới
+                                if (!id && data.id) {
+                                    var form = document.getElementById("newsForm");
+                                    var input = document.createElement("input");
+                                    input.type = "hidden";
+                                    input.name = "id";
+                                    input.value = data.id;
+                                    form.appendChild(input);
+                                }
+                                showAutoSaveStatus("Đã tự động lưu nháp lúc " + new Date().toLocaleTimeString(), "success");
+                            } else {
+                                showAutoSaveStatus("Lỗi tự động lưu nháp", "danger");
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error("Lỗi Auto-save:", err);
+                            showAutoSaveStatus("Lỗi kết nối khi tự động lưu", "danger");
+                        });
+                    }
+
+                    function showAutoSaveStatus(msg, type) {
+                        var statusDiv = document.getElementById("autoSaveStatus");
+                        if (!statusDiv) {
+                            statusDiv = document.createElement("div");
+                            statusDiv.id = "autoSaveStatus";
+                            statusDiv.style.position = "fixed";
+                            statusDiv.style.bottom = "20px";
+                            statusDiv.style.right = "20px";
+                            statusDiv.style.zIndex = "9999";
+                            statusDiv.style.padding = "10px 15px";
+                            statusDiv.style.borderRadius = "8px";
+                            statusDiv.style.fontSize = "0.9rem";
+                            statusDiv.style.fontWeight = "600";
+                            statusDiv.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+                            document.body.appendChild(statusDiv);
+                        }
+                        statusDiv.innerText = msg;
+                        statusDiv.style.display = "block";
+                        if (type === "success") {
+                            statusDiv.style.backgroundColor = "#10b981";
+                            statusDiv.style.color = "#ffffff";
+                            setTimeout(function() {
+                                statusDiv.style.display = "none";
+                            }, 3000);
+                        } else if (type === "danger") {
+                            statusDiv.style.backgroundColor = "#ef4444";
+                            statusDiv.style.color = "#ffffff";
+                        } else {
+                            statusDiv.style.backgroundColor = "#006389";
+                            statusDiv.style.color = "#ffffff";
+                        }
                     }
                 </script>
             </body>

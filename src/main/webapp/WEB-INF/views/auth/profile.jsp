@@ -80,66 +80,89 @@
                     </span>
                 </div>
 
-                <!-- Info Grid -->
-                <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 text-left">
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-                            <i class="fas fa-id-card text-gray-400"></i> Tên đăng nhập (ID)
-                        </div>
-                        <div class="text-lg font-semibold text-gray-900">${sessionScope.currentUser.id}</div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-                            <i class="fas fa-envelope text-gray-400"></i> Địa chỉ Email
-                        </div>
-                        <div class="text-lg font-semibold text-gray-900 break-all">${sessionScope.currentUser.email}</div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-                            <i class="fas fa-phone text-gray-400"></i> Số điện thoại
-                        </div>
-                        <div class="text-lg font-semibold text-gray-900">
-                            ${not empty sessionScope.currentUser.mobile ? sessionScope.currentUser.mobile : '<span class="text-gray-400 italic font-normal">Chưa cập nhật</span>'}
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-                            <i class="fas fa-venus-mars text-gray-400"></i> Giới tính
-                        </div>
-                        <div class="text-lg font-semibold text-gray-900">
-                            <c:choose><c:when test="${sessionScope.currentUser.gender}">Nam</c:when><c:otherwise>Nữ</c:otherwise></c:choose>
-                        </div>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 md:col-span-2">
-                        <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
-                            <i class="fas fa-birthday-cake text-gray-400"></i> Ngày sinh
-                        </div>
-                        <div class="text-lg font-semibold text-gray-900">
-                            <c:if test="${not empty sessionScope.currentUser.birthday}">
-                                <fmt:formatDate value="${sessionScope.currentUser.birthday}" pattern="dd/MM/yyyy" />
-                            </c:if>
-                            <c:if test="${empty sessionScope.currentUser.birthday}">
-                                <span class="text-gray-400 italic font-normal">Chưa cập nhật</span>
-                            </c:if>
-                        </div>
-                    </div>
-                </div>
+                <!-- Main Form for Profile Text Fields -->
+                <form action="${pageContext.request.contextPath}/profile" method="post" enctype="multipart/form-data" class="w-full">
+                    <input type="hidden" name="action" value="updateProfile" />
 
-                <!-- Actions -->
-                <div class="flex flex-wrap justify-center gap-4 w-full pt-6 border-t border-gray-100">
-                    <a href="${pageContext.request.contextPath}/change-password" class="flex items-center gap-2 px-6 py-2.5 rounded-lg border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-colors no-underline">
-                        <i class="fas fa-key"></i> Đổi mật khẩu
-                    </a>
-                    <c:if test="${sessionScope.currentUser.reporter || sessionScope.currentUser.admin}">
-                        <c:set var="myNewsUrl" value="${sessionScope.currentUser.admin ? '/admin/news' : '/reporter/news'}" />
-                        <a href="${pageContext.request.contextPath}${myNewsUrl}" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white font-bold shadow-md hover:bg-[#004c6b] hover:shadow-lg transition-all transform hover:-translate-y-0.5 no-underline">
-                            <i class="fas fa-list-alt"></i> ${sessionScope.currentUser.admin ? 'Quản trị trang' : 'Bài viết của tôi'}
+                    <!-- Info Grid -->
+                    <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 text-left">
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                <i class="fas fa-id-card text-gray-400"></i> Tên đăng nhập (ID)
+                            </div>
+                            <input type="text" class="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 mt-1 text-gray-500 font-semibold cursor-not-allowed" value="${sessionScope.currentUser.id}" disabled />
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                <i class="fas fa-user text-gray-400"></i> Họ và tên
+                            </div>
+                            <input type="text" name="fullname" value="${sessionScope.currentUser.fullname}" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" required />
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                <i class="fas fa-envelope text-gray-400"></i> Địa chỉ Email
+                            </div>
+                            <input type="email" name="email" value="${sessionScope.currentUser.email}" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" required />
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                <i class="fas fa-phone text-gray-400"></i> Số điện thoại
+                            </div>
+                            <input type="text" name="mobile" value="${sessionScope.currentUser.mobile}" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" placeholder="Chưa cập nhật" />
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                <i class="fas fa-venus-mars text-gray-400"></i> Giới tính
+                            </div>
+                            <select name="gender" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold">
+                                <option value="true" ${sessionScope.currentUser.gender ? 'selected' : ''}>Nam</option>
+                                <option value="false" ${not sessionScope.currentUser.gender ? 'selected' : ''}>Nữ</option>
+                            </select>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                            <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                <i class="fas fa-birthday-cake text-gray-400"></i> Ngày sinh
+                            </div>
+                            <fmt:formatDate value="${sessionScope.currentUser.birthday}" pattern="yyyy-MM-dd" var="formattedBirthday" />
+                            <input type="date" name="birthday" value="${formattedBirthday}" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" />
+                        </div>
+
+                        <!-- Các trường hiển thị thêm cho Nhà báo/Quản trị -->
+                        <c:if test="${sessionScope.currentUser.reporter || sessionScope.currentUser.admin}">
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 md:col-span-2">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                    <i class="fas fa-signature text-gray-400"></i> Bút danh hiển thị
+                                </div>
+                                <input type="text" name="penName" value="${sessionScope.currentUser.penName}" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" placeholder="Nhập bút danh hiển thị trên bài viết..." />
+                            </div>
+                            <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 md:col-span-2">
+                                <div class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                                    <i class="fas fa-address-card text-gray-400"></i> Tiểu sử ngắn (Bio)
+                                </div>
+                                <textarea name="bio" rows="3" class="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-primary text-gray-900 font-semibold" placeholder="Giới thiệu một chút về bản thân bạn...">${sessionScope.currentUser.bio}</textarea>
+                            </div>
+                        </c:if>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-wrap justify-center gap-4 w-full pt-6 border-t border-gray-100">
+                        <button type="submit" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 border-none cursor-pointer">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                        <a href="${pageContext.request.contextPath}/change-password" class="flex items-center gap-2 px-6 py-2.5 rounded-lg border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-colors no-underline">
+                            <i class="fas fa-key"></i> Đổi mật khẩu
                         </a>
-                    </c:if>
-                    <a href="${pageContext.request.contextPath}/" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition-colors no-underline">
-                        <i class="fas fa-newspaper"></i> Đọc tin tức
-                    </a>
-                </div>
+                        <c:if test="${sessionScope.currentUser.reporter || sessionScope.currentUser.admin}">
+                            <c:set var="myNewsUrl" value="${sessionScope.currentUser.admin ? '/admin/news' : '/reporter/news'}" />
+                            <a href="${pageContext.request.contextPath}${myNewsUrl}" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white font-bold shadow-md hover:bg-[#004c6b] hover:shadow-lg transition-all transform hover:-translate-y-0.5 no-underline">
+                                <i class="fas fa-list-alt"></i> ${sessionScope.currentUser.admin ? 'Quản trị trang' : 'Bài viết của tôi'}
+                            </a>
+                        </c:if>
+                        <a href="${pageContext.request.contextPath}/" class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-bold hover:bg-gray-200 transition-colors no-underline">
+                            <i class="fas fa-newspaper"></i> Đọc tin tức
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
     </main>

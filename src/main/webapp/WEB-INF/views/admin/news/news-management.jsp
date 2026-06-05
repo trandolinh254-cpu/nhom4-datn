@@ -574,7 +574,8 @@
                                                                             <form action="${pageContext.request.contextPath}/admin/news/status" method="POST" style="display:inline;">
                                                                                 <input type="hidden" name="id" value="${news.id}">
                                                                                 <input type="hidden" name="status" value="2">
-                                                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Từ chối" onclick="return confirm('Bạn chắc chắn muốn từ chối bài viết này?');">
+                                                                                <input type="hidden" name="rejectReason" value="">
+                                                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Từ chối" onclick="var r = prompt('Nhập lý do từ chối bài viết:'); if (r === null || r.trim() === '') { alert('Bạn phải nhập lý do từ chối bài viết!'); return false; }; this.form.rejectReason.value = r; return true;">
                                                                                     <i class="fas fa-times"></i>
                                                                                 </button>
                                                                             </form>

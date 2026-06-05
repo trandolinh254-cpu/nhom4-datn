@@ -214,7 +214,19 @@
                                                     <div class="flex-grow">
                                                         <div class="flex justify-between items-start mb-2">
                                                             <div>
-                                                                <h6 class="font-bold text-gray-900 m-0 text-base">${cmt.userFullName}</h6>
+                                                                <h6 class="font-bold text-gray-900 m-0 text-base">
+                                                                    ${cmt.userFullName}
+                                                                    <c:if test="${cmt.userId == news.author}">
+                                                                        <span class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                                                                            <i class="fas fa-pen-nib text-[10px]"></i> Tác giả
+                                                                        </span>
+                                                                    </c:if>
+                                                                    <c:if test="${cmt.isPinned}">
+                                                                        <span class="inline-flex items-center gap-1 ml-2 px-2 py-0.5 rounded text-xs font-semibold bg-yellow-100 text-yellow-800 border border-yellow-200" title="Được tác giả ghim">
+                                                                            <i class="fas fa-thumbtack text-[10px]"></i> Đã ghim
+                                                                        </span>
+                                                                    </c:if>
+                                                                </h6>
                                                                 <small class="text-gray-500 flex items-center gap-1 mt-1">
                                                                     <i class="far fa-clock"></i>
                                                                     <fmt:formatDate value="${cmt.createdDate}" pattern="dd/MM/yyyy HH:mm" />
@@ -258,7 +270,14 @@
                                                                             </div>
                                                                             <div>
                                                                                 <div class="flex items-baseline gap-2">
-                                                                                    <span class="font-bold text-gray-900 text-sm">${rep.userFullName}</span>
+                                                                                    <span class="font-bold text-gray-900 text-sm">
+                                                                                        ${rep.userFullName}
+                                                                                        <c:if test="${rep.userId == news.author}">
+                                                                                            <span class="inline-flex items-center gap-1 ml-1 px-1.5 py-0.2 rounded text-[10px] font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                                                                                                <i class="fas fa-pen-nib text-[8px]"></i> Tác giả
+                                                                                            </span>
+                                                                                        </c:if>
+                                                                                    </span>
                                                                                     <small class="text-gray-500 text-xs"><fmt:formatDate value="${rep.createdDate}" pattern="dd/MM/yyyy HH:mm" /></small>
                                                                                 </div>
                                                                                 <p class="mt-1 mb-0 text-gray-700 text-sm whitespace-pre-wrap"><c:out value="${rep.content}" /></p>

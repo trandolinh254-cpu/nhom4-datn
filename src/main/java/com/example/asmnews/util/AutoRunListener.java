@@ -7,6 +7,10 @@ package com.example.asmnews.util;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
@@ -34,6 +38,31 @@ public class AutoRunListener implements ServletContextListener {
         // scheduler.scheduleAtedRate(() -> {
         // fetcher.fetchAndSaveNews();
         // }, 0, 1, TimeUnit.HOURS);
+
+        // // FIX: Quét và tự động xuất bản các tin tức đã đến giờ lên lịch (chạy mỗi 1 phút)
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                publishScheduledNews();
+            } catch (Exception e) {
+                System.err.println("[Scheduled Publisher] Lỗi khi chạy tác vụ quét xuất bản: " + e.getMessage());
+            }
+        }, 5, 60, TimeUnit.SECONDS);
+    }
+
+    /**
+     * // FIX: Quét và cập nhật trạng thái bài viết đã đến giờ xuất bản từ "Chờ duyệt" hoặc "Nháp" sang "Đã xuất bản/Đã duyệt" (Status = 1)
+     */
+    private void publishScheduledNews() {
+        String sql = "UPDATE News SET Status = 1 WHERE Status IN (0, 3, 4) AND ScheduledDate IS NOT NULL AND ScheduledDate <= NOW()";
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            int updatedRows = ps.executeUpdate();
+            if (updatedRows > 0) {
+                System.out.println("[Scheduled Publisher] Đã tự động xuất bản " + updatedRows + " bài viết đến giờ lên lịch.");
+            }
+        } catch (SQLException e) {
+            System.err.println("[Scheduled Publisher] Lỗi truy vấn cơ sở dữ liệu: " + e.getMessage());
+        }
     }
 
     @Override

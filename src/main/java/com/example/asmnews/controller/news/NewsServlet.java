@@ -176,7 +176,14 @@ public class NewsServlet extends BaseServlet {
 
         // Lấy danh sách bình luận từ DB
         List<Comment> comments = commentDAO.findByNewsId(newsId);
-        news.setCommentCount(comments.size()); // Gán số đếm bình luận vào bài báo
+        int totalComments = 0;
+        for (Comment c : comments) {
+            totalComments++; // Đếm bình luận cha
+            if (c.getReplies() != null) {
+                totalComments += c.getReplies().size(); // Đếm các phản hồi con
+            }
+        }
+        news.setCommentCount(totalComments); // Gán tổng số đếm bình luận vào bài báo
         request.setAttribute("commentsList", comments); // Đẩy danh sách bình luận ra giao diện JSP
 
         // VỊ TRÍ 3: Lấy số đếm Thích và Không thích từ DB gán vào bài báo
