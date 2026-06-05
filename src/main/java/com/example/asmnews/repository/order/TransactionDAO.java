@@ -88,6 +88,27 @@ public class TransactionDAO {
         return null;
     }
 
+    public Transaction findByOrderId(int orderId) {
+        String sql = "SELECT t.*, u.Fullname, u.Email " +
+                "FROM Transactions t " +
+                "LEFT JOIN Users u ON t.UserId = u.Id " +
+                "WHERE OrderId = ?";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapRow(rs);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi findByOrderId Transaction: " + e.getMessage());
+        }
+        return null;
+    }
+
     private Transaction mapRow(ResultSet rs) throws SQLException {
         Transaction tx = new Transaction();
         tx.setId(rs.getInt("TransactionId"));

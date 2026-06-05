@@ -39,7 +39,7 @@
 
 <div class="w-full flex justify-center items-start relative xl:overflow-visible overflow-hidden">
     <!-- QUẢNG CÁO SIDEBAR TRÁI (Sticky) -->
-    <c:if test="${not empty sidebarLeftAds}">
+    <c:if test="${not empty sidebarLeftAds and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
         <div class="hidden xl:block w-[160px] flex-shrink-0 pt-8 z-0 mr-6 relative">
             <div class="sticky top-24 flex flex-col gap-4">
                 <c:forEach var="ad" items="${sidebarLeftAds}">
@@ -55,7 +55,7 @@
     </c:if>
 
     <main class="max-w-6xl px-4 py-8 w-full smooth-load bg-white z-10 relative">
-        <c:if test="${not empty topBannerAd}">
+        <c:if test="${not empty topBannerAd and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
             <div class="w-full aspect-[1120/90] mb-8 rounded shadow-sm relative overflow-hidden group">
                 <span class="absolute top-1 right-2 text-[10px] bg-white/80 text-gray-400 px-1 rounded shadow-sm z-10">Tài trợ</span>
                 <a href="${topBannerAd.targetUrl}" target="_blank" class="block w-full h-full">
@@ -120,7 +120,35 @@
                                         </div>
                                     </c:if>
 
-                                    <div class="news-content">
+                                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl mb-6 border border-purple-100 shadow-sm">
+                                        <div class="flex items-center gap-3 mb-3">
+                                            <i class="fas fa-magic text-purple-600 text-xl"></i>
+                                            <h3 class="font-bold text-gray-800 m-0 text-lg">AI Assistant</h3>
+                                            <c:if test="${empty sessionScope.currentUser || not sessionScope.currentUser.premium}">
+                                                 <span id="freeSummaryBadge" class="text-[10px] bg-gray-500 text-white px-2 py-0.5 rounded-full ml-2 uppercase">Free (Còn ${sessionScope.currentUser != null ? sessionScope.currentUser.freeSummaryCount : 4} lượt)</span>
+                                            </c:if>
+                                            <c:if test="${not empty sessionScope.currentUser && sessionScope.currentUser.premium}">
+                                                 <span class="text-[10px] bg-purple-600 text-white px-2 py-0.5 rounded-full ml-2 uppercase shadow-sm"><i class="fas fa-crown text-yellow-300 mr-1"></i>Premium</span>
+                                            </c:if>
+                                        </div>
+                                        <div class="flex gap-3">
+                                            <button type="button" onclick="aiProcess('summarize')" class="bg-white hover:bg-purple-600 hover:text-white text-purple-700 border border-purple-200 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-sm">
+                                                <i class="fas fa-compress-alt"></i> Tóm tắt bài viết
+                                            </button>
+                                            <button type="button" onclick="aiProcess('translate')" class="bg-white hover:bg-pink-600 hover:text-white text-pink-700 border border-pink-200 px-4 py-2 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-sm">
+                                                <i class="fas fa-language"></i> Dịch sang Tiếng Việt/Anh
+                                            </button>
+                                        </div>
+                                        <div id="aiLoadingContainer" class="mt-4 hidden flex items-center gap-2 text-purple-600 font-medium text-sm">
+                                            <i class="fas fa-spinner fa-spin"></i> AI đang xử lý, vui lòng đợi...
+                                        </div>
+                                        <div id="aiResultContainer" class="mt-4 hidden">
+                                            <div class="bg-white p-4 rounded-lg border border-purple-100 text-gray-800 text-base leading-relaxed whitespace-pre-wrap shadow-inner" id="aiResultText">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="news-content" id="articleContent">
                                         ${news.content}
                                     </div>
 
@@ -427,7 +455,7 @@
                 </main>
 
     <!-- QUẢNG CÁO SIDEBAR PHẢI (Sticky) -->
-    <c:if test="${not empty sidebarRightAds}">
+    <c:if test="${not empty sidebarRightAds and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
         <div class="hidden xl:block w-[160px] flex-shrink-0 pt-8 z-0 ml-6 relative">
             <div class="sticky top-24 flex flex-col gap-4">
                 <c:forEach var="ad" items="${sidebarRightAds}">
@@ -751,6 +779,67 @@
                                 }
                             })
                             .catch(err => console.error(err));
+                    }
+
+                    // Xử lý AI
+                    function aiProcess(actionType) {
+                        const articleHtml = document.getElementById('articleContent').innerHTML;
+                        // Loại bỏ các thẻ HTML để gửi text thuần
+                        const textContent = articleHtml.replace(/<[^>]*>?/gm, '').trim();
+                        
+                        if (!textContent) {
+                            alert("Không tìm thấy nội dung bài viết.");
+                            return;
+                        }
+
+                        document.getElementById('aiLoadingContainer').classList.remove('hidden');
+                        document.getElementById('aiResultContainer').classList.add('hidden');
+
+                        const url = actionType === 'summarize' ? '${pageContext.request.contextPath}/ai/summarize' : '${pageContext.request.contextPath}/ai/translate';
+
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ text: textContent })
+                        })
+                        .then(response => {
+                            if (response.status === 401) {
+                                alert("Bạn cần đăng nhập để sử dụng tính năng này.");
+                                window.location.href = '${pageContext.request.contextPath}/login';
+                                throw new Error('Unauthorized');
+                            }
+                            if (!response.ok) {
+                                return response.json()
+                                    .then(err => { throw new Error(err.error || "Lỗi hệ thống (" + response.status + ")"); })
+                                    .catch(() => { throw new Error("Lỗi hệ thống (" + response.status + ")"); });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            document.getElementById('aiLoadingContainer').classList.add('hidden');
+                            if (data.error) {
+                                alert(data.error);
+                                return;
+                            }
+                            document.getElementById('aiResultContainer').classList.remove('hidden');
+                            document.getElementById('aiResultText').innerText = data.result;
+                            
+                            if (data.freeSummaryLeft !== undefined) {
+                                 // Cập nhật lượt free hiển thị trên giao diện mà không cần reload trang
+                                 const badge = document.getElementById('freeSummaryBadge');
+                                 if (badge) {
+                                     badge.innerText = `FREE (CÒN ${data.freeSummaryLeft} LƯỢT)`;
+                                 }
+                            }
+                        })
+                        .catch(error => {
+                            document.getElementById('aiLoadingContainer').classList.add('hidden');
+                            if (error.message !== 'Unauthorized') {
+                                 alert(error.message);
+                            }
+                        });
                     }
                 </script>
             </body>

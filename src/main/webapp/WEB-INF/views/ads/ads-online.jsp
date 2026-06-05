@@ -119,7 +119,7 @@
                                     <div class="flex flex-col gap-1.5 items-center">
                                         <fmt:formatNumber var="formattedPrice" value="${pos.basePrice}" pattern="#,###" />
                                         <button type="button" onclick="showDemoByPosId('${pos.id}', '${pos.name}')" class="w-[85px] py-1 border border-danger text-danger rounded-full hover:bg-danger hover:text-white transition-colors text-[11px] font-medium">Xem demo</button>
-                                        <button type="button" onclick="selectAd('${pos.name}', '${pos.sizeDesc}', 'Trang chủ: ${formattedPrice}đ', '${pos.id}')" class="w-[85px] py-1 bg-primary text-white rounded-full hover:bg-[#004c6b] transition-colors text-[11px] font-bold">Chọn mua</button>
+                                        <button type="button" data-name="${pos.name}" data-size="${pos.sizeDesc}" data-price="Trang chủ: ${formattedPrice}đ" data-id="${pos.id}" data-baseprice="${pos.basePrice}" onclick="selectAdFromButton(this)" class="w-[85px] py-1 bg-primary text-white rounded-full hover:bg-[#004c6b] transition-colors text-[11px] font-bold">Chọn mua</button>
                                     </div>
                                 </td>
                             </tr>
@@ -169,7 +169,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-600 mb-1.5">Thời gian chạy *</label>
-                        <select name="duration" class="form-input" required>
+                        <select name="duration" class="form-input" required onchange="updateAdsQR()">
                             <option value="1w">1 Tuần</option>
                             <option value="2w">2 Tuần</option>
                             <option value="1m">1 Tháng (Giảm 10%)</option>
@@ -193,17 +193,100 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-600 mb-1.5">Người liên hệ *</label>
-                        <input type="text" name="contact_name" value="${sessionScope.currentUser.fullname}" class="form-input" required>
+                        <input type="text" name="contact_name" value="${sessionScope.currentUser.fullname}" class="form-input" required oninput="updateAdsQR()">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-600 mb-1.5">Điện thoại *</label>
-                        <input type="tel" name="phone" class="form-input" required>
+                        <input type="tel" name="phone" class="form-input" required oninput="updateAdsQR()">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-600 mb-1.5">Email *</label>
-                        <input type="email" name="email" value="${sessionScope.currentUser.email}" class="form-input" required>
+                        <input type="email" name="email" value="${sessionScope.currentUser.email}" class="form-input" required oninput="updateAdsQR()">
                     </div>
                 </div>
+
+                <h3 class="text-lg font-bold text-gray-900 mb-4 border-t border-gray-100 pt-6">Phương thức thanh toán</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <%-- Thanh toán sau --%>
+                    <label class="relative flex items-center gap-3 p-4 border border-gray-200 bg-white rounded-xl cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="payment_method_option" value="cod" class="peer h-4 w-4 text-primary focus:ring-primary" checked onchange="toggleAdsPaymentDetail()"/>
+                        <div class="flex items-center gap-3">
+                            <span class="fas fa-file-invoice-dollar text-gray-500 text-lg"></span>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">Thanh toán sau (Duyệt offline)</h4>
+                                <p class="text-[11px] text-gray-500">Chuyển khoản sau khi liên hệ ký hợp đồng</p>
+                            </div>
+                        </div>
+                    </label>
+
+                    <%-- Chuyển khoản VietQR --%>
+                    <label class="relative flex items-center gap-3 p-4 border border-gray-200 bg-white rounded-xl cursor-pointer hover:border-primary transition-all">
+                        <input type="radio" name="payment_method_option" value="bank_transfer" class="peer h-4 w-4 text-primary focus:ring-primary" onchange="toggleAdsPaymentDetail()"/>
+                        <div class="flex items-center gap-3">
+                            <span class="fas fa-qrcode text-primary text-lg"></span>
+                            <div>
+                                <h4 class="font-bold text-gray-900 text-sm">Chuyển khoản VietQR (Xác nhận nhanh)</h4>
+                                <p class="text-[11px] text-gray-500">Quét mã QR để tự động kích hoạt chiến dịch</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <%-- Chi tiết chuyển khoản VietQR cho Ads --%>
+                <div id="vietqrAdsDetail" class="hidden border border-gray-200 bg-white rounded-xl p-6 mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                        <%-- QR Code --%>
+                        <div class="md:col-span-5 flex flex-col items-center justify-center bg-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+                            <img id="qrAdsImage" src="" alt="Mã QR thanh toán quảng cáo" class="w-44 h-44 object-contain mb-2" />
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1">
+                                <i class="fa-solid fa-qrcode text-xs"></i> Quét để thanh toán
+                            </span>
+                        </div>
+
+                        <%-- Thông tin chuyển khoản --%>
+                        <div class="md:col-span-7 space-y-3">
+                            <div class="inline-flex items-center gap-2 bg-blue-50 text-primary text-[11px] font-bold px-3 py-1 rounded-full">
+                                <span class="relative flex h-2 w-2">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                Tự động điền số tiền & nội dung quảng cáo
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-y-2 text-xs">
+                                <span class="text-gray-500">Ngân hàng:</span>
+                                <span class="col-span-2 font-bold text-gray-950">MB Bank (Ngân hàng Quân Đội)</span>
+
+                                <span class="text-gray-500">Chủ tài khoản:</span>
+                                <span class="col-span-2 font-bold text-gray-950">CONG TY XYZ NEWS</span>
+
+                                <span class="text-gray-500">Số tài khoản:</span>
+                                <span class="col-span-2 font-mono font-bold text-gray-950 flex items-center gap-2">
+                                    <span id="bankAccountAds">190356789012</span>
+                                    <button type="button" onclick="copyAdsText('bankAccountAds')" class="text-primary hover:text-blue-800 text-[10px] flex items-center gap-0.5 font-sans font-normal">
+                                        <i class="fa-regular fa-copy"></i> Sao chép
+                                    </button>
+                                </span>
+
+                                <span class="text-gray-500">Tổng số tiền:</span>
+                                <span id="bankAmountAds" class="col-span-2 font-bold text-primary text-base">0đ</span>
+
+                                <span class="text-gray-500">Nội dung CK:</span>
+                                <span class="col-span-2 font-mono font-bold text-gray-950 flex items-center gap-2">
+                                    <span id="bankMemoAds">XYZADS</span>
+                                    <button type="button" onclick="copyAdsText('bankMemoAds')" class="text-primary hover:text-blue-800 text-[10px] flex items-center gap-0.5 font-sans font-normal">
+                                        <i class="fa-regular fa-copy"></i> Sao chép
+                                    </button>
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-danger font-medium flex items-start gap-1 bg-red-50 p-2.5 rounded-lg leading-normal">
+                                <span class="fas fa-exclamation-triangle text-xs mt-0.5"></span>
+                                <span>Lưu ý: Hãy ghi đúng nội dung để chúng tôi đối soát và duyệt vị trí quảng cáo ngay lập tức.</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="adsPaymentMethodInput" name="payment_method" value="cod" />
 
                 <div class="bg-gray-100 p-5 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-gray-200">
                     <label class="flex items-center gap-2 cursor-pointer">
@@ -306,6 +389,17 @@
     <jsp:include page="../public/components/footer.jsp" />
 
     <script>
+        var selectedBasePrice = 0;
+
+        function selectAdFromButton(btn) {
+            var name = btn.getAttribute('data-name');
+            var size = btn.getAttribute('data-size');
+            var priceInfo = btn.getAttribute('data-price');
+            var posId = btn.getAttribute('data-id');
+            var basePrice = parseFloat(btn.getAttribute('data-baseprice')) || 0;
+            selectAd(name, size, priceInfo, posId, basePrice);
+        }
+
         // Xử lý mapping Name sang demo block thay vì ID để luôn chuẩn
         function showDemoByPosId(posId, name) {
             let demoId = '';
@@ -365,7 +459,7 @@
         }
 
         // Xử lý nút Chọn mua
-        function selectAd(name, size, priceInfo, posId = 1) {
+        function selectAd(name, size, priceInfo, posId = 1, basePrice = 0) {
             // Mở khóa Form đăng ký
             const form = document.getElementById('registrationForm');
             form.classList.remove('opacity-40', 'pointer-events-none');
@@ -377,8 +471,78 @@
             document.getElementById('selected_price').value = priceInfo;
             document.getElementById('position_id').value = posId;
             
+            selectedBasePrice = basePrice;
+            updateAdsQR();
+            
             // Cuộn mượt xuống Form
             form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        /**
+         * Ẩn/hiện chi tiết chuyển khoản VietQR cho Ads
+         */
+        function toggleAdsPaymentDetail() {
+            var selectedMethod = document.querySelector('input[name="payment_method_option"]:checked').value;
+            document.getElementById('adsPaymentMethodInput').value = selectedMethod;
+            
+            var detailBox = document.getElementById('vietqrAdsDetail');
+            if (selectedMethod === 'bank_transfer') {
+                detailBox.classList.remove('hidden');
+                updateAdsQR();
+            } else {
+                detailBox.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Tính toán chi phí quảng cáo động và sinh mã VietQR
+         */
+        function updateAdsQR() {
+            if (!selectedBasePrice) return;
+            
+            var duration = document.querySelector('select[name="duration"]').value;
+            var amount = 0;
+            if (duration === '1w') {
+                amount = selectedBasePrice * 1;
+            } else if (duration === '2w') {
+                amount = selectedBasePrice * 2;
+            } else if (duration === '1m') {
+                amount = Math.round(selectedBasePrice * 4 * 0.9); // Giảm 10%
+            }
+            
+            var phone = document.querySelector('input[name="phone"]').value.trim();
+            var email = document.querySelector('input[name="email"]').value.trim();
+            var contactName = document.querySelector('input[name="contact_name"]').value.trim();
+            var identifier = phone || email || contactName || 'USER';
+            // Chỉ giữ lại chữ và số, chuyển thành chữ hoa
+            identifier = identifier.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            var memo = 'XYZADS' + identifier;
+            if (memo.length > 25) {
+                memo = memo.substring(0, 25);
+            }
+            
+            document.getElementById('bankMemoAds').textContent = memo;
+            document.getElementById('bankAmountAds').textContent = amount.toLocaleString('vi-VN') + 'đ';
+            
+            // Sinh QR Code động
+            var qrUrl = 'https://img.vietqr.io/image/MB-190356789012-compact.png?amount=' + amount + '&addInfo=' + encodeURIComponent(memo) + '&accountName=CONG%20TY%20XYZ%20NEWS';
+            document.getElementById('qrAdsImage').src = qrUrl;
+        }
+
+        /**
+         * Sao chép thông tin tài khoản quảng cáo
+         */
+        function copyAdsText(elementId) {
+            var text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(function() {
+                var btn = document.querySelector('#' + elementId).nextElementSibling;
+                var originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i> Đã chép';
+                setTimeout(function() { btn.innerHTML = originalHTML; }, 2000);
+            }).catch(function(err) {
+                console.error('Không thể sao chép: ', err);
+            });
         }
     </script>
 </body>

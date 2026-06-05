@@ -44,13 +44,28 @@ public class PremiumServlet extends BaseServlet {
         String path = request.getServletPath();
         
         if ("/premium-checkout".equals(path)) {
-            // Xử lý logic thanh toán gói Premium ở đây
+            // Lấy thông tin user hiện tại
+            com.example.asmnews.entity.auth.User currentUser = (com.example.asmnews.entity.auth.User) request.getSession().getAttribute("currentUser");
+            if (currentUser == null) {
+                redirect(response, request.getContextPath() + "/login");
+                return;
+            }
+
             String plan = request.getParameter("plan");
             
-            // Tạm thời, redirect về trang chủ kèm thông báo thành công
-            // (Bạn có thể thêm logic lưu vào Database, gọi API Momo/VNPAY tại đây)
-            setSuccessMessage(request, "Cảm ơn bạn đã chọn gói: " + plan + "! Chức năng thanh toán đang được phát triển.");
-            response.sendRedirect(request.getContextPath() + "/premium");
+            // Xử lý nâng cấp tài khoản
+            com.example.asmnews.repository.auth.UserDAO userDAO = new com.example.asmnews.repository.auth.UserDAO();
+            if (userDAO.upgradeToPremium(currentUser.getId())) {
+                // Cập nhật lại session
+                currentUser.setPremium(true);
+                request.getSession().setAttribute("currentUser", currentUser);
+                
+                setSuccessMessage(request, "Cảm ơn bạn đã đăng ký! Tài khoản của bạn đã được nâng cấp lên Premium.");
+                response.sendRedirect(request.getContextPath() + "/premium");
+            } else {
+                setErrorMessage(request, "Có lỗi xảy ra khi nâng cấp tài khoản.");
+                response.sendRedirect(request.getContextPath() + "/premium");
+            }
         } else {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }

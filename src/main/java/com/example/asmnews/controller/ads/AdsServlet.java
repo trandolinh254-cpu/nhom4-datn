@@ -91,8 +91,11 @@ public class AdsServlet extends BaseServlet {
                 String companyName = request.getParameter("company_name");
                 contract.setCompanyName(companyName != null && !companyName.trim().isEmpty() ? companyName : "Cá nhân");
                 
+                String paymentMethod = request.getParameter("payment_method");
+                String methodLabel = "bank_transfer".equals(paymentMethod) ? "Chuyển khoản VietQR" : "Thanh toán sau (Offline)";
                 String address = request.getParameter("address");
-                contract.setBillingAddress(address != null && !address.trim().isEmpty() ? address : "Chưa cập nhật");
+                String fullAddress = (address != null && !address.trim().isEmpty() ? address : "Chưa cập nhật");
+                contract.setBillingAddress("[" + methodLabel + "] " + fullAddress); // FIX: Lưu phương thức thanh toán đính kèm vào billingAddress
                 
                 // --- TÍNH TOÁN GIÁ TIỀN TỰ ĐỘNG ---
                 String posIdStr = request.getParameter("position_id");

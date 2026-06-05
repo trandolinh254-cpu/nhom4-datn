@@ -37,6 +37,9 @@ public class User {
     private String bio;
     private Integer failedLoginAttempts = 0;
     private Date lockoutTime;
+    
+    private boolean isPremium = false;
+    private int freeSummaryCount = 4;
 
 
     public String getAvatar() {
@@ -217,6 +220,22 @@ public class User {
 
     public void setLockoutTime(Date lockoutTime) {
         this.lockoutTime = lockoutTime;
+    }
+
+    public boolean isPremium() {
+        return isPremium;
+    }
+
+    public void setPremium(boolean premium) {
+        isPremium = premium;
+    }
+
+    public int getFreeSummaryCount() {
+        return freeSummaryCount;
+    }
+
+    public void setFreeSummaryCount(int freeSummaryCount) {
+        this.freeSummaryCount = freeSummaryCount;
     }
 }
 

@@ -44,6 +44,11 @@ public class OrderServlet extends BaseServlet {
             // Nếu đã đăng nhập, điền sẵn thông tin user
             User currentUser = getCurrentUser(request);
             if (currentUser != null) {
+                if (currentUser.isPremium()) {
+                    setErrorMessage(request, "Tài khoản của bạn đã là Premium Trọn Đời. Không cần đăng ký lại!");
+                    redirect(response, request.getContextPath() + "/");
+                    return;
+                }
                 request.setAttribute("prefillName", currentUser.getFullname());
                 request.setAttribute("prefillEmail", currentUser.getEmail());
             }
@@ -70,7 +75,7 @@ public class OrderServlet extends BaseServlet {
         try {
             // Lấy dữ liệu từ form
             String newspaperType = getParameter(request, "newspaper_type", "print");
-            String packageDuration = getParameter(request, "package_duration", "6_months");
+            String packageDuration = getParameter(request, "package_duration", "lifetime"); // // FIX
             String fullName = getParameter(request, "fullName", "");
             String phone = getParameter(request, "phone", "");
             String email = getParameter(request, "email", "");
@@ -90,10 +95,18 @@ public class OrderServlet extends BaseServlet {
             // Tạo đối tượng Order
             Order order = new Order(newspaperType, packageDuration, fullName,
                     phone, email, city, district, ward, addressDetail, note);
+            
+            // TỰ ĐỘNG DUYỆT ĐƠN
+            order.setStatus("confirmed");
 
             // Nếu đã đăng nhập, gán userId
             User currentUser = getCurrentUser(request);
             if (currentUser != null) {
+                if (currentUser.isPremium()) {
+                    setErrorMessage(request, "Tài khoản của bạn đã là Premium Trọn Đời. Không cần đăng ký lại!");
+                    redirect(response, request.getContextPath() + "/");
+                    return;
+                }
                 order.setUserId(currentUser.getId());
             }
 
@@ -119,8 +132,9 @@ public class OrderServlet extends BaseServlet {
                     // Quy đổi dữ liệu để lưu theo cấu trúc CSDL của bạn
                     tx.setTransactionType("digital".equals(newspaperType) ? "premium" : "print");
                     tx.setTransactionAction("new"); // Mua mới
-                    tx.setPaymentMethod("cod"); // Thanh toán khi nhận hàng
-                    tx.setStatus("pending"); // Đang chờ xử lý
+                    String paymentMethod = getParameter(request, "payment_method", "cod");
+                    tx.setPaymentMethod(paymentMethod); // // FIX: Lấy phương thức thanh toán động từ form (cod hoặc bank_transfer)
+                    tx.setStatus("success"); // Đã thanh toán thành công
 
                     // Gán số tiền dạng số nguyên (int)
                     int amount = 0;
@@ -130,6 +144,8 @@ public class OrderServlet extends BaseServlet {
                         amount = 480000;
                     else if ("12_months".equals(packageDuration))
                         amount = 900000;
+                    else if ("lifetime".equals(packageDuration)) // // FIX
+                        amount = 990000; // // FIX
                     tx.setAmount(amount);
 
                     // Lưu vào Database thông qua TransactionDAO
@@ -138,12 +154,26 @@ public class OrderServlet extends BaseServlet {
                     if (!txSuccess) {
                         System.err.println("Cảnh báo: Tạo đơn hàng thành công nhưng không tạo được Lịch sử Giao dịch.");
                     }
+                    
+                    // =========================================================
+                    // TỰ ĐỘNG KÍCH HOẠT PREMIUM CHO NGƯỜI DÙNG
+                    // =========================================================
+                    if (currentUser != null) {
+                        com.example.asmnews.repository.auth.UserDAO userDAO = new com.example.asmnews.repository.auth.UserDAO();
+                        boolean upgraded = userDAO.upgradeToPremium(currentUser.getId());
+                        if (upgraded) {
+                            // Cập nhật session hiện tại
+                            currentUser.setPremium(true);
+                            request.getSession().setAttribute("currentUser", currentUser);
+                        }
+                    }
+
                 } catch (Exception ex) {
                     System.err.println("Lỗi khi lưu Lịch sử Giao dịch: " + ex.getMessage());
                 }
                 // =========================================================
 
-                setSuccessMessage(request, "Đặt báo thành công! Chúng tôi sẽ liên hệ xác nhận trong 24h.");
+                setSuccessMessage(request, "Đăng ký thành công! Tài khoản của bạn đã được nâng cấp lên Premium.");
             } else {
                 // BẮT BỆNH Ở ĐÂY: Hiện dòng báo lỗi đỏ chót của SQL lên giao diện JSP
                 setErrorMessage(request, "Lỗi Database: " + dbResult);

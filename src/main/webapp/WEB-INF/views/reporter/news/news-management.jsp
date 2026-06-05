@@ -1,7 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -555,7 +554,7 @@
                                                                     <c:choose>
                                                                         <c:when test="${not empty news.image}">
                                                                             <c:choose>
-                                                                                <c:when test="${fn:startsWith(news.image, 'http')}">
+                                                                                <c:when test="${news.image.startsWith('http')}">
                                                                                     <img src="${news.image}" class="news-image-preview" alt="${news.title}">
                                                                                 </c:when>
                                                                                 <c:otherwise>

@@ -115,17 +115,10 @@
                 <i class="fas fa-envelope-open-text main-icon text-secondary"></i> Đăng ký nhận tin
             </a>
             
-            <a class="nav-link ${param.activeMenu == 'orders_premium' || param.activeMenu == 'orders_transactions' ? 'active' : ''}" 
-               href="#orderSubmenu" data-bs-toggle="collapse" role="button" aria-expanded="${param.activeMenu == 'orders_premium' || param.activeMenu == 'orders_transactions' ? 'true' : 'false'}">
+            <a class="nav-link ${param.activeMenu == 'orders_premium' ? 'active' : ''}" 
+               href="${pageContext.request.contextPath}/admin/orders/premium">
                 <i class="fas fa-shopping-cart main-icon text-warning"></i> Quản lý đăng ký
-                <i class="fas fa-chevron-down arrow-icon"></i>
             </a>
-            <div class="collapse collapse-level-1 ${param.activeMenu == 'orders_premium' || param.activeMenu == 'orders_transactions' ? 'show' : ''}" id="orderSubmenu">
-                <div class="nav flex-column">
-                    <a class="nav-link ${param.activeMenu == 'orders_premium' ? 'active' : ''}" href="${pageContext.request.contextPath}/admin/orders/premium"><i class="fas fa-crown text-warning me-2"></i> Premium</a>
-                    <a class="nav-link ${param.activeMenu == 'orders_transactions' ? 'active' : ''}" href="${pageContext.request.contextPath}/admin/orders/transactions"><i class="fas fa-history me-2"></i> Lịch sử giao dịch</a>
-                </div>
-            </div>
 
             <a class="nav-link ${fn:contains(param.activeMenu, 'ads_') ? 'active' : ''}" 
                href="#adsMainDropdown" data-bs-toggle="collapse" role="button" aria-expanded="${fn:contains(param.activeMenu, 'ads_') ? 'true' : 'false'}">

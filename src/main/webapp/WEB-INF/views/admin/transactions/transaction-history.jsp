@@ -153,7 +153,7 @@
                                                         </td>
                                                         <td>
                                                             <c:choose>
-                                                                <c:when test="${tx.paymentMethod == 'bank_transfer'}">Chuyển khoản</c:when>
+                                                                <c:when test="${tx.paymentMethod == 'bank_transfer'}"><span class="badge bg-info text-white"><i class="fa-solid fa-qrcode me-1"></i> VietQR</span></c:when>
                                                                 <c:when test="${tx.paymentMethod == 'e_wallet'}">Ví điện tử</c:when>
                                                                 <c:when test="${tx.paymentMethod == 'cod'}">Thanh toán khi nhận (COD)</c:when>
                                                                 <c:otherwise>${tx.paymentMethod}</c:otherwise>

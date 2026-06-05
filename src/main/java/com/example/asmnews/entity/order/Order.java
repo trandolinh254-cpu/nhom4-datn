@@ -74,6 +74,8 @@ public class Order {
                 return 480000;
             case "12_months":
                 return 900000;
+            case "lifetime": // // FIX
+                return 990000; // // FIX
             default:
                 return 0;
         }
@@ -92,6 +94,8 @@ public class Order {
                 return "6 Tháng";
             case "12_months":
                 return "12 Tháng";
+            case "lifetime": // // FIX
+                return "Trọn Đời"; // // FIX
             default:
                 return packageDuration;
         }

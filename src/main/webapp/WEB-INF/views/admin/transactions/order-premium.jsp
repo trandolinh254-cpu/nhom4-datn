@@ -164,15 +164,89 @@
                                                             </c:choose>
                                                         </td>
                                                         <td>
-                                                            <form action="${pageContext.request.contextPath}/admin/orders/update-status" method="POST" class="d-inline">
-                                                                <input type="hidden" name="id" value="${order.id}">
-                                                                <select name="status" class="form-select form-select-sm d-inline-block w-auto" onchange="this.form.submit()">
-                                                                    <option value="pending" ${order.status == 'pending' ? 'selected' : ''}>Chờ thanh toán</option>
-                                                                    <option value="active" ${order.status == 'active' || order.status == 'confirmed' ? 'selected' : ''}>Kích hoạt (Hoạt động)</option>
-                                                                    <option value="expired" ${order.status == 'expired' ? 'selected' : ''}>Hết hạn</option>
-                                                                    <option value="cancelled" ${order.status == 'cancelled' ? 'selected' : ''}>Hủy</option>
-                                                                </select>
-                                                            </form>
+                                                            <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#txModal${order.id}" title="Xem chi tiết giao dịch">
+                                                                <i class="fa-solid fa-eye"></i>
+                                                            </button>
+
+                                                            <!-- Modal Chi tiết giao dịch -->
+                                                            <div class="modal fade" id="txModal${order.id}" tabindex="-1" aria-hidden="true">
+                                                              <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                  <div class="modal-body p-0">
+                                                                    <!-- Header thanh lịch -->
+                                                                    <div class="bg-primary text-white p-4 text-center rounded-top">
+                                                                       <i class="fa-solid fa-circle-check display-4 mb-2"></i>
+                                                                       <h4 class="mb-0 fw-bold">Giao dịch thành công</h4>
+                                                                       <p class="text-white-50 small mb-0">Dịch vụ Premium AI đã kích hoạt</p>
+                                                                    </div>
+                                                                    
+                                                                    <!-- Nội dung biên lai -->
+                                                                    <div class="p-4 bg-light">
+                                                                      <div class="bg-white rounded-3 shadow-sm p-4 border border-light">
+                                                                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                           <span class="text-muted small text-uppercase">Khách hàng</span>
+                                                                           <span class="fw-bold text-dark">${order.fullName}</span>
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                           <span class="text-muted small text-uppercase">Gói Đăng ký</span>
+                                                                           <span class="fw-bold text-primary">${order.packageDisplayName}</span>
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                           <span class="text-muted small text-uppercase">Số tiền</span>
+                                                                           <span class="fw-bold fs-5 text-danger"><fmt:formatNumber value="${order.totalAmount}" type="currency" currencySymbol="VND" maxFractionDigits="0"/></span>
+                                                                        </div>
+                                                                        
+                                                                        <c:set var="tx" value="${txMap[order.id]}" />
+                                                                        <c:if test="${tx != null}">
+                                                                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                               <span class="text-muted small text-uppercase">Hình thức</span>
+                                                                               <span>
+                                                                                    <c:choose>
+                                                                                        <c:when test="${tx.paymentMethod == 'bank_transfer'}"><span class="badge bg-info text-dark"><i class="fas fa-qrcode"></i> VietQR</span></c:when>
+                                                                                        <c:when test="${tx.paymentMethod == 'cod'}"><span class="badge bg-secondary"><i class="fas fa-money-bill-wave"></i> Thu tiền mặt</span></c:when>
+                                                                                        <c:otherwise><span class="badge bg-secondary">${tx.paymentMethod}</span></c:otherwise>
+                                                                                    </c:choose>
+                                                                               </span>
+                                                                            </div>
+                                                                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                                <span class="text-muted small text-uppercase">Ngày ghi nhận</span>
+                                                                                <span class="fw-bold text-dark"><fmt:formatDate value="${tx.createdDate}" pattern="HH:mm - dd/MM/yyyy"/></span>
+                                                                            </div>
+                                                                            <div class="d-flex justify-content-between">
+                                                                                <span class="text-muted small text-uppercase">Trạng thái</span>
+                                                                                <span>
+                                                                                    <c:choose>
+                                                                                        <c:when test="${tx.status == 'success'}"><span class="badge bg-success px-3 py-2 rounded-pill">Thành công</span></c:when>
+                                                                                        <c:when test="${tx.status == 'failed'}"><span class="badge bg-danger px-3 py-2 rounded-pill">Thất bại</span></c:when>
+                                                                                        <c:otherwise><span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Đang xử lý</span></c:otherwise>
+                                                                                    </c:choose>
+                                                                                </span>
+                                                                            </div>
+                                                                        </c:if>
+                                                                        <c:if test="${tx == null}">
+                                                                            <!-- Xử lý tinh tế khi không có data giao dịch -->
+                                                                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                               <span class="text-muted small text-uppercase">Hình thức</span>
+                                                                               <span class="badge bg-secondary text-white"><i class="fas fa-history"></i> Dữ liệu cũ</span>
+                                                                            </div>
+                                                                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom" style="border-bottom-style: dashed !important;">
+                                                                                <span class="text-muted small text-uppercase">Ngày ghi nhận</span>
+                                                                                <span class="fw-bold text-dark"><fmt:formatDate value="${order.createdDate}" pattern="HH:mm - dd/MM/yyyy"/></span>
+                                                                            </div>
+                                                                            <div class="d-flex justify-content-between">
+                                                                                <span class="text-muted small text-uppercase">Trạng thái</span>
+                                                                                <span class="badge bg-success px-3 py-2 rounded-pill">Đã kích hoạt</span>
+                                                                            </div>
+                                                                        </c:if>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                  <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 </c:forEach>

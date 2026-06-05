@@ -134,6 +134,7 @@
                                                         <td>
                                                             <div class="fw-bold text-dark">${req.contract.contactName}</div>
                                                             <small class="text-muted">${req.contract.email}</small>
+                                                            <div class="text-xs text-muted mt-1"><i class="fas fa-wallet me-1"></i>${req.contract.billingAddress}</div>
                                                         </td>
                                                         <td><span class="badge bg-info text-white">${req.campaignName}</span></td>
                                                         <td><fmt:formatDate value="${req.contract.createdAt}" pattern="dd/MM/yyyy"/></td>
@@ -224,6 +225,7 @@
                                                         <td>
                                                             <div class="fw-bold text-dark">${req.contract.contactName}</div>
                                                             <small class="text-muted">${req.contract.email}</small>
+                                                            <div class="text-xs text-muted mt-1"><i class="fas fa-wallet me-1"></i>${req.contract.billingAddress}</div>
                                                         </td>
                                                         <td><span class="badge bg-info text-white">${req.campaignName}</span></td>
                                                         <td>

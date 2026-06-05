@@ -1,10 +1,5 @@
 package com.example.asmnews.repository.auth;
 
-
-
-
-
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +17,7 @@ import com.example.asmnews.util.DatabaseUtils;
 public class UserDAO {
     private static final String SELECT_USER_FIELDS = 
         "SELECT UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar, " +
-        "PenName, Bio, FailedLoginAttempts, LockoutTime ";
+        "PenName, Bio, FailedLoginAttempts, LockoutTime, IsPremium, FreeSummaryCount ";
 
 
     /**
@@ -153,8 +148,8 @@ public class UserDAO {
     }
 
     public boolean insert(User user) {
-        String sql = "INSERT INTO Users (UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar, PenName, Bio, FailedLoginAttempts, LockoutTime) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Users (UserId, Password, Fullname, Birthday, Gender, Mobile, Email, Role, IsActive, Avatar, PenName, Bio, FailedLoginAttempts, LockoutTime, IsPremium, FreeSummaryCount) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -173,6 +168,8 @@ public class UserDAO {
             ps.setString(12, user.getBio());
             ps.setInt(13, user.getFailedLoginAttempts() != null ? user.getFailedLoginAttempts() : 0);
             ps.setTimestamp(14, user.getLockoutTime() != null ? new java.sql.Timestamp(user.getLockoutTime().getTime()) : null);
+            ps.setBoolean(15, user.isPremium());
+            ps.setInt(16, user.getFreeSummaryCount());
 
             int result = ps.executeUpdate();
             return result > 0;
@@ -187,7 +184,7 @@ public class UserDAO {
     public boolean update(User user) {
         String sql = "UPDATE Users SET Password = ?, Fullname = ?, Birthday = ?, Gender = ?, " +
                 "Mobile = ?, Email = ?, Role = ?, IsActive = ?, Avatar = ?, PenName = ?, Bio = ?, " +
-                "FailedLoginAttempts = ?, LockoutTime = ? WHERE UserId = ?";
+                "FailedLoginAttempts = ?, LockoutTime = ?, IsPremium = ?, FreeSummaryCount = ? WHERE UserId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -205,7 +202,9 @@ public class UserDAO {
             ps.setString(11, user.getBio());
             ps.setInt(12, user.getFailedLoginAttempts() != null ? user.getFailedLoginAttempts() : 0);
             ps.setTimestamp(13, user.getLockoutTime() != null ? new java.sql.Timestamp(user.getLockoutTime().getTime()) : null);
-            ps.setString(14, user.getId());
+            ps.setBoolean(14, user.isPremium());
+            ps.setInt(15, user.getFreeSummaryCount());
+            ps.setString(16, user.getId());
 
             int result = ps.executeUpdate();
             return result > 0;
@@ -273,6 +272,26 @@ public class UserDAO {
         return false;
     }
 
+    public boolean mobileExists(String mobile) {
+        String sql = "SELECT COUNT(*) FROM Users WHERE Mobile = ?";
+
+        try (Connection conn = DatabaseUtils.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, mobile);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi kiểm tra mobile tồn tại: " + e.getMessage());
+        }
+
+        return false;
+    }
+
     /**
      * Map ResultSet thành User object
      */
@@ -309,6 +328,8 @@ public class UserDAO {
             user.setBio(rs.getString("Bio"));
             user.setFailedLoginAttempts(rs.getInt("FailedLoginAttempts"));
             user.setLockoutTime(rs.getTimestamp("LockoutTime"));
+            user.setPremium(rs.getBoolean("IsPremium"));
+            user.setFreeSummaryCount(rs.getInt("FreeSummaryCount"));
         } catch (SQLException e) {
             // Bỏ qua nếu query chưa có các cột này
         }
@@ -483,6 +504,30 @@ public class UserDAO {
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("Lỗi khi đặt lại số lần đăng nhập sai: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean decrementFreeSummaryCount(String userId) {
+        String sql = "UPDATE Users SET FreeSummaryCount = FreeSummaryCount - 1 WHERE UserId = ? AND FreeSummaryCount > 0";
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi trừ lượt summary: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean upgradeToPremium(String userId) {
+        String sql = "UPDATE Users SET IsPremium = 1 WHERE UserId = ?";
+        try (Connection conn = DatabaseUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi nâng cấp Premium: " + e.getMessage());
             return false;
         }
     }

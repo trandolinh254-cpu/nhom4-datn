@@ -24,9 +24,9 @@ public class OrderDAO {
      * @return true nếu thành công
      */
     public boolean create(Order order) {
-        String sql = "INSERT INTO Orders (UserId, NewspaperType, PackageDuration, FullName, Phone, Email, " +
-                "City, District, Ward, AddressDetail, Note, TotalAmount, Status, StartDate, EndDate) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Orders (UserId, NewspaperType, PackageDuration, FullName, Phone, Email, " + // // FIX
+                "Note, TotalAmount, Status, StartDate, EndDate, CreatedDate) " + // // FIX
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // // FIX
 
         // FIX: Đã gỡ bỏ RETURN_GENERATED_KEYS gây xung đột với Database Driver
         try (Connection conn = DatabaseUtils.getConnection();
@@ -43,25 +43,27 @@ public class OrderDAO {
             ps.setString(4, order.getFullName());
             ps.setString(5, order.getPhone());
             ps.setString(6, order.getEmail());
-            ps.setString(7, order.getCity());
-            ps.setString(8, order.getDistrict());
-            ps.setString(9, order.getWard());
-            ps.setString(10, order.getAddressDetail());
-            ps.setString(11, order.getNote());
-            ps.setInt(12, order.getTotalAmount());
-            ps.setString(13, order.getStatus());
+            ps.setString(7, order.getNote()); // // FIX
+            ps.setInt(8, order.getTotalAmount()); // // FIX
+            ps.setString(9, order.getStatus()); // // FIX
 
             if (order.getStartDate() != null) {
-                ps.setTimestamp(14, new java.sql.Timestamp(order.getStartDate().getTime()));
+                ps.setTimestamp(10, new java.sql.Timestamp(order.getStartDate().getTime())); // // FIX
             } else {
-                ps.setNull(14, Types.TIMESTAMP);
+                ps.setNull(10, Types.TIMESTAMP); // // FIX
             }
 
             if (order.getEndDate() != null) {
-                ps.setTimestamp(15, new java.sql.Timestamp(order.getEndDate().getTime()));
+                ps.setTimestamp(11, new java.sql.Timestamp(order.getEndDate().getTime())); // // FIX
             } else {
-                ps.setNull(15, Types.TIMESTAMP);
+                ps.setNull(11, Types.TIMESTAMP); // // FIX
             }
+
+            if (order.getCreatedDate() != null) { // // FIX
+                ps.setTimestamp(12, new java.sql.Timestamp(order.getCreatedDate().getTime())); // // FIX
+            } else { // // FIX
+                ps.setTimestamp(12, new java.sql.Timestamp(System.currentTimeMillis())); // // FIX
+            } // // FIX
 
             int affectedRows = ps.executeUpdate();
 
@@ -227,10 +229,10 @@ public class OrderDAO {
         order.setFullName(rs.getString("FullName"));
         order.setPhone(rs.getString("Phone"));
         order.setEmail(rs.getString("Email"));
-        order.setCity(rs.getString("City"));
-        order.setDistrict(rs.getString("District"));
-        order.setWard(rs.getString("Ward"));
-        order.setAddressDetail(rs.getString("AddressDetail"));
+        // order.setCity(rs.getString("City")); // // FIX (comment do DB đã DROP cột)
+        // order.setDistrict(rs.getString("District")); // // FIX (comment do DB đã DROP cột)
+        // order.setWard(rs.getString("Ward")); // // FIX (comment do DB đã DROP cột)
+        // order.setAddressDetail(rs.getString("AddressDetail")); // // FIX (comment do DB đã DROP cột)
         order.setNote(rs.getString("Note"));
         order.setTotalAmount(rs.getInt("TotalAmount"));
         order.setStatus(rs.getString("Status"));
@@ -270,9 +272,9 @@ public class OrderDAO {
      * Thêm đơn đặt báo mới (Trả về lỗi chi tiết của SQL)
      */
     public String createWithResult(Order order) {
-        String sql = "INSERT INTO Orders (UserId, NewspaperType, PackageDuration, FullName, Phone, Email, " +
-                "City, District, Ward, AddressDetail, Note, TotalAmount, Status, StartDate, EndDate) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Orders (UserId, NewspaperType, PackageDuration, FullName, Phone, Email, " + // // FIX
+                "Note, TotalAmount, Status, StartDate, EndDate, CreatedDate) " + // // FIX
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // // FIX
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -287,25 +289,27 @@ public class OrderDAO {
             ps.setString(4, order.getFullName());
             ps.setString(5, order.getPhone());
             ps.setString(6, order.getEmail());
-            ps.setString(7, order.getCity());
-            ps.setString(8, order.getDistrict());
-            ps.setString(9, order.getWard());
-            ps.setString(10, order.getAddressDetail());
-            ps.setString(11, order.getNote());
-            ps.setInt(12, order.getTotalAmount());
-            ps.setString(13, order.getStatus());
+            ps.setString(7, order.getNote()); // // FIX
+            ps.setInt(8, order.getTotalAmount()); // // FIX
+            ps.setString(9, order.getStatus()); // // FIX
 
             if (order.getStartDate() != null) {
-                ps.setTimestamp(14, new java.sql.Timestamp(order.getStartDate().getTime()));
+                ps.setTimestamp(10, new java.sql.Timestamp(order.getStartDate().getTime())); // // FIX
             } else {
-                ps.setNull(14, Types.TIMESTAMP);
+                ps.setNull(10, Types.TIMESTAMP); // // FIX
             }
 
             if (order.getEndDate() != null) {
-                ps.setTimestamp(15, new java.sql.Timestamp(order.getEndDate().getTime()));
+                ps.setTimestamp(11, new java.sql.Timestamp(order.getEndDate().getTime())); // // FIX
             } else {
-                ps.setNull(15, Types.TIMESTAMP);
+                ps.setNull(11, Types.TIMESTAMP); // // FIX
             }
+
+            if (order.getCreatedDate() != null) { // // FIX
+                ps.setTimestamp(12, new java.sql.Timestamp(order.getCreatedDate().getTime())); // // FIX
+            } else { // // FIX
+                ps.setTimestamp(12, new java.sql.Timestamp(System.currentTimeMillis())); // // FIX
+            } // // FIX
 
             int affectedRows = ps.executeUpdate();
 

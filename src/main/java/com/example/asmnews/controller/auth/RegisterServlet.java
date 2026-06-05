@@ -61,6 +61,13 @@ public class RegisterServlet extends BaseServlet {
             return;
         }
 
+        // 4. Kiểm tra trùng Số điện thoại
+        if (!mobile.isEmpty() && userDAO.mobileExists(mobile)) {
+            request.setAttribute("errorMessage", "Số điện thoại này đã được sử dụng!");
+            forward(request, response, "/WEB-INF/views/auth/register.jsp");
+            return;
+        }
+
         try {
             Date birthday = null;
             if (!birthdayStr.isEmpty()) {

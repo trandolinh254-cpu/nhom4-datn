@@ -58,7 +58,17 @@ public class AdminOrderServlet extends BaseServlet {
     private void showPremiumManagement(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Order> premiumOrders = orderDAO.findByType("digital");
+        
+        java.util.Map<Integer, Transaction> txMap = new java.util.HashMap<>();
+        for (Order o : premiumOrders) {
+            Transaction tx = transactionDAO.findByOrderId(o.getId());
+            if (tx != null) {
+                txMap.put(o.getId(), tx);
+            }
+        }
+        
         request.setAttribute("orders", premiumOrders);
+        request.setAttribute("txMap", txMap);
         forward(request, response, "/WEB-INF/views/admin/transactions/order-premium.jsp");
     }
 
@@ -130,13 +140,16 @@ public class AdminOrderServlet extends BaseServlet {
         String status = request.getParameter("status"); // VD: "active", "delivered", "cancelled"...
 
         if (orderDAO.updateStatus(orderId, status)) {
+            // Lấy thông tin đơn hàng để kiểm tra loại
+            Order order = orderDAO.findById(orderId);
 
             // =======================================================
-            // FIX: ĐỒNG BỘ TRẠNG THÁI GIAO DỊCH (TRANSACTION)
+            // FIX: ĐỒNG BỘ TRẠNG THÁI GIAO DỊCH (TRANSACTION) & KÍCH HOẠT PREMIUM
             // =======================================================
             String txStatus = "pending";
             // Các trạng thái đơn hàng coi là "Thành công"
-            if ("active".equals(status) || "delivered".equals(status) || "completed".equals(status)) {
+            boolean isSuccessStatus = "active".equals(status) || "delivered".equals(status) || "completed".equals(status);
+            if (isSuccessStatus) {
                 txStatus = "success";
             }
             // Các trạng thái đơn hàng coi là "Thất bại" hoặc Hủy
@@ -149,6 +162,20 @@ public class AdminOrderServlet extends BaseServlet {
             if (!txUpdated) {
                 System.err.println(
                         "Cảnh báo: Cập nhật Order thành công nhưng chưa đổi được trạng thái Transaction liên kết.");
+            }
+
+            // Kích hoạt Premium cho User nếu đây là đơn hàng Báo điện tử Premium thành công
+            if (order != null && "digital".equals(order.getNewspaperType()) && isSuccessStatus) {
+                String userId = order.getUserId();
+                if (userId != null && !userId.trim().isEmpty()) {
+                    com.example.asmnews.repository.auth.UserDAO userDAO = new com.example.asmnews.repository.auth.UserDAO();
+                    boolean userUpgraded = userDAO.upgradeToPremium(userId);
+                    if (userUpgraded) {
+                        System.out.println("Đã tự động kích hoạt tài khoản Premium thành công cho User: " + userId);
+                    } else {
+                        System.err.println("Lỗi: Không thể tự động nâng cấp Premium cho User: " + userId);
+                    }
+                }
             }
             // =======================================================
 

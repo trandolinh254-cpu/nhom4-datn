@@ -34,7 +34,7 @@
 
 <div class="w-full flex justify-center items-start relative xl:overflow-visible overflow-hidden">
     <!-- QUẢNG CÁO SIDEBAR TRÁI (Sticky) -->
-    <c:if test="${not empty sidebarLeftAds}">
+    <c:if test="${not empty sidebarLeftAds and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
         <div class="hidden xl:block w-[160px] flex-shrink-0 pt-8 z-0 mr-6 relative">
             <div class="sticky top-24 flex flex-col gap-4">
                 <c:forEach var="ad" items="${sidebarLeftAds}">
@@ -50,7 +50,7 @@
     </c:if>
 
     <main class="max-w-6xl px-4 py-8 w-full smooth-load bg-white z-10 relative">
-        <c:if test="${not empty topBannerAd}">
+        <c:if test="${not empty topBannerAd and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
             <div class="w-full aspect-[1120/90] mb-8 rounded shadow-sm relative overflow-hidden group">
                 <span class="absolute top-1 right-2 text-[10px] bg-white/80 text-gray-400 px-1 rounded shadow-sm z-10">Tài trợ</span>
                 <a href="${topBannerAd.targetUrl}" target="_blank" class="block w-full h-full">
@@ -117,7 +117,7 @@
     </main>
 
     <!-- QUẢNG CÁO SIDEBAR PHẢI (Sticky) -->
-    <c:if test="${not empty sidebarRightAds}">
+    <c:if test="${not empty sidebarRightAds and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
         <div class="hidden xl:block w-[160px] flex-shrink-0 pt-8 z-0 ml-6 relative">
             <div class="sticky top-24 flex flex-col gap-4">
                 <c:forEach var="ad" items="${sidebarRightAds}">

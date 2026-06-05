@@ -6,7 +6,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Thanh Niên Premium</title>
+<title>XYZ Premium AI</title> <!-- // FIX -->
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
@@ -123,8 +123,8 @@
 <div class="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-2 gap-section-gap items-center">
 <div>
 <div class="inline-block bg-primary-container text-on-primary-container font-label-caps text-label-caps px-2 py-1 rounded-sm mb-stack-md uppercase">Độc quyền</div>
-<h1 class="font-display-lg text-display-lg md:text-[56px] md:leading-[64px] text-on-surface mb-stack-md">XYZ Premium — Trải nghiệm tin tức đẳng cấp</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-md">Đọc tin không quảng cáo, tiếp cận nội dung chuyên sâu và phân tích đặc quyền từ đội ngũ phóng viên hàng đầu.</p>
+<h1 class="font-display-lg text-display-lg md:text-[56px] md:leading-[64px] text-on-surface mb-stack-md">XYZ Premium — Trải nghiệm dịch vụ AI đẳng cấp</h1> <!-- // FIX -->
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-stack-md">Không giới hạn lượt sử dụng trợ lý ảo AI, dịch thuật đa ngôn ngữ và tóm tắt bài viết tự động.</p> <!-- // FIX -->
 <button class="bg-primary text-on-primary font-label-caps text-label-caps px-8 py-4 rounded uppercase hover:bg-surface-tint transition-colors shadow-sm">Đăng ký ngay</button>
 </div>
 <div class="relative w-full aspect-[4/3] rounded overflow-hidden">
@@ -137,29 +137,29 @@
 <section class="py-section-gap bg-surface">
 <div class="max-w-container-max mx-auto px-gutter">
 <div class="text-center mb-section-gap">
-<h2 class="font-headline-md text-headline-md text-on-surface">Đặc quyền Hội viên</h2>
+<h2 class="font-headline-md text-headline-md text-on-surface">Đặc quyền Premium AI</h2> <!-- // FIX -->
 </div>
 <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
 <div class="bg-pure-white p-6 border border-border-subtle rounded flex flex-col items-start">
 <div class="w-12 h-12 rounded bg-surface-container-low flex items-center justify-center text-primary mb-stack-md">
-<span class="material-symbols-outlined icon-fill">workspace_premium</span>
+<span class="material-symbols-outlined icon-fill">smart_toy</span> <!-- // FIX -->
 </div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Tin bài Đặc quyền</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Những phóng sự điều tra, phân tích chuyên sâu chỉ dành cho hội viên.</p>
-</div>
-<div class="bg-pure-white p-6 border border-border-subtle rounded flex flex-col items-start">
-<div class="w-12 h-12 rounded bg-surface-container-low flex items-center justify-center text-primary mb-stack-md">
-<span class="material-symbols-outlined icon-fill">block</span>
-</div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Không quảng cáo</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Trải nghiệm đọc tin mượt mà, tập trung hoàn toàn vào nội dung.</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Trợ lý ảo AI Chat</h3> <!-- // FIX -->
+<p class="font-body-md text-body-md text-on-surface-variant">Trò chuyện, giải đáp thắc mắc và hỗ trợ viết lách thông minh 24/7.</p> <!-- // FIX -->
 </div>
 <div class="bg-pure-white p-6 border border-border-subtle rounded flex flex-col items-start">
 <div class="w-12 h-12 rounded bg-surface-container-low flex items-center justify-center text-primary mb-stack-md">
-<span class="material-symbols-outlined icon-fill">mail</span>
+<span class="material-symbols-outlined icon-fill">translate</span> <!-- // FIX -->
 </div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Bản tin Sáng sớm</h3>
-<p class="font-body-md text-body-md text-on-surface-variant">Nhận tin tức quan trọng nhất trực tiếp qua email vào mỗi sáng.</p>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Dịch thuật AI</h3> <!-- // FIX -->
+<p class="font-body-md text-body-md text-on-surface-variant">Dịch thuật bài viết chuẩn xác sang nhiều ngôn ngữ khác nhau ngay lập tức.</p> <!-- // FIX -->
+</div>
+<div class="bg-pure-white p-6 border border-border-subtle rounded flex flex-col items-start">
+<div class="w-12 h-12 rounded bg-surface-container-low flex items-center justify-center text-primary mb-stack-md">
+<span class="material-symbols-outlined icon-fill">description</span> <!-- // FIX -->
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-stack-sm">Tóm tắt tự động</h3> <!-- // FIX -->
+<p class="font-body-md text-body-md text-on-surface-variant">Tóm tắt nhanh nội dung bài viết dài chỉ trong vài giây bằng trí tuệ nhân tạo.</p> <!-- // FIX -->
 </div>
 </div>
 </div>
@@ -171,41 +171,19 @@
 <h2 class="font-headline-md text-headline-md text-on-surface">Chọn gói phù hợp với bạn</h2>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter items-center">
-    
-    <%-- FIX: Đồng bộ giá, tên gói và gắn link truyền tham số --%>
-    <div class="bg-surface p-8 border border-border-subtle rounded flex flex-col">
-        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Gói Ngắn Hạn</h3>
-        <div class="mb-4">
-            <span class="font-display-lg text-display-lg text-on-surface">250.000đ</span>
-            <span class="font-body-md text-body-md text-on-surface-variant">/3 tháng</span>
-        </div>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-grow">Phù hợp trải nghiệm thử.</p>
-        <a href="${pageContext.request.contextPath}/order?type=digital&duration=3_months" class="text-center block w-full bg-transparent border border-primary text-primary font-label-caps text-label-caps px-4 py-3 rounded uppercase hover:bg-primary-fixed transition-colors">Chọn gói này</a>
-    </div>
-
-    <div class="bg-primary text-on-primary p-8 border border-primary rounded flex flex-col relative transform md:-translate-y-4 shadow-lg">
-        <div class="absolute top-0 right-0 bg-urgent-red text-on-error font-label-caps text-label-caps px-3 py-1 rounded-bl rounded-tr uppercase text-[10px]">Phổ biến nhất</div>
-        <h3 class="font-headline-sm text-headline-sm text-on-primary mb-2">Gói Bán Niên</h3>
-        <div class="mb-4">
-            <span class="font-display-lg text-display-lg text-on-primary">480.000đ</span>
-            <span class="font-body-md text-body-md text-on-primary">/6 tháng</span>
-        </div>
-        <p class="font-body-md text-body-md text-on-primary mb-6 flex-grow">Tiết kiệm 20.000đ so với gói 3 tháng.</p>
-        <a href="${pageContext.request.contextPath}/order?type=digital&duration=6_months" class="text-center block w-full bg-surface text-primary font-label-caps text-label-caps px-4 py-3 rounded uppercase hover:bg-surface-tint hover:text-pure-white transition-colors">Chọn gói này</a>
-    </div>
-    
-    <div class="bg-surface p-8 border border-border-subtle rounded flex flex-col">
-        <h3 class="font-headline-sm text-headline-sm text-on-surface mb-2">Gói Thường Niên</h3>
-        <div class="mb-4">
-            <span class="font-display-lg text-display-lg text-on-surface">900.000đ</span>
-            <span class="font-body-md text-body-md text-on-surface-variant">/12 tháng</span>
-        </div>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-6 flex-grow">Lựa chọn tiết kiệm nhất. Tặng kèm 1 tháng.</p>
-        <a href="${pageContext.request.contextPath}/order?type=digital&duration=12_months" class="text-center block w-full bg-transparent border border-primary text-primary font-label-caps text-label-caps px-4 py-3 rounded uppercase hover:bg-primary-fixed transition-colors">Chọn gói này</a>
-    </div>
-
-</div>
+<div class="max-w-md mx-auto"> <!-- // FIX -->
+    <%-- FIX: Chỉ hiển thị duy nhất Gói Premium Trọn Đời --%>
+    <div class="bg-primary text-on-primary p-8 border border-primary rounded-xl flex flex-col relative shadow-xl text-center"> <!-- // FIX -->
+        <div class="absolute top-0 right-0 bg-urgent-red text-on-error font-label-caps text-label-caps px-4 py-1.5 rounded-bl rounded-tr-xl uppercase text-[10px] tracking-wider">Ưu đãi trọn đời</div> <!-- // FIX -->
+        <h3 class="font-headline-sm text-headline-sm text-on-primary mb-3">Gói Premium Trọn Đời</h3> <!-- // FIX -->
+        <div class="mb-5"> <!-- // FIX -->
+            <span class="font-display-lg text-display-lg text-on-primary text-5xl">990.000đ</span> <!-- // FIX -->
+            <span class="font-body-md text-body-md text-on-primary/80 block mt-1">Sở hữu vĩnh viễn</span> <!-- // FIX -->
+        </div> <!-- // FIX -->
+        <p class="font-body-md text-body-md text-on-primary/95 mb-6">Trải nghiệm không giới hạn trợ lý ảo AI Chat, dịch thuật đa ngôn ngữ và tóm tắt tự động trọn đời. Chỉ thanh toán một lần duy nhất.</p> <!-- // FIX -->
+        <a href="${pageContext.request.contextPath}/order?type=digital&duration=lifetime" class="text-center block w-full bg-pure-white text-primary font-label-caps text-label-caps px-6 py-4 rounded-lg uppercase hover:bg-surface-tint hover:text-pure-white transition-all font-bold shadow-md">Đăng ký ngay</a> <!-- // FIX -->
+    </div> <!-- // FIX -->
+</div> <!-- // FIX -->
 </div>
 </section>
 </main>

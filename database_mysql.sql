@@ -1,4 +1,199 @@
-﻿DROP DATABASE IF EXISTS asm_news;
+DROP DATABASE IF EXISTS asm_news;
+CREATE DATABASE asm_news;
+USE asm_news;
+
+
+/****** Object:  Table ad_campaigns    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE ad_campaigns(
+	CampaignId int AUTO_INCREMENT NOT NULL,
+	contract_id int NOT NULL,
+	position_id int NOT NULL,
+	campaign_name NVARCHAR(200) NOT NULL,
+	start_date datetime NOT NULL,
+	end_date datetime NOT NULL,
+	target_url NVARCHAR(500) NOT NULL,
+	drive_url NVARCHAR(500) NULL,
+	image_url NVARCHAR(500) NULL,
+	status NVARCHAR(50) NULL,
+	approved_by NVARCHAR(50) NULL,
+PRIMARY KEY 
+(
+	CampaignId )
+);
+
+/****** Object:  Table ad_contracts    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE ad_contracts(
+	ContractId int AUTO_INCREMENT NOT NULL,
+	user_id NVARCHAR(50) NOT NULL,
+	company_name NVARCHAR(200) NOT NULL,
+	billing_address NVARCHAR(500) NOT NULL,
+	contact_name NVARCHAR(100) NOT NULL,
+	phone NVARCHAR(20) NOT NULL,
+	email NVARCHAR(100) NOT NULL,
+	total_price decimal(18, 2) NOT NULL,
+	status NVARCHAR(50) NULL,
+	created_at datetime NULL,
+PRIMARY KEY 
+(
+	ContractId )
+);
+
+/****** Object:  Table ad_positions    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE ad_positions(
+	PositionId int AUTO_INCREMENT NOT NULL,
+	platform NVARCHAR(50) NOT NULL,
+	name NVARCHAR(255) NOT NULL,
+	size_desc NVARCHAR(100) NULL,
+	base_price decimal(15, 0) NULL,
+	status NVARCHAR(50) NULL,
+PRIMARY KEY 
+(
+	PositionId )
+);
+
+/****** Object:  Table Categories    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE Categories(
+	CategoryId NVARCHAR(50) NOT NULL,
+	Name NVARCHAR(255) NOT NULL,
+PRIMARY KEY 
+(
+	CategoryId )
+);
+
+/****** Object:  Table Comments    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE Comments(
+	CommentId int AUTO_INCREMENT NOT NULL,
+	Content LONGTEXT NOT NULL,
+	CreatedDate datetime NULL,
+	UserId NVARCHAR(50) NOT NULL,
+	NewsId NVARCHAR(50) NOT NULL,
+	ReportCount int NULL,
+	ParentId int NULL,
+PRIMARY KEY 
+(
+	CommentId )
+);
+
+/****** Object:  Table News    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE News(
+	NewsId NVARCHAR(50) NOT NULL,
+	Title NVARCHAR(500) NOT NULL,
+	Content LONGTEXT NOT NULL,
+	Image LONGTEXT NULL,
+	PostedDate date NOT NULL,
+	Author NVARCHAR(50) NOT NULL,
+	ViewCount int NULL,
+	CategoryId NVARCHAR(50) NOT NULL,
+	Home TINYINT(1) NULL,
+	Status int NULL,
+	SubCategory NVARCHAR(255) NULL,
+PRIMARY KEY 
+(
+	NewsId )
+);
+
+/****** Object:  Table Newsletters    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE Newsletters(
+	Email NVARCHAR(255) NOT NULL,
+	Enabled TINYINT(1) NULL,
+PRIMARY KEY 
+(
+	Email )
+);
+
+/****** Object:  Table Orders    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE Orders(
+	OrderId int AUTO_INCREMENT NOT NULL,
+	UserId NVARCHAR(50) NULL,
+	NewspaperType NVARCHAR(20) NOT NULL,
+	PackageDuration NVARCHAR(20) NOT NULL,
+	FullName NVARCHAR(100) NOT NULL,
+	Phone NVARCHAR(20) NOT NULL,
+	Email NVARCHAR(100) NOT NULL,
+	City NVARCHAR(100) NOT NULL,
+	District NVARCHAR(100) NOT NULL,
+	Ward NVARCHAR(100) NOT NULL,
+	AddressDetail NVARCHAR(255) NOT NULL,
+	Note NVARCHAR(500) NULL,
+	TotalAmount int NOT NULL,
+	Status NVARCHAR(20) NOT NULL,
+	CreatedDate datetime NOT NULL,
+	StartDate datetime NULL,
+	EndDate datetime NULL,
+ CONSTRAINT PK__Orders__3214EC073230C5CF PRIMARY KEY 
+(
+	OrderId )
+);
+
+/****** Object:  Table Reactions    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE Reactions(
+	UserId NVARCHAR(50) NOT NULL,
+	NewsId NVARCHAR(50) NOT NULL,
+	Type tinyint NOT NULL,
+	CreatedDate datetime NULL,
+ CONSTRAINT PK_Reactions PRIMARY KEY 
+(
+	UserId ,
+	NewsId )
+);
+
+/****** Object:  Table Transactions    Script Date: 04/06/2026 1:05:56 CH ******/
+
+
+
+
+CREATE TABLE Transactions(
+	TransactionId int AUTO_INCREMENT NOT NULL,
+	OrderId int NULL,
+	UserId NVARCHAR(50) NULL,
+	TransactionType NVARCHAR(50) NOT NULL,
+	Amount int NOT NULL,
+	PaymentMethod NVARCHAR(50) NOT NULL,
+	Status NVARCHAR(50) NOT NULL,
+	TransactionAction NVARCHAR(50) NOT NULL,
+	CreatedDate datetime NULL,
+ CONSTRAINT PK__Transact__3214EC076DD3F8B0 PRIMARY KEY 
+(
+	TransactionId )
+);
+
+/****** Object:  Table Users    Script Date: 04/06/2026 1:05:56 CH ******/
 CREATE DATABASE asm_news;
 USE asm_news;
 
@@ -209,6 +404,12 @@ CREATE TABLE Users(
 	Role tinyint NULL,
 	IsActive TINYINT(1) NULL,
 	Avatar NVARCHAR(255) NULL,
+	PenName NVARCHAR(255) NULL,
+	Bio NVARCHAR(500) NULL,
+	FailedLoginAttempts INT DEFAULT 0,
+	LockoutTime DATETIME NULL,
+	IsPremium TINYINT(1) DEFAULT 0,
+	FreeSummaryCount INT DEFAULT 4,
 PRIMARY KEY 
 (
 	UserId )
@@ -3168,51 +3369,66 @@ ALTER TABLE Users ADD UNIQUE (Email);
 
 
 
-ALTER TABLE ad_campaigns  ADD FOREIGN KEY(approved_by) REFERENCES Users (UserId);
+ALTER TABLE ad_campaigns  ADD FOREIGN KEY(approved_by) REFERENCES Users (UserId)
+;
 
-ALTER TABLE ad_campaigns  ADD FOREIGN KEY(contract_id) REFERENCES ad_contracts (ContractId);
+ALTER TABLE ad_campaigns  ADD FOREIGN KEY(contract_id) REFERENCES ad_contracts (ContractId)
+;
 
-ALTER TABLE ad_campaigns  ADD FOREIGN KEY(position_id) REFERENCES ad_positions (PositionId);
+ALTER TABLE ad_campaigns  ADD FOREIGN KEY(position_id) REFERENCES ad_positions (PositionId)
+;
 
-ALTER TABLE ad_contracts  ADD FOREIGN KEY(user_id) REFERENCES Users (UserId);
+ALTER TABLE ad_contracts  ADD FOREIGN KEY(user_id) REFERENCES Users (UserId)
+;
 
-ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_News FOREIGN KEY(NewsId) REFERENCES News (NewsId);
-
-
-
-ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_Parent FOREIGN KEY(ParentId) REFERENCES Comments (CommentId);
-
-
-
-ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_Users FOREIGN KEY(UserId) REFERENCES Users (UserId);
+ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_News FOREIGN KEY(NewsId) REFERENCES News (NewsId)
+;
 
 
 
-ALTER TABLE News  ADD FOREIGN KEY(Author) REFERENCES Users (UserId);
-
-ALTER TABLE News  ADD FOREIGN KEY(CategoryId) REFERENCES Categories (CategoryId);
-
-ALTER TABLE News  ADD  CONSTRAINT FK_News_Categories FOREIGN KEY(CategoryId) REFERENCES Categories (CategoryId);
+ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_Parent FOREIGN KEY(ParentId) REFERENCES Comments (CommentId)
+;
 
 
 
-ALTER TABLE Orders  ADD  CONSTRAINT FK_Orders_Users FOREIGN KEY(UserId) REFERENCES Users (UserId);
+ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_Users FOREIGN KEY(UserId) REFERENCES Users (UserId)
+;
 
 
 
-ALTER TABLE Reactions  ADD  CONSTRAINT FK_Reactions_News FOREIGN KEY(NewsId) REFERENCES News (NewsId);
+ALTER TABLE News  ADD FOREIGN KEY(Author) REFERENCES Users (UserId)
+;
+
+ALTER TABLE News  ADD FOREIGN KEY(CategoryId) REFERENCES Categories (CategoryId)
+;
+
+ALTER TABLE News  ADD  CONSTRAINT FK_News_Categories FOREIGN KEY(CategoryId) REFERENCES Categories (CategoryId)
+;
 
 
 
-ALTER TABLE Reactions  ADD  CONSTRAINT FK_Reactions_Users FOREIGN KEY(UserId) REFERENCES Users (UserId);
+ALTER TABLE Orders  ADD  CONSTRAINT FK_Orders_Users FOREIGN KEY(UserId) REFERENCES Users (UserId)
+;
 
 
 
-ALTER TABLE Transactions  ADD  CONSTRAINT FK_Transactions_Orders FOREIGN KEY(OrderId) REFERENCES Orders (OrderId);
+ALTER TABLE Reactions  ADD  CONSTRAINT FK_Reactions_News FOREIGN KEY(NewsId) REFERENCES News (NewsId)
+;
 
 
 
-ALTER TABLE Transactions  ADD  CONSTRAINT FK_Transactions_Users FOREIGN KEY(UserId) REFERENCES Users (UserId);
+ALTER TABLE Reactions  ADD  CONSTRAINT FK_Reactions_Users FOREIGN KEY(UserId) REFERENCES Users (UserId)
+;
+
+
+
+ALTER TABLE Transactions  ADD  CONSTRAINT FK_Transactions_Orders FOREIGN KEY(OrderId) REFERENCES Orders (OrderId)
+;
+
+
+
+ALTER TABLE Transactions  ADD  CONSTRAINT FK_Transactions_Users FOREIGN KEY(UserId) REFERENCES Users (UserId)
+;
 
 
 

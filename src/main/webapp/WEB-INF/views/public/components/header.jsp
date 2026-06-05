@@ -32,7 +32,6 @@
         </div>
         <div class="flex gap-5 items-center text-gray-600 tracking-wide uppercase">
             <a href="${pageContext.request.contextPath}/quang-cao/online" class="text-gray-500 hover:text-primary transition no-underline">Quảng cáo</a>
-            <a href="${pageContext.request.contextPath}/order" class="text-gray-500 hover:text-primary transition no-underline">Đặt báo</a>
             <a href="${pageContext.request.contextPath}/premium" class="text-red-500 hover:text-red-600 font-bold transition no-underline flex items-center gap-1"><i class="fas fa-crown"></i> Premium</a>
             <c:choose>
                 <c:when test="${sessionScope.currentUser != null}">
