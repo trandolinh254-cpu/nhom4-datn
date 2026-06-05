@@ -240,8 +240,8 @@ public class NewsDAO {
      */
     public boolean insert(News news) {
         String sql = "INSERT INTO News (NewsId, Title, Summary, Content, Image, PostedDate, Author, ViewCount, CategoryId, Home, SubCategory, " +
-                "MetaTitle, MetaDescription, Slug, ScheduledDate, RejectReason, LastModified, IsDeleted) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "MetaTitle, MetaDescription, Slug, ScheduledDate, RejectReason, LastModified, IsDeleted, Status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -264,6 +264,7 @@ public class NewsDAO {
             ps.setString(16, news.getRejectReason());
             ps.setTimestamp(17, news.getLastModified() != null ? new java.sql.Timestamp(news.getLastModified().getTime()) : null);
             ps.setBoolean(18, news.getIsDeleted() != null ? news.getIsDeleted() : false);
+            ps.setInt(19, news.getStatus()); // // FIX
 
             int result = ps.executeUpdate();
             return result > 0;
@@ -283,7 +284,7 @@ public class NewsDAO {
     public boolean update(News news) {
         String sql = "UPDATE News SET Title = ?, Summary = ?, Content = ?, Image = ?, PostedDate = ?, " +
                 "Author = ?, ViewCount = ?, CategoryId = ?, Home = ?, SubCategory = ?, " +
-                "MetaTitle = ?, MetaDescription = ?, Slug = ?, ScheduledDate = ?, RejectReason = ?, LastModified = ?, IsDeleted = ? " +
+                "MetaTitle = ?, MetaDescription = ?, Slug = ?, ScheduledDate = ?, RejectReason = ?, LastModified = ?, IsDeleted = ?, Status = ? " +
                 "WHERE NewsId = ?";
 
         try (Connection conn = DatabaseUtils.getConnection();
@@ -306,7 +307,8 @@ public class NewsDAO {
             ps.setString(15, news.getRejectReason());
             ps.setTimestamp(16, news.getLastModified() != null ? new java.sql.Timestamp(news.getLastModified().getTime()) : null);
             ps.setBoolean(17, news.getIsDeleted() != null ? news.getIsDeleted() : false);
-            ps.setString(18, news.getId());
+            ps.setInt(18, news.getStatus()); // // FIX
+            ps.setString(19, news.getId()); // // FIX
 
             int result = ps.executeUpdate();
             return result > 0;

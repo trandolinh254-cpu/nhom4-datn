@@ -222,7 +222,23 @@
                                 </div>
                             </nav>
 
-                            <div class="container-fluid p-4">
+                             <div class="container-fluid p-4">
+                                <c:if test="${sessionScope.successMessage != null}">
+                                    <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+                                        <i class="fas fa-check-circle me-2 fs-5"></i> ${sessionScope.successMessage}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <c:remove var="successMessage" scope="session" />
+                                </c:if>
+
+                                <c:if test="${sessionScope.errorMessage != null}">
+                                    <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                                        <i class="fas fa-exclamation-circle me-2 fs-5"></i> ${sessionScope.errorMessage}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    </div>
+                                    <c:remove var="errorMessage" scope="session" />
+                                </c:if>
+
                                 <form id="newsForm" action="${pageContext.request.contextPath}/reporter/news/save"
                                     method="post" enctype="multipart/form-data">
                                     <div class="row">
@@ -534,6 +550,10 @@
                     if (btnSaveDraft) {
                         btnSaveDraft.addEventListener("click", function() {
                             document.getElementById("formStatus").value = "3"; // Đặt trạng thái là Bản nháp
+                            // // FIX: Cập nhật dữ liệu từ CKEditor vào textarea trước khi submit
+                            if (window.CKEDITOR && CKEDITOR.instances.content) {
+                                CKEDITOR.instances.content.updateElement();
+                            }
                             // Loại bỏ thuộc tính required tạm thời để cho phép lưu nháp khi chưa nhập đủ
                             document.querySelectorAll("#newsForm [required]").forEach(function(el) {
                                 el.removeAttribute("required");

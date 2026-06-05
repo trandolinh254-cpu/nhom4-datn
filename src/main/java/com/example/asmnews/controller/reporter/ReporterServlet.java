@@ -294,7 +294,12 @@ public class ReporterServlet extends BaseServlet {
 
         if (title.isEmpty() || content.isEmpty() || categoryId.isEmpty()) {
             setErrorMessage(request, "Vui lòng nhập đầy đủ thông tin bắt buộc");
-            redirect(response, request.getContextPath() + "/reporter/news/add");
+            // // FIX: Redirect về trang edit nếu là chỉnh sửa bài viết cũ
+            if (!newsId.isEmpty()) {
+                redirect(response, request.getContextPath() + "/reporter/news/edit?id=" + newsId);
+            } else {
+                redirect(response, request.getContextPath() + "/reporter/news/add");
+            }
             return;
         }
 
