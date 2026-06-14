@@ -25,7 +25,9 @@ public class CategoryDAO {
      */
     public List<Category> findAll() {
         List<Category> categories = new ArrayList<>();
-        String sql = "SELECT CategoryId, Name FROM Categories ORDER BY Name";
+        String sql = "SELECT CategoryId, Name FROM Categories " +
+                "ORDER BY CASE WHEN CategoryId IN ('TECH', 'ENT', 'BUSINESS', 'HEALTH', 'SPORT') THEN 0 ELSE 1 END, " +
+                "FIELD(CategoryId, 'TECH', 'ENT', 'BUSINESS', 'HEALTH', 'SPORT'), Name";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);

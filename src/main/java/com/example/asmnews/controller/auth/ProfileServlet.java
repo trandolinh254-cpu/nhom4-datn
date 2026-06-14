@@ -18,6 +18,7 @@ import com.example.asmnews.repository.order.NewsletterDAO; // -- FIX
 import com.example.asmnews.entity.news.News; // -- FIX
 import java.util.List; // -- FIX
 import com.example.asmnews.repository.news.FollowDAO; // -- FIX
+import com.example.asmnews.repository.news.CategoryDAO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -38,6 +39,7 @@ public class ProfileServlet extends BaseServlet {
     private ReadingHistoryDAO readingHistoryDAO = new ReadingHistoryDAO(); // -- FIX
     private NewsletterDAO newsletterDAO = new NewsletterDAO(); // -- FIX
     private FollowDAO followDAO = new FollowDAO(); // -- FIX
+    private CategoryDAO categoryDAO = new CategoryDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -59,6 +61,7 @@ public class ProfileServlet extends BaseServlet {
         request.setAttribute("bookmarkList", bookmarks); // -- FIX
         request.setAttribute("readingHistoryList", history); // -- FIX
         request.setAttribute("followingAuthorsList", followingAuthors); // -- FIX
+        request.setAttribute("categories", categoryDAO.findAll());
 
         forward(request, response, "/WEB-INF/views/auth/profile.jsp");
     }

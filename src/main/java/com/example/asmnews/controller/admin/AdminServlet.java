@@ -456,16 +456,17 @@ public class AdminServlet extends BaseServlet {
             return;
         }
 
-        String categoryId = getParameter(request, "id", "");
-        String categoryName = getParameter(request, "name", "");
+        String mode = getParameter(request, "mode", "create");
+        String categoryId = getParameter(request, "id", "").trim().toUpperCase();
+        String categoryName = getParameter(request, "name", "").trim();
 
-        if (categoryName.isEmpty()) {
-            setErrorMessage(request, "Vui lòng nhập tên loại tin");
+        if (categoryId.isEmpty() || categoryName.isEmpty()) {
+            setErrorMessage(request, "Vui lòng nhập đầy đủ mã và tên loại tin");
             redirect(response, request.getContextPath() + "/admin/categories");
             return;
         }
 
-        boolean isEdit = !categoryId.isEmpty();
+        boolean isEdit = "edit".equals(mode);
         Category category;
 
         if (isEdit) {
@@ -477,8 +478,13 @@ public class AdminServlet extends BaseServlet {
             }
             category.setName(categoryName);
         } else {
+            if (categoryDAO.exists(categoryId)) {
+                setErrorMessage(request, "Mã loại tin đã tồn tại");
+                redirect(response, request.getContextPath() + "/admin/categories");
+                return;
+            }
             category = new Category();
-            category.setId(categoryName.toUpperCase().replaceAll("\\s+", "_"));
+            category.setId(categoryId);
             category.setName(categoryName);
         }
 

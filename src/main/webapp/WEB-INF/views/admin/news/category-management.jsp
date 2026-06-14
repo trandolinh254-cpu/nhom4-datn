@@ -397,6 +397,7 @@ code {
                                             <div class="card-body">
                                                 <form action="${pageContext.request.contextPath}/admin/categories/save"
                                                     method="post">
+                                                    <input type="hidden" name="mode" value="create">
                                                     <div class="mb-3">
                                                         <label for="categoryId" class="form-label fw-bold text-secondary">
                                                             <i class="fas fa-key"></i> Mã chuyên mục <span
@@ -493,6 +494,7 @@ code {
                             </div>
                             <form action="${pageContext.request.contextPath}/admin/categories/save" method="post">
                                 <div class="modal-body">
+                                    <input type="hidden" name="mode" value="edit">
                                     <input type="hidden" id="editId" name="id">
                                     <div class="mb-3">
                                         <label for="editName" class="form-label fw-bold">Tên chuyên mục</label>
