@@ -3277,6 +3277,22 @@ ALTER TABLE Comments ADD COLUMN IsPinned TINYINT(1) DEFAULT 0; -- Ghim bình lu�
 ALTER TABLE Comments ADD COLUMN IsHidden TINYINT(1) DEFAULT 0; -- Ẩn bình luận khỏi độc giả
 ALTER TABLE Comments ADD COLUMN ReportCount INT DEFAULT 0; -- -- FIX: Đếm số lượt bị báo cáo (RQ18)
 
+-- Bảng SubCategories (Danh mục con của chuyên mục chính)
+CREATE TABLE IF NOT EXISTS SubCategories (
+    SubCategoryId INT AUTO_INCREMENT PRIMARY KEY,
+    CategoryId VARCHAR(50) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
+    UNIQUE KEY UK_SubCategories_Category_Name (CategoryId, Name),
+    CONSTRAINT FK_SubCategories_Categories FOREIGN KEY (CategoryId) REFERENCES Categories(CategoryId) ON DELETE CASCADE
+);
+
+INSERT IGNORE INTO SubCategories (CategoryId, Name) VALUES
+('TECH', 'Thị trường'), ('TECH', 'Chuyển đổi số'), ('TECH', 'An ninh mạng'), ('TECH', 'AI - Trí tuệ nhân tạo'),
+('SPORT', 'Bóng đá'), ('SPORT', 'Tennis'), ('SPORT', 'Esports'), ('SPORT', 'Bóng rổ'),
+('ENTERTAINMENT', 'Âm nhạc'), ('ENTERTAINMENT', 'Phim ảnh'), ('ENTERTAINMENT', 'Showbiz'), ('ENTERTAINMENT', 'Thời trang'),
+('BUSINESS', 'Chứng khoán'), ('BUSINESS', 'Bất động sản'), ('BUSINESS', 'Khởi nghiệp'),
+('HEALTH', 'Dinh dưỡng'), ('HEALTH', 'Y tế'), ('HEALTH', 'Làm đẹp');
+
 -- Bảng Follows (Theo dõi tác giả - RQ22) -- FIX
 CREATE TABLE IF NOT EXISTS Follows ( -- FIX
     FollowerId VARCHAR(100), -- FIX

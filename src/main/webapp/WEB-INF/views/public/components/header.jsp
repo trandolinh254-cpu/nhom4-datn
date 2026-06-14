@@ -88,7 +88,7 @@
                 <%-- Menu --%>
                 <a href="${pageContext.request.contextPath}/" class="text-gray-700 hover:text-primary transition no-underline">Trang chủ</a>
                 <c:forEach var="category" items="${categories}">
-                    <c:set var="hasSub" value="${category.id == 'TECH' || category.id == 'SPORT' || category.id == 'ENT' || category.id == 'BUSINESS' || category.id == 'HEALTH' || category.name == 'Công nghệ' || category.name == 'Thể thao' || category.name == 'Giải trí' || category.name == 'Kinh doanh' || category.name == 'Sức khỏe'}" />
+                    <c:set var="hasSub" value="${not empty category.subCategories}" />
                     <div class="group relative">
                         <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}" 
                            class="text-gray-700 hover:text-primary transition nav-link px-0 block pb-1 no-underline ${category.id == param.id ? '!text-primary border-b-2 border-primary' : ''}">
@@ -97,32 +97,9 @@
                         </a>
                         <c:if test="${hasSub}">
                             <div class="dropdown-dark absolute left-0 top-full hidden group-hover:block w-48 bg-white shadow-lg border-t-2 border-primary z-50 rounded-b-md overflow-hidden text-left font-normal mt-[1px]">
-                                <c:if test="${category.id == 'TECH' || category.name == 'Công nghệ'}">
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Thị trường" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Thị trường</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Chuyển đổi số" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Chuyển đổi số</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=An ninh mạng" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">An ninh mạng</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=AI - Trí tuệ nhân tạo" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">AI - Trí tuệ nhân tạo</a>
-                                </c:if>
-                                <c:if test="${category.id == 'SPORT' || category.name == 'Thể thao'}">
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Bóng đá" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Bóng đá</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Tennis" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Tennis</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Esports" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Esports</a>
-                                </c:if>
-                                <c:if test="${category.id == 'ENT' || category.name == 'Giải trí'}">
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Âm nhạc" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Âm nhạc</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Phim ảnh" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Phim ảnh</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=ShowBUSINESS" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Showbiz</a>
-                                </c:if>
-                                <c:if test="${category.id == 'BUSINESS' || category.name == 'Kinh doanh'}">
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Chứng khoán" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Chứng khoán</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Bất động sản" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Bất động sản</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Khởi nghiệp" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Khởi nghiệp</a>
-                                </c:if>
-                                <c:if test="${category.id == 'HEALTH' || category.name == 'Sức khỏe'}">
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Dinh dưỡng" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Dinh dưỡng</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Y tế" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Y tế</a>
-                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=Làm đẹp" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">Làm đẹp</a>
-                                </c:if>
+                                <c:forEach var="subCategory" items="${category.subCategories}">
+                                    <a href="${pageContext.request.contextPath}/news?action=category&id=${category.id}&subCategory=${subCategory.name}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary text-[13px] no-underline">${subCategory.name}</a>
+                                </c:forEach>
                             </div>
                         </c:if>
                     </div>

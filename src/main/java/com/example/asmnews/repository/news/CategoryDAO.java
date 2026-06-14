@@ -11,12 +11,15 @@ import com.example.asmnews.util.DatabaseUtils;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * DAO class cho Category
  * Thực hiện các thao tác CRUD với bảng Categories
  */
 public class CategoryDAO {
+    private SubCategoryDAO subCategoryDAO = new SubCategoryDAO();
 
     /**
      * Lấy tất cả categories
@@ -26,8 +29,8 @@ public class CategoryDAO {
     public List<Category> findAll() {
         List<Category> categories = new ArrayList<>();
         String sql = "SELECT CategoryId, Name FROM Categories " +
-                "ORDER BY CASE WHEN CategoryId IN ('TECH', 'ENT', 'BUSINESS', 'HEALTH', 'SPORT') THEN 0 ELSE 1 END, " +
-                "FIELD(CategoryId, 'TECH', 'ENT', 'BUSINESS', 'HEALTH', 'SPORT'), Name";
+                "ORDER BY CASE WHEN CategoryId IN ('TECH', 'ENTERTAINMENT', 'BUSINESS', 'HEALTH', 'SPORT') THEN 0 ELSE 1 END, " +
+                "FIELD(CategoryId, 'TECH', 'ENTERTAINMENT', 'BUSINESS', 'HEALTH', 'SPORT'), Name";
 
         try (Connection conn = DatabaseUtils.getConnection();
                 PreparedStatement ps = conn.prepareStatement(sql);
@@ -42,6 +45,13 @@ public class CategoryDAO {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách categories: " + e.getMessage());
+        }
+
+        Map<String, List<com.example.asmnews.entity.news.SubCategory>> subCategoryMap = subCategoryDAO.findAll()
+                .stream()
+                .collect(Collectors.groupingBy(com.example.asmnews.entity.news.SubCategory::getCategoryId));
+        for (Category category : categories) {
+            category.setSubCategories(subCategoryMap.getOrDefault(category.getId(), new ArrayList<>()));
         }
 
         return categories;

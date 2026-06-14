@@ -37,11 +37,12 @@ Dự án hiện tại là ứng dụng **Java Spring / Servlet** phục vụ cho
 
 ## 2. Trạng thái Cơ sở dữ liệu (Database State)
 * **Bảng chính trong dump**: `Users`, `News`, `Categories`, `Comments`, `Reactions`, `Orders`, `Transactions`, `Newsletters`, `ad_campaigns`, `ad_contracts`, `ad_positions`.
-* **Bảng bổ sung**: `Follows`, `Bookmarks`, `ReadingHistory`.
+* **Bảng bổ sung**: `SubCategories`, `Follows`, `Bookmarks`, `ReadingHistory`.
 * **Cột/feature bổ sung đáng chú ý**:
   - `Users`: `PenName`, `Bio`, `FailedLoginAttempts`, `LockoutTime`, `IsPremium`, `FreeSummaryCount`.
   - `News`: `Summary`, `MetaTitle`, `MetaDescription`, `Slug`, `ScheduledDate`, `RejectReason`, `LastModified`, `IsDeleted`, `Status`.
   - `Comments`: `IsPinned`, `IsHidden`, `ReportCount`, `ParentId`.
+  - `SubCategories`: `SubCategoryId`, `CategoryId`, `Name`, unique theo cặp `CategoryId` + `Name`.
 * *Chưa có thay đổi database mới trong session này.*
 
 ---
@@ -50,6 +51,10 @@ Dự án hiện tại là ứng dụng **Java Spring / Servlet** phục vụ cho
 *(Mỗi khi sửa code xong, AI sẽ cập nhật chi tiết các file đã sửa và logic thay đổi vào đây)*
 
 - **2026-06-14**:
+  - **Sửa quản lý Newsletter**: Thêm route POST `/admin/newsletters/toggle` trong `AdminServlet` để nút vô hiệu hóa/kích hoạt không bị 404; cập nhật thống kê tổng số và đang hoạt động cho trang quản lý newsletter.
+  - **Thêm quản lý danh mục con**: Tạo `SubCategory` entity và `SubCategoryDAO`, tự tạo bảng `SubCategories` nếu DB cũ chưa có, seed danh mục con mặc định cho các chuyên mục có sẵn.
+  - **Cập nhật UI danh mục con**: Trang quản lý chuyên mục có form thêm/xóa danh mục con; form thêm tin admin/reporter load danh mục con từ DB theo chuyên mục chính; header public render dropdown theo `category.subCategories` thay vì hard-code.
+  - **Cập nhật database dump**: Thêm bảng `SubCategories` và dữ liệu mặc định vào `asm_news_final.sql`.
   - **Sửa quản lý chuyên mục**: Fix lỗi thêm chuyên mục bị hiểu nhầm thành sửa do form luôn gửi `id`; thêm `mode=create/edit`, validate mã/tên, chặn trùng mã khi thêm mới.
   - **Cập nhật navbar chuyên mục**: `CategoryDAO.findAll()` giữ thứ tự menu mặc định `TECH`, `ENT`, `BUSINESS`, `HEALTH`, `SPORT`; chuyên mục mới hiển thị sau nhóm mặc định và trước ô tìm kiếm. `ProfileServlet` cũng truyền `categories` để header trang hồ sơ không bị thiếu menu.
   - **Cập nhật trạng thái dự án**: Bổ sung tổng quan kiến trúc Servlet/JSP/JDBC, module chính, luồng xử lý, session auth, view structure và database state vào `PROJECT_STATE.md`.

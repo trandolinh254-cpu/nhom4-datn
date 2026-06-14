@@ -480,6 +480,100 @@ code {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="row g-4 mt-1">
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0 d-flex align-items-center">
+                                                    <i class="fas fa-plus-circle me-2"></i> Thêm danh mục con
+                                                </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <form action="${pageContext.request.contextPath}/admin/categories/sub/save" method="post">
+                                                    <div class="mb-3">
+                                                        <label for="subCategoryParent" class="form-label fw-bold text-secondary">
+                                                            <i class="fas fa-folder"></i> Chuyên mục chính <span class="text-danger">*</span>
+                                                        </label>
+                                                        <select class="form-control" id="subCategoryParent" name="categoryId" required>
+                                                            <option value="">-- Chọn chuyên mục --</option>
+                                                            <c:forEach var="category" items="${categories}">
+                                                                <option value="${category.id}">${category.name}</option>
+                                                            </c:forEach>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="subCategoryName" class="form-label fw-bold text-secondary">
+                                                            <i class="fas fa-tag"></i> Tên danh mục con <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="text" class="form-control" id="subCategoryName"
+                                                            name="name" required maxlength="255"
+                                                            placeholder="VD: Tuyển sinh, Du học">
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary w-100 mt-2">
+                                                        <i class="fas fa-save"></i> Thêm danh mục con
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0 d-flex align-items-center">
+                                                    <i class="fas fa-sitemap me-2"></i> Danh sách danh mục con
+                                                </h5>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <c:choose>
+                                                    <c:when test="${not empty subCategories}">
+                                                        <div class="table-responsive">
+                                                            <table class="table table-hover align-middle mb-0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th style="width: 35%;">Chuyên mục chính</th>
+                                                                        <th style="width: 45%;">Danh mục con</th>
+                                                                        <th style="width: 20%;" class="text-end">Thao tác</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <c:forEach var="subCategory" items="${subCategories}">
+                                                                        <tr>
+                                                                            <td>
+                                                                                <c:forEach var="category" items="${categories}">
+                                                                                    <c:if test="${category.id == subCategory.categoryId}">
+                                                                                        <strong>${category.name}</strong>
+                                                                                    </c:if>
+                                                                                </c:forEach>
+                                                                            </td>
+                                                                            <td>${subCategory.name}</td>
+                                                                            <td class="text-end">
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-outline-danger"
+                                                                                    onclick="deleteSubCategory('${subCategory.id}', '${subCategory.name}')"
+                                                                                    title="Xóa">
+                                                                                    <i class="fas fa-trash"></i>
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </c:forEach>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <div class="text-center py-5">
+                                                            <i class="fas fa-sitemap fa-3x text-secondary mb-3"></i>
+                                                            <h5 class="text-muted fw-bold">Chưa có danh mục con nào</h5>
+                                                            <p class="text-muted">Hãy thêm danh mục con cho chuyên mục chính</p>
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -545,6 +639,27 @@ code {
                             const form = document.createElement('form');
                             form.method = 'POST';
                             form.action = '${pageContext.request.contextPath}/admin/categories/delete';
+
+                            const idInput = document.createElement('input');
+                            idInput.type = 'hidden';
+                            idInput.name = 'id';
+                            idInput.value = id;
+
+                            form.appendChild(idInput);
+                            document.body.appendChild(form);
+                            form.submit();
+                        };
+
+                        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                        modal.show();
+                    }
+
+                    function deleteSubCategory(id, name) {
+                        document.getElementById('deleteName').textContent = name;
+                        document.getElementById('confirmDelete').onclick = function () {
+                            const form = document.createElement('form');
+                            form.method = 'POST';
+                            form.action = '${pageContext.request.contextPath}/admin/categories/sub/delete';
 
                             const idInput = document.createElement('input');
                             idInput.type = 'hidden';

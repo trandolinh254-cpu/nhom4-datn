@@ -16,6 +16,7 @@ import java.util.List;
 
 import com.example.asmnews.repository.news.CategoryDAO;
 import com.example.asmnews.repository.news.NewsDAO;
+import com.example.asmnews.repository.news.SubCategoryDAO;
 import com.example.asmnews.repository.order.NewsletterDAO;
 import com.example.asmnews.util.DatabaseUtils;
 import com.example.asmnews.repository.auth.UserDAO;
@@ -23,6 +24,7 @@ import com.example.asmnews.repository.news.FollowDAO; //
 import com.example.asmnews.util.EmailUtils; // 
 import com.example.asmnews.entity.news.Category;
 import com.example.asmnews.entity.news.News;
+import com.example.asmnews.entity.news.SubCategory;
 import com.example.asmnews.entity.order.Newsletter;
 import com.example.asmnews.entity.auth.User;
 import com.example.asmnews.repository.ads.AdCampaignDAO;
@@ -48,6 +50,7 @@ public class AdminServlet extends BaseServlet {
 
     private NewsDAO newsDAO = new NewsDAO();
     private CategoryDAO categoryDAO = new CategoryDAO();
+    private SubCategoryDAO subCategoryDAO = new SubCategoryDAO();
     private UserDAO userDAO = new UserDAO();
     private NewsletterDAO newsletterDAO = new NewsletterDAO();
     private AdCampaignDAO adCampaignDAO = new AdCampaignDAO();
@@ -129,6 +132,12 @@ public class AdminServlet extends BaseServlet {
                 case "/categories/delete":
                     deleteCategory(request, response);
                     break;
+                case "/categories/sub/save":
+                    saveSubCategory(request, response);
+                    break;
+                case "/categories/sub/delete":
+                    deleteSubCategory(request, response);
+                    break;
                 case "/users/save":
                     saveUser(request, response);
                     break;
@@ -138,6 +147,9 @@ public class AdminServlet extends BaseServlet {
                     break;
                 case "/newsletters/delete":
                     deleteNewsletter(request, response);
+                    break;
+                case "/newsletters/toggle":
+                    toggleNewsletter(request, response);
                     break;
                 case "/news/status":
                     updateNewsStatus(request, response);
@@ -273,6 +285,7 @@ public class AdminServlet extends BaseServlet {
 
         List<Category> categories = categoryDAO.findAll();
         request.setAttribute("categories", categories);
+        request.setAttribute("subCategories", subCategoryDAO.findAll());
 
         forward(request, response, "/WEB-INF/views/admin/news/news-form.jsp");
     }
@@ -301,6 +314,7 @@ public class AdminServlet extends BaseServlet {
 
         List<Category> categories = categoryDAO.findAll();
         request.setAttribute("categories", categories);
+        request.setAttribute("subCategories", subCategoryDAO.findAll());
         request.setAttribute("news", news);
 
         forward(request, response, "/WEB-INF/views/admin/news/news-form.jsp");
@@ -442,6 +456,7 @@ public class AdminServlet extends BaseServlet {
 
         List<Category> categories = categoryDAO.findAll();
         request.setAttribute("categories", categories);
+        request.setAttribute("subCategories", subCategoryDAO.findAll());
 
         forward(request, response, "/WEB-INF/views/admin/news/category-management.jsp");
     }
@@ -494,6 +509,76 @@ public class AdminServlet extends BaseServlet {
             setSuccessMessage(request, isEdit ? "Cập nhật loại tin thành công!" : "Thêm loại tin thành công!");
         } else {
             setErrorMessage(request, isEdit ? "Có lỗi khi cập nhật loại tin" : "Có lỗi khi thêm loại tin");
+        }
+
+        redirect(response, request.getContextPath() + "/admin/categories");
+    }
+
+    /**
+     * Lưu danh mục con cho chuyên mục chính.
+     */
+    private void saveSubCategory(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        if (!checkAdminAccess(request, response)) {
+            return;
+        }
+
+        String categoryId = getParameter(request, "categoryId", "").trim().toUpperCase();
+        String name = getParameter(request, "name", "").trim();
+
+        if (categoryId.isEmpty() || name.isEmpty()) {
+            setErrorMessage(request, "Vui lòng chọn chuyên mục chính và nhập tên danh mục con");
+            redirect(response, request.getContextPath() + "/admin/categories");
+            return;
+        }
+
+        if (categoryDAO.findById(categoryId) == null) {
+            setErrorMessage(request, "Chuyên mục chính không tồn tại");
+            redirect(response, request.getContextPath() + "/admin/categories");
+            return;
+        }
+
+        if (subCategoryDAO.exists(categoryId, name)) {
+            setErrorMessage(request, "Danh mục con đã tồn tại trong chuyên mục này");
+            redirect(response, request.getContextPath() + "/admin/categories");
+            return;
+        }
+
+        SubCategory subCategory = new SubCategory();
+        subCategory.setCategoryId(categoryId);
+        subCategory.setName(name);
+
+        if (subCategoryDAO.insert(subCategory)) {
+            setSuccessMessage(request, "Thêm danh mục con thành công!");
+        } else {
+            setErrorMessage(request, "Có lỗi khi thêm danh mục con");
+        }
+
+        redirect(response, request.getContextPath() + "/admin/categories");
+    }
+
+    /**
+     * Xóa danh mục con.
+     */
+    private void deleteSubCategory(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        if (!checkAdminAccess(request, response)) {
+            return;
+        }
+
+        int id = getIntParameter(request, "id", 0);
+        if (id <= 0) {
+            setErrorMessage(request, "Thiếu thông tin danh mục con");
+            redirect(response, request.getContextPath() + "/admin/categories");
+            return;
+        }
+
+        if (subCategoryDAO.delete(id)) {
+            setSuccessMessage(request, "Xóa danh mục con thành công!");
+        } else {
+            setErrorMessage(request, "Có lỗi khi xóa danh mục con");
         }
 
         redirect(response, request.getContextPath() + "/admin/categories");
@@ -687,8 +772,39 @@ public class AdminServlet extends BaseServlet {
 
         List<Newsletter> newsletters = newsletterDAO.findAll();
         request.setAttribute("newsletters", newsletters);
+        request.setAttribute("totalNewsletters", newsletters.size());
+        request.setAttribute("activeNewsletters", newsletterDAO.countActive());
 
         forward(request, response, "/WEB-INF/views/admin/marketing/newsletter-management.jsp");
+    }
+
+    /**
+     * Bật/tắt trạng thái đăng ký newsletter.
+     */
+    private void toggleNewsletter(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        if (!checkAdminAccess(request, response)) {
+            return;
+        }
+
+        String email = getParameter(request, "email", "");
+        boolean enabled = Boolean.parseBoolean(getParameter(request, "enabled", "false"));
+
+        if (email.isEmpty()) {
+            setErrorMessage(request, "Thiếu thông tin email");
+            redirect(response, request.getContextPath() + "/admin/newsletters");
+            return;
+        }
+
+        boolean success = enabled ? newsletterDAO.reactivate(email) : newsletterDAO.unsubscribe(email);
+        if (success) {
+            setSuccessMessage(request, enabled ? "Đã kích hoạt đăng ký nhận tin!" : "Đã vô hiệu hóa đăng ký nhận tin!");
+        } else {
+            setErrorMessage(request, "Có lỗi khi cập nhật trạng thái đăng ký nhận tin");
+        }
+
+        redirect(response, request.getContextPath() + "/admin/newsletters");
     }
 
     /**

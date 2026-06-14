@@ -435,37 +435,25 @@
                         if (currentImageArea) currentImageArea.style.display = 'block'; // Hiện lại ảnh cũ
                     }
 
-              const subCategoryData = {
-            "TECH": ["Thị trường", "Chuyển đổi số", "An ninh mạng", "AI - Trí tuệ nhân tạo"],
-            "Công nghệ": ["Thị trường", "Chuyển đổi số", "An ninh mạng", "AI - Trí tuệ nhân tạo"],
-            "SPORT": ["Bóng đá", "Tennis", "Esports", "Bóng rổ"],
-            "Thể thao": ["Bóng đá", "Tennis", "Esports", "Bóng rổ"],
-            
-            // : Đổi ENT thành ENTERTAINMENT
-            "ENTERTAINMENT": ["Âm nhạc", "Phim ảnh", "Showbiz", "Thời trang"],
-            "Giải trí": ["Âm nhạc", "Phim ảnh", "Showbiz", "Thời trang"],
-            
-            // : Đổi BIZ thành BUSINESS
-            "BUSINESS": ["Chứng khoán", "Bất động sản", "Khởi nghiệp"],
-            "Kinh doanh": ["Chứng khoán", "Bất động sản", "Khởi nghiệp"],
-            
-            "HEALTH": ["Dinh dưỡng", "Y tế", "Làm đẹp"],
-            "Sức khỏe": ["Dinh dưỡng", "Y tế", "Làm đẹp"]
-        };
+                    const subCategoryData = {};
+                    <c:forEach var="category" items="${categories}">
+                        subCategoryData["${category.id}"] = [
+                            <c:forEach var="subCategory" items="${category.subCategories}" varStatus="status">
+                                "${subCategory.name}"${status.last ? '' : ','}
+                            </c:forEach>
+                        ];
+                    </c:forEach>
 
                     const categorySelect = document.getElementById('categoryId');
                     const subCategorySelect = document.getElementById('subCategoryId');
 
                     function loadSubCategories() {
-                        // Lấy ID (VD: TECH) hoặc Tên (đã cắt khoảng trắng 2 đầu)
                         const selectedValue = categorySelect.value;
-                        const selectedText = categorySelect.options[categorySelect.selectedIndex].text.trim();
                         
                         // Xóa dữ liệu cũ
                         subCategorySelect.innerHTML = '<option value="">-- Chọn danh mục con --</option>';
                         
-                        // Tìm mảng danh mục con (Ưu tiên tìm theo ID trước, không có thì tìm theo Tên)
-                        const subCats = subCategoryData[selectedValue] || subCategoryData[selectedText];
+                        const subCats = subCategoryData[selectedValue];
 
                         if (subCats) {
                             subCats.forEach(subCat => {

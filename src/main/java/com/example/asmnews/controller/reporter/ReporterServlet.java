@@ -7,6 +7,7 @@ import com.example.asmnews.entity.news.News;
 import com.example.asmnews.entity.news.Comment;
 import com.example.asmnews.repository.news.CategoryDAO;
 import com.example.asmnews.repository.news.NewsDAO;
+import com.example.asmnews.repository.news.SubCategoryDAO;
 import com.example.asmnews.repository.news.commentDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -29,6 +30,7 @@ public class ReporterServlet extends BaseServlet {
 
     private NewsDAO newsDAO = new NewsDAO();
     private CategoryDAO categoryDAO = new CategoryDAO();
+    private SubCategoryDAO subCategoryDAO = new SubCategoryDAO();
     private commentDAO commentDAO = new commentDAO();
 
     @Override
@@ -202,6 +204,7 @@ public class ReporterServlet extends BaseServlet {
 
         List<Category> categories = categoryDAO.findAll();
         request.setAttribute("categories", categories);
+        request.setAttribute("subCategories", subCategoryDAO.findAll());
 
         forward(request, response, "/WEB-INF/views/reporter/news/news-form.jsp");
     }
@@ -242,6 +245,7 @@ public class ReporterServlet extends BaseServlet {
 
         List<Category> categories = categoryDAO.findAll();
         request.setAttribute("categories", categories);
+        request.setAttribute("subCategories", subCategoryDAO.findAll());
         request.setAttribute("news", news);
 
         forward(request, response, "/WEB-INF/views/reporter/news/news-form.jsp");
