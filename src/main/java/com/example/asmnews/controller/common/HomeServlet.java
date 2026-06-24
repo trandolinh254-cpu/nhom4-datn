@@ -71,6 +71,7 @@ public class HomeServlet extends BaseServlet {
             com.example.asmnews.repository.ads.AdCampaignDAO adDAO = new com.example.asmnews.repository.ads.AdCampaignDAO();
             request.setAttribute("superMastheadAd", adDAO.getRunningAdByPosition(1)); // Super Masthead
             request.setAttribute("topBannerAd", adDAO.getRunningAdByPosition(2)); // Top Banner
+            request.setAttribute("mediumRectangle1Ad", adDAO.getRunningAdByPosition(3)); // Medium Rectangle
             request.setAttribute("sidebarLeftAds", adDAO.getRunningAdsByPosition(4));   // Trái (List)
             request.setAttribute("sidebarRightAds", adDAO.getRunningAdsByPosition(5));  // Phải (List)
             

@@ -130,7 +130,7 @@
 
         <%-- Right: Tin mới / Đọc nhiều --%>
         <div class="col-span-12 lg:col-span-4">
-            <div class="border border-gray-200 p-5 rounded h-full flex flex-col">
+            <div class="border border-gray-200 p-5 rounded flex flex-col">
                 
 
 
@@ -139,7 +139,7 @@
                     <button class="font-bold text-[13px] text-gray-500 hover:text-gray-800 pb-2 uppercase transition">Bạn quan tâm</button>
                 </div>
                 
-                <div class="flex-1 flex flex-col gap-4">
+                <div class="flex flex-col gap-4">
                     <c:forEach items="${latestNews}" var="news" end="3">
                         <article class="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
                             <a href="${pageContext.request.contextPath}/news?action=detail&id=${news.id}" 
@@ -155,20 +155,20 @@
                     XEM THÊM
                 </a>
             </div>
-        </div>
-    </div>
-
-    <%-- FIX: CHỈ HIỆN CÁC KHỐI MEDIUM RECTANGLE KHI CÓ QUẢNG CÁO VÀ KHÔNG PHẢI TÀI KHOẢN PREMIUM --%>
-    <c:if test="${(not empty mediumRectangle1Ad or not empty mediumRectangle2Ad or not empty mediumRectangle3Ad) and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 border-b border-gray-200 pb-12">
-            <c:if test="${not empty mediumRectangle1Ad}">
-                <div class="w-full aspect-[300/250] rounded shadow-sm relative overflow-hidden group">
+            <c:if test="${not empty mediumRectangle1Ad and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
+                <div class="w-full aspect-[300/250] rounded shadow-sm relative overflow-hidden group mt-6">
                     <span class="absolute top-1 right-2 text-[10px] bg-white/80 text-gray-400 px-1 rounded shadow-sm z-10">Tài trợ</span>
                     <a href="${mediumRectangle1Ad.targetUrl}" target="_blank" class="block w-full h-full">
                         <img src="${mediumRectangle1Ad.imageUrl}" class="w-full h-full object-cover" alt="Ad">
                     </a>
                 </div>
             </c:if>
+        </div>
+    </div>
+
+    <%-- FIX: CHỈ HIỆN CÁC KHỐI MEDIUM RECTANGLE KHI CÓ QUẢNG CÁO VÀ KHÔNG PHẢI TÀI KHOẢN PREMIUM --%>
+    <c:if test="${(not empty mediumRectangle2Ad or not empty mediumRectangle3Ad) and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 border-b border-gray-200 pb-12">
             <c:if test="${not empty mediumRectangle2Ad}">
                 <div class="w-full aspect-[300/250] rounded shadow-sm relative overflow-hidden group">
                     <span class="absolute top-1 right-2 text-[10px] bg-white/80 text-gray-400 px-1 rounded shadow-sm z-10">Tài trợ</span>

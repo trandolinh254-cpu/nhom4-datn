@@ -51,6 +51,10 @@ Dự án hiện tại là ứng dụng **Java Spring / Servlet** phục vụ cho
 *(Mỗi khi sửa code xong, AI sẽ cập nhật chi tiết các file đã sửa và logic thay đổi vào đây)*
 
 - **2026-06-14**:
+  - **Sửa khoảng trắng ở khối Tin mới trang chủ**: Bỏ `h-full` và `flex-1` ở card `Tin mới / Bạn quan tâm` trong `home/index.jsp` để card không bị kéo cao theo ảnh tin chính, giúp banner `Medium Rectangle` nằm ngay dưới card thay vì rớt xuống xa.
+  - **Đồng bộ Medium Rectangle trên trang chủ**: `HomeServlet` truyền `mediumRectangle1Ad` từ vị trí quảng cáo ID 3; `home/index.jsp` hiển thị banner này dưới khối `Tin mới / Bạn quan tâm` và tránh render trùng ở block medium phía dưới; mock demo quảng cáo đổi nhãn `Tin nổi bật` thành `Tin mới` để khớp giao diện trang chủ thật.
+  - **Bổ sung demo vị trí quảng cáo**: Thêm wireframe cho `Medium Rectangle 1` trong trang khách hàng đặt quảng cáo online, đặt tại cột phụ bên phải dưới khối tin nổi bật và map nút `Xem demo` để không còn báo chưa có mô phỏng.
+  - **Sửa luồng đặt quảng cáo online**: Chuẩn hóa ID vị trí quảng cáo theo DB (`1=Super Masthead`, `2=Top Banner`, `3=Medium Rectangle`, `4=Sidebar Left`, `5=Sidebar Right`); trang khách hàng vẫn hiển thị giá vị trí độc quyền nhưng khóa nút mua nếu vị trí đang `RUNNING/PENDING/APPROVED`; sửa resize ảnh upload theo đúng kích thước vị trí; cập nhật seed `ad_positions` trong `asm_news_final.sql` để Super Masthead active và Sidebar Left/Right có giá `30.000.000` thay vì `30.000`.
   - **Sửa quản lý Newsletter**: Thêm route POST `/admin/newsletters/toggle` trong `AdminServlet` để nút vô hiệu hóa/kích hoạt không bị 404; cập nhật thống kê tổng số và đang hoạt động cho trang quản lý newsletter.
   - **Thêm quản lý danh mục con**: Tạo `SubCategory` entity và `SubCategoryDAO`, tự tạo bảng `SubCategories` nếu DB cũ chưa có, seed danh mục con mặc định cho các chuyên mục có sẵn.
   - **Cập nhật UI danh mục con**: Trang quản lý chuyên mục có form thêm/xóa danh mục con; form thêm tin admin/reporter load danh mục con từ DB theo chuyên mục chính; header public render dropdown theo `category.subCategories` thay vì hard-code.

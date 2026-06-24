@@ -49,11 +49,11 @@ public class AdsServlet extends BaseServlet {
             if ("/quang-cao".equals(path) || "/quang-cao/online".equals(path)) {
                 List<com.example.asmnews.entity.ads.AdPosition> positions = adPositionDAO.findByPlatform("ONLINE");
                 
-                // Lọc bỏ vị trí 1 (Super Masthead) và 2 (Top Banner) nếu đã có người đặt
+                // Vị trí độc quyền vẫn hiển thị giá, nhưng khóa nút mua nếu đã có người đặt.
                 List<Integer> occupiedIds = adCampaignDAO.getOccupiedPositionIds();
-                positions.removeIf(p -> (p.getId() == 1 || p.getId() == 2) && occupiedIds.contains(p.getId()));
                 
                 request.setAttribute("positions", positions);
+                request.setAttribute("occupiedIds", occupiedIds);
                 request.getRequestDispatcher("/WEB-INF/views/ads/ads-online.jsp").forward(request, response);
             } else {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -174,10 +174,10 @@ public class AdsServlet extends BaseServlet {
                     int pos = campaign.getPositionId();
                     int tWidth = 1120, tHeight = 90; // Mặc định là Top Banner
                     
-                    if (pos == 2 || pos == 4 || pos == 5) { // Sidebar cũ (2) hoặc Sidebar Trái (4) / Phải (5)
-                        tWidth = 160; tHeight = 600;
-                    } else if (pos == 3) { // Super Masthead
+                    if (pos == 1) { // Super Masthead
                         tWidth = 1920; tHeight = 250;
+                    } else if (pos == 3 || pos == 4 || pos == 5) { // Medium Rectangle / Sidebar
+                        tWidth = 300; tHeight = 250;
                     }
 
                     File targetFile = new File(uploadPath + File.separator + uniqueFileName);

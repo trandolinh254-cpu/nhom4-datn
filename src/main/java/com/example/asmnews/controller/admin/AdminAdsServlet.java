@@ -63,9 +63,9 @@ public class AdminAdsServlet extends BaseServlet {
                     request.setAttribute("positions", onlinePositions);
 
                     java.util.Map<Integer, String> predefinedPositions = new java.util.LinkedHashMap<>();
-                    predefinedPositions.put(1, "Top Banner");
-                    predefinedPositions.put(2, "Medium Rectangle 1");
-                    predefinedPositions.put(3, "Super Masthead");
+                    predefinedPositions.put(1, "Super Masthead");
+                    predefinedPositions.put(2, "Top Banner");
+                    predefinedPositions.put(3, "Medium Rectangle 1");
                     predefinedPositions.put(4, "Sidebar Left");
                     predefinedPositions.put(5, "Sidebar Right");
                     predefinedPositions.put(6, "In-Article Content");

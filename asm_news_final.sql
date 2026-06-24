@@ -250,11 +250,11 @@ INSERT ad_contracts (ContractId, user_id, company_name, billing_address, contact
 INSERT ad_contracts (ContractId, user_id, company_name, billing_address, contact_name, phone, email, total_price, status, created_at) VALUES (19, 'admin', 'cong ti ha', '33a so 19', 'Quản trị viên', '54533', 'admin@news.com', 0.00, 'PENDING', '2026-06-04T02:30:00.260');
 INSERT ad_contracts (ContractId, user_id, company_name, billing_address, contact_name, phone, email, total_price, status, created_at) VALUES (20, 'admin', 'cong ti ha', '33a so 19', 'Quản trị viên', '54533', 'admin@news.com', 0.00, 'PENDING', '2026-06-04T02:46:08.303');
 INSERT ad_contracts (ContractId, user_id, company_name, billing_address, contact_name, phone, email, total_price, status, created_at) VALUES (21, 'admin', 'ct', 'ct', 'Quản trị viên', '4444', 'admin@news.com', 0.00, 'PENDING', '2026-06-04T13:01:23.847');
-INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (1, 'ONLINE', 'Super Masthead', '1920 x 250 px', 35000000, 'INACTIVE');
+INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (1, 'ONLINE', 'Super Masthead', '1920 x 250 px', 35000000, 'ACTIVE');
 INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (2, 'ONLINE', 'Top Banner', '1120 x 90 px', 27000000, 'ACTIVE');
 INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (3, 'ONLINE', 'Medium Rectangle 1', '300 x 250 px', 25000000, 'ACTIVE');
-INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (4, 'ONLINE', 'Sidebar Left', '300 x 250 px', 30000, 'ACTIVE');
-INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (5, 'ONLINE', 'Sidebar Right', '300 x 250 px', 30000, 'ACTIVE');
+INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (4, 'ONLINE', 'Sidebar Left', '300 x 250 px', 30000000, 'ACTIVE');
+INSERT ad_positions (PositionId, platform, name, size_desc, base_price, status) VALUES (5, 'ONLINE', 'Sidebar Right', '300 x 250 px', 30000000, 'ACTIVE');
 INSERT Categories (CategoryId, Name) VALUES ('BUSINESS', 'Kinh doanh');
 INSERT Categories (CategoryId, Name) VALUES ('ENTERTAINMENT', 'Giải trí');
 INSERT Categories (CategoryId, Name) VALUES ('HEALTH', 'Sức khỏe');

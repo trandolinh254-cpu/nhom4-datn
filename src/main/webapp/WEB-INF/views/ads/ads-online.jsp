@@ -88,6 +88,7 @@
                     </thead>
                     <tbody class="text-center divide-y divide-gray-200">
                         <c:forEach var="pos" items="${positions}">
+                            <c:set var="isExclusiveOccupied" value="${(pos.id == 1 || pos.id == 2) && occupiedIds.contains(pos.id)}" />
                             <tr class="hover:bg-red-50 transition-colors ${pos.id == 1 ? 'bg-yellow-50/50' : ''}">
                                 <td class="px-3 py-4 text-left text-gray-900 border-r border-gray-200 font-semibold">
                                     <c:choose>
@@ -119,7 +120,14 @@
                                     <div class="flex flex-col gap-1.5 items-center">
                                         <fmt:formatNumber var="formattedPrice" value="${pos.basePrice}" pattern="#,###" />
                                         <button type="button" onclick="showDemoByPosId('${pos.id}', '${pos.name}')" class="w-[85px] py-1 border border-danger text-danger rounded-full hover:bg-danger hover:text-white transition-colors text-[11px] font-medium">Xem demo</button>
-                                        <button type="button" data-name="${pos.name}" data-size="${pos.sizeDesc}" data-price="Trang chủ: ${formattedPrice}đ" data-id="${pos.id}" data-baseprice="${pos.basePrice}" onclick="selectAdFromButton(this)" class="w-[85px] py-1 bg-primary text-white rounded-full hover:bg-[#004c6b] transition-colors text-[11px] font-bold">Chọn mua</button>
+                                        <c:choose>
+                                            <c:when test="${isExclusiveOccupied}">
+                                                <button type="button" disabled class="w-[85px] py-1 bg-gray-300 text-gray-600 rounded-full cursor-not-allowed text-[11px] font-bold">Đã đặt</button>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <button type="button" data-name="${pos.name}" data-size="${pos.sizeDesc}" data-price="Trang chủ: ${formattedPrice}đ" data-id="${pos.id}" data-baseprice="${pos.basePrice}" onclick="selectAdFromButton(this)" class="w-[85px] py-1 bg-primary text-white rounded-full hover:bg-[#004c6b] transition-colors text-[11px] font-bold">Chọn mua</button>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
                                 </td>
                             </tr>
@@ -370,13 +378,17 @@
                                 </div>
                             </div>
                             <div class="w-[200px] shrink-0">
-                                <div class="w-full h-8 bg-gray-100 flex items-center justify-center font-bold text-gray-300 text-[10px] border border-gray-200 mb-3">TIN NỔI BẬT</div>
+                                <div class="w-full h-8 bg-gray-100 flex items-center justify-center font-bold text-gray-300 text-[10px] border border-gray-200 mb-3">TIN MỚI</div>
                                 <div class="space-y-2">
                                     <div class="w-full h-3 bg-gray-200 rounded"></div>
                                     <div class="w-full h-3 bg-gray-200 rounded"></div>
                                     <div class="w-full h-3 bg-gray-200 rounded"></div>
                                     <div class="w-full h-3 bg-gray-200 rounded"></div>
                                     <div class="w-4/5 h-3 bg-gray-200 rounded"></div>
+                                </div>
+                                <div id="demo_medium_rectangle" class="ad-block w-full h-[150px] bg-gray-100 border border-dashed border-gray-300 flex flex-col items-center justify-center text-gray-500 mt-4 transition-all duration-300">
+                                    <span class="font-black text-xs tracking-widest text-center">MEDIUM RECTANGLE</span>
+                                    <span class="text-xs font-medium">300 × 250</span>
                                 </div>
                             </div>
                         </div>
@@ -406,6 +418,7 @@
             let n = name.toLowerCase();
             if (n.includes('masthead')) demoId = 'super_masthead';
             else if (n.includes('top')) demoId = 'top_banner';
+            else if (n.includes('medium') || n.includes('rectangle')) demoId = 'medium_rectangle';
             else if (n.includes('left') || n.includes('trái')) demoId = 'sidebar_left';
             else if (n.includes('right') || n.includes('phải')) demoId = 'sidebar_right';
             
