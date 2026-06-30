@@ -50,6 +50,14 @@ Dự án hiện tại là ứng dụng **Java Spring / Servlet** phục vụ cho
 ## 3. Nhật ký Thay đổi gần nhất (Change Log)
 *(Mỗi khi sửa code xong, AI sẽ cập nhật chi tiết các file đã sửa và logic thay đổi vào đây)*
 
+- **2026-07-01**:
+  - **Dọn dẹp mã nguồn (Ads & Premium)**:
+    - Loại bỏ chức năng quảng cáo (Ads) và tài khoản Premium khỏi hệ thống.
+    - Sửa `HomeServlet.java`, `NewsServlet.java`, `AdminServlet.java` để không truy vấn và không gán các biến quảng cáo (`Ads`) và thống kê danh thu vào `request/session`.
+    - Mở khóa tính năng dịch thuật và tóm tắt AI cho tất cả người dùng không giới hạn trong `AIServlet.java`.
+    - Cập nhật các giao diện (`home/index.jsp`, `news-list.jsp`, `news-detail.jsp`, `dashboard.jsp`, `header.jsp`, `admin-sidebar.jsp`) để gỡ bỏ toàn bộ code render quảng cáo, menu Premium, dashboard stats, và canvas chart doanh thu.
+    - Sửa lại file `home/index.jsp` và `header.jsp` sang định dạng chuẩn UTF-8 để khắc phục tình trạng lỗi font tiếng Việt.
+
 - **2026-06-14**:
   - **Sửa khoảng trắng ở khối Tin mới trang chủ**: Bỏ `h-full` và `flex-1` ở card `Tin mới / Bạn quan tâm` trong `home/index.jsp` để card không bị kéo cao theo ảnh tin chính, giúp banner `Medium Rectangle` nằm ngay dưới card thay vì rớt xuống xa.
   - **Đồng bộ Medium Rectangle trên trang chủ**: `HomeServlet` truyền `mediumRectangle1Ad` từ vị trí quảng cáo ID 3; `home/index.jsp` hiển thị banner này dưới khối `Tin mới / Bạn quan tâm` và tránh render trùng ở block medium phía dưới; mock demo quảng cáo đổi nhãn `Tin nổi bật` thành `Tin mới` để khớp giao diện trang chủ thật.

@@ -1,67 +1,7 @@
-﻿DROP DATABASE IF EXISTS asm_news;
+DROP DATABASE IF EXISTS asm_news;
 CREATE DATABASE asm_news;
 USE asm_news;
 
-
-/****** Object:  Table ad_campaigns    Script Date: 04/06/2026 1:05:56 CH ******/
-
-
-
-
-CREATE TABLE ad_campaigns(
-	CampaignId int AUTO_INCREMENT NOT NULL,
-	contract_id int NOT NULL,
-	position_id int NOT NULL,
-	campaign_name VARCHAR(200) NOT NULL,
-	start_date datetime NOT NULL,
-	end_date datetime NOT NULL,
-	target_url VARCHAR(500) NOT NULL,
-	drive_url VARCHAR(500) NULL,
-	image_url VARCHAR(500) NULL,
-	status VARCHAR(50) NULL,
-	approved_by VARCHAR(50) NULL,
-PRIMARY KEY 
-(
-	CampaignId )
-);
-
-/****** Object:  Table ad_contracts    Script Date: 04/06/2026 1:05:56 CH ******/
-
-
-
-
-CREATE TABLE ad_contracts(
-	ContractId int AUTO_INCREMENT NOT NULL,
-	user_id VARCHAR(50) NOT NULL,
-	company_name VARCHAR(200) NOT NULL,
-	billing_address VARCHAR(500) NOT NULL,
-	contact_name VARCHAR(100) NOT NULL,
-	phone VARCHAR(20) NOT NULL,
-	email VARCHAR(100) NOT NULL,
-	total_price decimal(18, 2) NOT NULL,
-	status VARCHAR(50) NULL,
-	created_at datetime NULL,
-PRIMARY KEY 
-(
-	ContractId )
-);
-
-/****** Object:  Table ad_positions    Script Date: 04/06/2026 1:05:56 CH ******/
-
-
-
-
-CREATE TABLE ad_positions(
-	PositionId int AUTO_INCREMENT NOT NULL,
-	platform varchar(50) NOT NULL,
-	name VARCHAR(255) NOT NULL,
-	size_desc VARCHAR(100) NULL,
-	base_price decimal(15, 0) NULL,
-	status varchar(50) NULL,
-PRIMARY KEY 
-(
-	PositionId )
-);
 
 /****** Object:  Table Categories    Script Date: 04/06/2026 1:05:56 CH ******/
 
@@ -3168,17 +3108,7 @@ ALTER TABLE Users ADD UNIQUE (Email);
 
 
 
-ALTER TABLE ad_campaigns  ADD FOREIGN KEY(approved_by) REFERENCES Users (UserId)
-;
 
-ALTER TABLE ad_campaigns  ADD FOREIGN KEY(contract_id) REFERENCES ad_contracts (ContractId)
-;
-
-ALTER TABLE ad_campaigns  ADD FOREIGN KEY(position_id) REFERENCES ad_positions (PositionId)
-;
-
-ALTER TABLE ad_contracts  ADD FOREIGN KEY(user_id) REFERENCES Users (UserId)
-;
 
 ALTER TABLE Comments  ADD  CONSTRAINT FK_Comments_News FOREIGN KEY(NewsId) REFERENCES News (NewsId)
 ;
@@ -3237,9 +3167,7 @@ ALTER TABLE Transactions  ADD  CONSTRAINT FK_Transactions_Users FOREIGN KEY(User
 USE asm_news;
 
 -- Bổ sung các dây khóa ngoại (Foreign Keys) bị thiếu
-ALTER TABLE ad_campaigns ADD CONSTRAINT FK_ad_campaigns_contracts FOREIGN KEY (contract_id) REFERENCES ad_contracts(ContractId);
-ALTER TABLE ad_campaigns ADD CONSTRAINT FK_ad_campaigns_positions FOREIGN KEY (position_id) REFERENCES ad_positions(PositionId);
-ALTER TABLE ad_contracts ADD CONSTRAINT FK_ad_contracts_users FOREIGN KEY (user_id) REFERENCES users(UserId);
+
 ALTER TABLE Orders ADD CONSTRAINT FK_Orders_Users FOREIGN KEY (UserId) REFERENCES users(UserId);
 ALTER TABLE Transactions ADD CONSTRAINT FK_Transactions_Orders FOREIGN KEY (OrderId) REFERENCES Orders(OrderId);
 ALTER TABLE Transactions ADD CONSTRAINT FK_Transactions_Users FOREIGN KEY (UserId) REFERENCES users(UserId);

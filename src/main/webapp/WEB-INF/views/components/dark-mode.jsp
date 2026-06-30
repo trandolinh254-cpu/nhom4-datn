@@ -123,7 +123,7 @@
 <%-- Script khôi phục theme khi chuyển trang --%>
 <script>
     (function restoreTheme() {
-        var saved = localStorage.getItem('xyz_theme');
+        var saved = localStorage.getItem('dongchay_theme');
         if (saved === 'dark') {
             document.documentElement.classList.add('dark');
             // Cập nhật icon trên trang nếu có nút toggle

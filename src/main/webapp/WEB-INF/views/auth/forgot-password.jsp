@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <title>Quên mật khẩu - XYZ System</title>
+    <title>Quên mật khẩu - Dòng Chảy System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700&display=swap" rel="stylesheet">
@@ -86,7 +86,7 @@
             <h4 class="mb-0"><i class="fas fa-unlock-alt me-2"></i> Khôi phục mật khẩu</h4>
         </div>
         <div class="p-4">
-            <p class="text-muted text-center mb-4" style="font-size: 14px;">Vui lòng nhập ID và Email đã đăng ký để hệ thống cấp lại mật khẩu.</p>
+            <p class="text-muted text-center mb-4" style="font-size: 14px;">Vui lòng nhập Email đã đăng ký để hệ thống cấp lại mật khẩu.</p>
             
             <c:if test="${not empty sessionScope.errorMessage}">
                 <div class="alert alert-danger py-2">${sessionScope.errorMessage}</div>

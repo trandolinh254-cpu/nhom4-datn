@@ -354,67 +354,18 @@ body {
                         </div>
                     </div>
 
-                    <!-- THỐNG KÊ QUẢNG CÁO -->
-                    <h5 class="mb-3 mt-4 text-muted fw-bold"><i class="fas fa-bullhorn me-2"></i>Tổng quan Quảng Cáo</h5>
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-4">
-                            <div class="stat-card warning">
-                                <div class="d-flex flex-column position-relative z-1">
-                                    <h3 class="mb-0 text-warning">${empty pendingAdsCount ? '0' : pendingAdsCount}</h3>
-                                    <p class="mb-0">Yêu cầu chờ duyệt</p>
-                                </div>
-                                <i class="fas fa-inbox stat-icon text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="stat-card success">
-                                <div class="d-flex flex-column position-relative z-1">
-                                    <h3 class="mb-0 text-success">${empty runningAdsCount ? '0' : runningAdsCount}</h3>
-                                    <p class="mb-0">Đang chạy</p>
-                                </div>
-                                <i class="fas fa-play-circle stat-icon text-success"></i>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="stat-card primary">
-                                <div class="d-flex flex-column position-relative z-1">
-                                    <h3 class="mb-0 text-primary">
-                                        <c:choose>
-                                            <c:when test="${not empty revenueThisMonth}">
-                                                <fmt:formatNumber value="${revenueThisMonth}" pattern="#,###"/> đ
-                                            </c:when>
-                                            <c:otherwise>0 đ</c:otherwise>
-                                        </c:choose>
-                                    </h3>
-                                    <p class="mb-0">Doanh thu tháng</p>
-                                </div>
-                                <i class="fas fa-money-bill-wave stat-icon text-primary"></i>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- KHU VỰC BIỂU ĐỒ THỐNG KÊ -->
                     <div class="row g-4 mb-4">
                         <!-- Chart 1: News Category (Doughnut) -->
-                        <div class="col-md-5">
+                        <div class="col-md-8 mx-auto">
                             <div class="card h-100">
                                 <div class="card-header">
                                     <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Tỷ lệ bài viết theo chuyên mục</h5>
                                 </div>
                                 <div class="card-body d-flex justify-content-center align-items-center">
-                                    <canvas id="categoryChart" style="max-height: 300px; width: 100%;"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Chart 2: Ads Revenue (Bar) -->
-                        <div class="col-md-7">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Doanh thu quảng cáo năm ${currentYear}</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="revenueChart" style="max-height: 300px; width: 100%;"></canvas>
+                                    <canvas id="categoryChart" style="max-height: 400px; width: 100%;"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -509,65 +460,7 @@ body {
                         </div>
                     </div>
 
-                    <!-- BẢNG QUẢNG CÁO MỚI NHẤT -->
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-header text-danger">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-bell"></i> Yêu cầu đặt chỗ mới nhất
-                                    </h5>
-                                </div>
-                                <div class="card-body p-0">
-                                    <div class="table-responsive"> 
-                                        <table class="table table-hover align-middle mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th class="ps-4">Khách hàng</th>
-                                                    <th>Chiến dịch</th>
-                                                    <th>Ngân sách</th>
-                                                    <th>Trạng thái</th>
-                                                    <th class="text-end pe-4">Hành động</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:choose>
-                                                    <c:when test="${not empty recentAdRequests}">
-                                                        <c:forEach var="req" items="${recentAdRequests}">
-                                                            <tr>
-                                                                <td class="ps-4">
-                                                                    <div class="fw-bold text-dark">${req.contract.contactName}</div>
-                                                                    <div class="text-muted small">${req.contract.email}</div>
-                                                                </td>
-                                                                <td>${req.campaignName}</td>
-                                                                <td class="fw-bold text-primary">
-                                                                    <fmt:formatNumber value="${req.contract.totalPrice}" pattern="#,###"/> đ
-                                                                </td>
-                                                                <td>
-                                                                    <span class="badge bg-warning text-dark"><i class="fas fa-clock me-1"></i> Chờ duyệt</span>
-                                                                </td>
-                                                                <td class="text-end pe-4">
-                                                                    <a href="${pageContext.request.contextPath}/admin/ads/requests" class="btn btn-sm btn-outline-primary">Xem</a>
-                                                                </td>
-                                                            </tr>
-                                                        </c:forEach>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <tr>
-                                                            <td colspan="5" class="text-center py-5 text-muted">
-                                                                <i class="fas fa-database fa-2x mb-2 opacity-25 d-block"></i>
-                                                                Chưa có yêu cầu mới
-                                                            </td>
-                                                        </tr>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -577,13 +470,17 @@ body {
     
     <!-- Thêm thư viện Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="application/json" id="categoryLabelsData">
+        ${empty chartCategoryLabels ? "[]" : chartCategoryLabels}
+    </script>
+    <script type="application/json" id="categoryDataData">
+        ${empty chartCategoryData ? "[]" : chartCategoryData}
+    </script>
+    
     <script>
         // Dữ liệu biểu đồ từ Java truyền sang
-        const categoryLabels = ${empty chartCategoryLabels ? '[]' : chartCategoryLabels};
-        const categoryData = ${empty chartCategoryData ? '[]' : chartCategoryData};
-        
-        const revenueLabels = ${empty chartRevenueLabels ? '[]' : chartRevenueLabels};
-        const revenueData = ${empty chartRevenueData ? '[]' : chartRevenueData};
+        const categoryLabels = JSON.parse(document.getElementById('categoryLabelsData').textContent || "[]");
+        const categoryData = JSON.parse(document.getElementById('categoryDataData').textContent || "[]");
 
         // Render Biểu đồ tròn
         const ctxCategory = document.getElementById('categoryChart').getContext('2d');
@@ -602,37 +499,6 @@ body {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'right' }
-                }
-            }
-        });
-
-        // Render Biểu đồ cột
-        const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-        new Chart(ctxRevenue, {
-            type: 'bar',
-            data: {
-                labels: revenueLabels,
-                datasets: [{
-                    label: 'Doanh thu (VNĐ)',
-                    data: revenueData,
-                    backgroundColor: 'rgba(0, 99, 137, 0.7)',
-                    borderColor: '#006389',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { 
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString('vi-VN') + ' đ';
-                            }
-                        }
-                    }
                 }
             }
         });

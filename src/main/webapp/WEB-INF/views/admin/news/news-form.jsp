@@ -7,7 +7,7 @@
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${news != null ? 'Sửa tin tức' : 'Thêm tin tức'} - XYZ Admin Premium</title>
+                <title>${news != null ? 'Sửa tin tức' : 'Th�m tin tức'} - XYZ Admin Premium</title>
 
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +18,7 @@
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
                 <style>
-                    /* // : SỬ DỤNG LẠI CHÍNH XÁC BỘ CSS CŨ BẠN ĐÃ CUNG CẤP */
+                    /* // : SỬ DỤNG LẠI CH�NH X�C BỘ CSS CŨ BẠN Đ� CUNG CẤP */
                     :root {
                         --primary: #006389;
                         --text-color: #333333;
@@ -211,7 +211,7 @@
             <div class="col-md-9 col-lg-10 ms-auto main-content">
                             <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
                                 <div class="container-fluid">
-                                    <h4 class="mb-0">${news != null ? 'Sửa tin tức' : 'Thêm tin tức mới'}</h4>
+                                    <h4 class="mb-0">${news != null ? 'Sửa tin tức' : 'Th�m tin tức mới'}</h4>
                                     <div class="navbar-nav ms-auto">
                                         <a href="${pageContext.request.contextPath}/admin/news"
                                             class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay
@@ -233,14 +233,14 @@
                                                     <c:if test="${news != null}"><input type="hidden" name="id"
                                                             value="${news.id}"></c:if>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Tiêu đề</label>
+                                                        <label class="form-label">Ti�u đề</label>
                                                         <input type="text" class="form-control" name="title"
                                                             value="${news.title}" required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Chuyên mục chính <span class="text-danger">*</span></label>
+                                                        <label class="form-label">Chuy�n mục ch�nh <span class="text-danger">*</span></label>
                                                         <select class="form-select" id="categoryId" name="categoryId" required>
-                                                            <option value="">-- Chọn chuyên mục --</option>
+                                                            <option value="">-- Chọn chuy�n mục --</option>
                                                             <c:forEach var="cat" items="${categories}">
                                                                 <option value="${cat.id}" ${news.categoryId == cat.id ? 'selected' : ''}>${cat.name}</option>
                                                             </c:forEach>
@@ -248,13 +248,13 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label class="form-label">Danh mục con (Tùy chọn)</label>
+                                                        <label class="form-label">Danh mục con (T�y chọn)</label>
                                                         <select class="form-select" id="subCategoryId" name="subCategoryId">
-                                                            <option value="">-- Vui lòng chọn chuyên mục chính trước --</option>
+                                                            <option value="">-- Vui l�ng chọn chuy�n mục ch�nh trước --</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Nội dung bài viết</label>
+                                                        <label class="form-label">Nội dung b�i viết</label>
                                                         <textarea class="form-control" name="content" rows="12"
                                                             required>${news.content}</textarea>
                                                     </div>
@@ -271,7 +271,7 @@
                                         <div class="col-lg-4">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h5 class="mb-0"><i class="fas fa-image"></i> Hình ảnh</h5>
+                                                    <h5 class="mb-0"><i class="fas fa-image"></i> H�nh ảnh</h5>
                                                 </div>
                                                 <div class="card-body">
                                                     <c:if test="${not empty news.image}">
@@ -286,7 +286,7 @@
 
                                                     <div class="upload-area" id="dropZone">
                                                         <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                                                        <h6>Kéo thả ảnh hoặc click để chọn</h6>
+                                                        <h6>K�o thả ảnh hoặc click để chọn</h6>
                                                         <input type="file" id="dropInput" name="image" accept="image/*"
                                                             style="display: none;">
                                                     </div>
@@ -299,14 +299,14 @@
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-danger mt-2 w-100"
                                                             onclick="removeImage()">
-                                                            <i class="fas fa-trash"></i> Hủy chọn ảnh này
+                                                            <i class="fas fa-trash"></i> Hủy chọn ảnh n�y
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
                                                 <i class="fas fa-save me-2"></i> ${news != null ? 'CẬP NHẬT' : 'ĐĂNG
-                                                BÀI'}
+                                                B�I'}
                                             </button>
                                         </div>
                                     </div>
@@ -324,7 +324,7 @@
                     const previewImg = document.getElementById('previewImg');
                     const currentImageArea = document.getElementById('currentImageArea');
 
-                    // 1. Click vào vùng dashed để chọn file
+                    // 1. Click v�o v�ng dashed để chọn file
                     dropZone.addEventListener('click', () => dropInput.click());
 
                     // 2. Khi chọn file từ cửa sổ Explorer
@@ -334,7 +334,7 @@
                         }
                     });
 
-                    // 3. Xử lý Kéo thả (Drag & Drop)
+                    // 3. Xử l� K�o thả (Drag & Drop)
                     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
                         dropZone.addEventListener(evt, e => {
                             e.preventDefault();
@@ -349,7 +349,7 @@
                         dropZone.classList.remove('dragover');
                         const file = e.dataTransfer.files[0];
                         if (file) {
-                            // // : Gán file từ sự kiện drop vào input file để submit form
+                            // // : G�n file từ sự kiện drop v�o input file để submit form
                             const dataTransfer = new DataTransfer();
                             dataTransfer.items.add(file);
                             dropInput.files = dataTransfer.files;
@@ -360,7 +360,7 @@
                     // 4. Hiển thị ảnh xem trước ngay lập tức
                     function handleFile(file) {
                         if (!file.type.startsWith('image/')) {
-                            alert('Vui lòng chỉ chọn file ảnh!');
+                            alert('Vui l�ng chỉ chọn file ảnh!');
                             return;
                         }
                         const reader = new FileReader();
@@ -368,7 +368,7 @@
                             previewImg.src = e.target.result;
                             imagePreview.style.display = 'block';
                             dropZone.style.display = 'none';
-                            if (currentImageArea) currentImageArea.style.display = 'none'; // Ẩn ảnh cũ khi đã chọn ảnh mới
+                            if (currentImageArea) currentImageArea.style.display = 'none'; // Ẩn ảnh cũ khi đ� chọn ảnh mới
                         };
                         reader.readAsDataURL(file);
                     }
@@ -396,19 +396,19 @@
                     function loadSubCategories() {
                         const selectedValue = categorySelect.value;
                         
-                        // Xóa dữ liệu cũ
+                        // X�a dữ liệu cũ
                         subCategorySelect.innerHTML = '<option value="">-- Chọn danh mục con --</option>';
                         
                         const subCats = subCategoryData[selectedValue];
 
                         if (subCats) {
                             subCats.forEach(subCat => {
-                                // Tạo thẻ option chuẩn DOM để không bị lỗi tàng hình chữ
+                                // Tạo thẻ option chuẩn DOM để kh�ng bị lỗi t�ng h�nh chữ
                                 let opt = document.createElement('option');
                                 opt.value = subCat;
                                 opt.text = subCat;
                                 
-                                // (Tùy chọn) Nếu đang sửa bài, tự động chọn lại mục cũ
+                                // (T�y chọn) Nếu đang sửa b�i, tự động chọn lại mục cũ
                                 if ("${news.subCategory}" === subCat) {
                                     opt.selected = true;
                                 }
@@ -416,14 +416,14 @@
                                 subCategorySelect.appendChild(opt);
                             });
                         } else {
-                            subCategorySelect.innerHTML = '<option value="">Không có danh mục con</option>';
+                            subCategorySelect.innerHTML = '<option value="">Kh�ng c� danh mục con</option>';
                         }
                     }
 
-                    // Lắng nghe sự kiện khi đổi chuyên mục
+                    // Lắng nghe sự kiện khi đổi chuy�n mục
                     categorySelect.addEventListener('change', loadSubCategories);
 
-                    // Kích hoạt ngay khi vừa mở trang (để load sẵn nếu đang ở trang Sửa bài)
+                    // K�ch hoạt ngay khi vừa mở trang (để load sẵn nếu đang ở trang Sửa b�i)
                     if (categorySelect.value !== "") {
                         loadSubCategories();
                     }

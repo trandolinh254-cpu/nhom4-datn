@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${pageTitle} - XYZ News</title>
+    <title>${pageTitle} - Dòng Chảy Tin Tức</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
@@ -33,31 +33,10 @@
     <jsp:include page="../public/components/header.jsp" />
 
 <div class="w-full flex justify-center items-start relative xl:overflow-visible overflow-hidden">
-    <!-- QUẢNG CÁO SIDEBAR TRÁI (Sticky) -->
-    <c:if test="${not empty sidebarLeftAds and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
-        <div class="hidden xl:block w-[160px] flex-shrink-0 pt-8 z-0 mr-6 relative">
-            <div class="sticky top-24 flex flex-col gap-4">
-                <c:forEach var="ad" items="${sidebarLeftAds}">
-                    <div class="bg-gray-100 rounded flex flex-col items-center justify-center text-gray-400 border border-gray-200 overflow-hidden relative" style="width: 160px; height: 600px;">
-                        <span class="absolute top-1 left-2 text-[10px] text-gray-400 bg-white/80 px-1 rounded shadow-sm z-10">Tài trợ</span>
-                        <a href="${ad.targetUrl}" target="_blank" class="block w-full h-full">
-                            <img src="${ad.imageUrl}" class="w-full h-full object-cover shadow-md rounded" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" loading="lazy" decoding="async" alt="Ad">
-                        </a>
-                    </div>
-                </c:forEach>
-            </div>
-        </div>
-    </c:if>
+
 
     <main class="max-w-6xl px-4 py-8 w-full smooth-load bg-white z-10 relative">
-        <c:if test="${not empty topBannerAd and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
-            <div class="w-full aspect-[1120/90] mb-8 rounded shadow-sm relative overflow-hidden group">
-                <span class="absolute top-1 right-2 text-[10px] bg-white/80 text-gray-400 px-1 rounded shadow-sm z-10">Tài trợ</span>
-                <a href="${topBannerAd.targetUrl}" target="_blank" class="block w-full h-full">
-                    <img src="${topBannerAd.imageUrl}" class="w-full h-full object-cover" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" loading="lazy" decoding="async" alt="Advertisement">
-                </a>
-            </div>
-        </c:if>
+
 
         <div class="mb-8 border-b border-gray-200 pb-4">
             <h1 class="text-3xl font-serif font-bold text-gray-900 flex items-center gap-3">
@@ -116,21 +95,7 @@
         </div>
     </main>
 
-    <!-- QUẢNG CÁO SIDEBAR PHẢI (Sticky) -->
-    <c:if test="${not empty sidebarRightAds and (empty sessionScope.currentUser or not sessionScope.currentUser.premium)}">
-        <div class="hidden xl:block w-[160px] flex-shrink-0 pt-8 z-0 ml-6 relative">
-            <div class="sticky top-24 flex flex-col gap-4">
-                <c:forEach var="ad" items="${sidebarRightAds}">
-                    <div class="bg-gray-100 rounded flex flex-col items-center justify-center text-gray-400 border border-gray-200 overflow-hidden relative" style="width: 160px; height: 600px;">
-                        <span class="absolute top-1 left-2 text-[10px] text-gray-400 bg-white/80 px-1 rounded shadow-sm z-10">Tài trợ</span>
-                        <a href="${ad.targetUrl}" target="_blank" class="block w-full h-full">
-                            <img src="${ad.imageUrl}" class="w-full h-full object-cover shadow-md rounded" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" loading="lazy" decoding="async" alt="Ad">
-                        </a>
-                    </div>
-                </c:forEach>
-            </div>
-        </div>
-    </c:if>
+
 </div>
 
     <jsp:include page="../public/components/footer.jsp" />

@@ -60,7 +60,7 @@
 
 <div class="col-md-3 col-lg-2 px-0 sidebar-dark position-fixed h-100 overflow-auto custom-scrollbar">
     <div class="admin-brand">
-        <i class="fas fa-pen-nib text-primary me-2"></i> XYZ REPORTER
+        <i class="fas fa-pen-nib text-primary me-2"></i> DÒNG CHẢY REPORTER
     </div>
 
     <nav class="nav flex-column mt-2">

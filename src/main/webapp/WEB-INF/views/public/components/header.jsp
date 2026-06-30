@@ -5,17 +5,7 @@
 <%-- ===== CSS cho Dark Mode toàn trang ===== --%>
 <jsp:include page="/WEB-INF/views/components/dark-mode.jsp" />
 
-<%-- FIX: CHỈ HIỂN THỊ SUPER MASTHEAD KHI ADMIN ĐÃ DUYỆT VÀ TRUYỀN DỮ LIỆU SANG --%>
-<c:if test="${not empty superMastheadAd}">
-    <div class="hidden md:block w-full relative">
-        <span class="absolute top-0 right-0 text-[10px] text-gray-400 bg-white/80 px-1 border-b border-l border-gray-200 shadow-sm z-10">Tài trợ</span>
-        <a href="${superMastheadAd.targetUrl}" target="_blank" class="block w-full">
-            <img src="${superMastheadAd.imageUrl}" class="w-full h-auto max-h-[250px] object-cover" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" loading="lazy" decoding="async" alt="${superMastheadAd.campaignName}">
-        </a>
-    </div>
-</c:if>
-
-<%-- ===== Wrapper sticky: toàn bộ header đi theo khi cuộn --%>
+<%-- ===== Wrapper sticky: toàn bộ header đi theo khi cuộn ===== --%>
 <div id="stickyHeaderWrapper" class="sticky top-0 z-50">
 
 <%-- ===== Top Bar ===== --%>
@@ -31,8 +21,6 @@
             </span>
         </div>
         <div class="flex gap-5 items-center text-gray-600 tracking-wide uppercase">
-            <a href="${pageContext.request.contextPath}/quang-cao/online" class="text-gray-500 hover:text-primary transition no-underline">Quảng cáo</a>
-            <a href="${pageContext.request.contextPath}/premium" class="text-red-500 hover:text-red-600 font-bold transition no-underline flex items-center gap-1"><i class="fas fa-crown"></i> Premium</a>
             <c:choose>
                 <c:when test="${sessionScope.currentUser != null}">
                     <div class="relative group">
@@ -42,9 +30,6 @@
                         <div class="dropdown-dark absolute right-0 top-full mt-2 w-52 bg-white shadow-lg rounded-md border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2">
                             <a href="${pageContext.request.contextPath}/profile" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary no-underline normal-case text-sm">
                                 <i class="fas fa-user-circle w-5"></i> Thông tin cá nhân
-                            </a>
-                            <a href="${pageContext.request.contextPath}/profile/ads" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary no-underline normal-case text-sm">
-                                <i class="fas fa-ad w-5"></i> Quảng cáo của tôi
                             </a>
                             <c:if test="${sessionScope.currentUser.admin}">
                                 <a href="${pageContext.request.contextPath}/admin" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary no-underline normal-case text-sm">
@@ -77,8 +62,8 @@
 <%-- ===== Logo chính giữa ===== --%>
 <header class="header-dark bg-white font-sans shadow-sm relative z-40">
     <div id="logoSection" class="header-dark bg-white border-b border-gray-100 flex items-center justify-center py-6 relative transition-all duration-300">
-        <a href="${pageContext.request.contextPath}/" class="text-4xl font-serif font-black text-gray-900 tracking-tighter hover:text-primary transition no-underline flex items-center gap-2" style="color: #006389 !important;">
-            <i class="fas fa-newspaper text-[32px]"></i> XYZ NEWS
+        <a href="${pageContext.request.contextPath}/" class="hover:opacity-90 transition no-underline flex items-center" style="height: 80px;">
+            <img src="${pageContext.request.contextPath}/images/logo.png" alt="Dòng Chảy Tin Tức" class="h-full object-contain" id="logoImg" />
         </a>
     </div>
 
@@ -129,17 +114,17 @@
         if (window.scrollY > 80) {
             logoSection.classList.add('py-2');
             logoSection.classList.remove('py-6');
-            logoSection.querySelector('a').classList.add('text-2xl');
-            logoSection.querySelector('a').classList.remove('text-4xl');
-            logoSection.querySelector('i').classList.add('text-[20px]');
-            logoSection.querySelector('i').classList.remove('text-[32px]');
+            
+            
+            logoSection.querySelector('img').style.height = '45px';
+            
         } else {
             logoSection.classList.remove('py-2');
             logoSection.classList.add('py-6');
-            logoSection.querySelector('a').classList.remove('text-2xl');
-            logoSection.querySelector('a').classList.add('text-4xl');
-            logoSection.querySelector('i').classList.remove('text-[20px]');
-            logoSection.querySelector('i').classList.add('text-[32px]');
+            
+            
+            
+            logoSection.querySelector('img').style.height = '80px';
         }
     });
 })();
@@ -189,11 +174,11 @@
         if (html.classList.contains('dark')) {
             html.classList.remove('dark');
             icon.className = 'fas fa-moon';
-            localStorage.setItem('xyz_theme', 'light');
+            localStorage.setItem('dongchay_theme', 'light');
         } else {
             html.classList.add('dark');
             icon.className = 'fas fa-sun text-yellow-400';
-            localStorage.setItem('xyz_theme', 'dark');
+            localStorage.setItem('dongchay_theme', 'dark');
         }
     }
 

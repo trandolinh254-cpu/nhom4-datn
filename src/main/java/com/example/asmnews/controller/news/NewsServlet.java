@@ -59,12 +59,7 @@ public class NewsServlet extends BaseServlet {
             List<Category> categories = categoryDAO.findAll();
             request.setAttribute("categories", categories);
 
-            // Lấy Quảng cáo đang chạy
-            com.example.asmnews.repository.ads.AdCampaignDAO adDAO = new com.example.asmnews.repository.ads.AdCampaignDAO();
-            request.setAttribute("superMastheadAd", adDAO.getRunningAdByPosition(1));
-            request.setAttribute("topBannerAd", adDAO.getRunningAdByPosition(2));
-            request.setAttribute("sidebarLeftAds", adDAO.getRunningAdsByPosition(4));   // Trái (List)
-            request.setAttribute("sidebarRightAds", adDAO.getRunningAdsByPosition(5));  // Phải (List)
+
 
             switch (action) {
                 case "detail":

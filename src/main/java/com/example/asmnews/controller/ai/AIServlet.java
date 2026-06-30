@@ -65,28 +65,11 @@ public class AIServlet extends BaseServlet {
 
         if ("/ai/summarize".equals(path)) {
             // Xử lý tóm tắt
-            if (!currentUser.isPremium()) {
-                // Kiểm tra và trừ lượt tóm tắt
-                if (!userDAO.decrementFreeSummaryCount(currentUser.getId())) {
-                    // Trả về JSON lỗi với HTTP status 200 để tránh Tomcat tự động ghi đè HTML
-                    response.getWriter()
-                            .write("{\"error\": \"Bạn đã hết lượt tóm tắt miễn phí. Vui lòng nâng cấp Premium!\"}");
-                    return;
-                }
-                // Cập nhật session sau khi trừ lượt
-                currentUser.setFreeSummaryCount(currentUser.getFreeSummaryCount() - 1);
-                request.getSession().setAttribute("currentUser", currentUser);
-            }
             prompt = "Hãy tóm tắt ngắn gọn đoạn văn bản báo chí sau bằng tiếng Việt trong khoảng 2-3 câu. Chỉ trả về kết quả tóm tắt:\n\n"
                     + textToProcess;
 
         } else if ("/ai/translate".equals(path)) {
             // Xử lý dịch thuật
-            if (!currentUser.isPremium()) {
-                // Trả về JSON lỗi với HTTP status 200 để tránh Tomcat tự động ghi đè HTML
-                response.getWriter().write("{\"error\": \"Chức năng dịch thuật chỉ dành cho tài khoản Premium!\"}");
-                return;
-            }
             prompt = "Nếu đoạn văn bản sau là tiếng Việt, hãy dịch toàn bộ sang tiếng Anh. Nếu là ngôn ngữ khác, hãy dịch toàn bộ sang tiếng Việt. Chỉ trả về kết quả dịch, không giải thích, không cắt bớt nội dung:\n\n"
                     + textToProcess;
         }
@@ -114,11 +97,6 @@ public class AIServlet extends BaseServlet {
 
             JsonObject jsonResponse = new JsonObject();
             jsonResponse.addProperty("result", resultText);
-
-            // Nếu là tóm tắt và không phải premium, gửi kèm số lượt còn lại
-            if ("/ai/summarize".equals(path) && !currentUser.isPremium()) {
-                jsonResponse.addProperty("freeSummaryLeft", currentUser.getFreeSummaryCount());
-            }
 
             response.getWriter().write(gson.toJson(jsonResponse));
         } catch (Exception e) {

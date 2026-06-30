@@ -27,7 +27,6 @@ import com.example.asmnews.entity.news.News;
 import com.example.asmnews.entity.news.SubCategory;
 import com.example.asmnews.entity.order.Newsletter;
 import com.example.asmnews.entity.auth.User;
-import com.example.asmnews.repository.ads.AdCampaignDAO;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -53,7 +52,6 @@ public class AdminServlet extends BaseServlet {
     private SubCategoryDAO subCategoryDAO = new SubCategoryDAO();
     private UserDAO userDAO = new UserDAO();
     private NewsletterDAO newsletterDAO = new NewsletterDAO();
-    private AdCampaignDAO adCampaignDAO = new AdCampaignDAO();
     private FollowDAO followDAO = new FollowDAO(); // 
 
     @Override
@@ -190,12 +188,6 @@ public class AdminServlet extends BaseServlet {
         List<News> latestNews = newsDAO.findTop5Latest();
         request.setAttribute("latestNews", latestNews);
 
-        // Thống kê quảng cáo
-        request.setAttribute("pendingAdsCount", adCampaignDAO.countPendingCampaigns());
-        request.setAttribute("runningAdsCount", adCampaignDAO.countRunningCampaigns());
-        request.setAttribute("revenueThisMonth", adCampaignDAO.calculateMonthlyRevenue());
-        request.setAttribute("recentAdRequests", adCampaignDAO.getRecentPendingCampaigns());
-
         // : Thêm dữ liệu cho Biểu đồ Tròn (Tổng quan Hệ thống - Tin tức theo Chuyên mục)
         java.util.Map<String, Integer> newsByCategory = categoryDAO.getNewsCountByCategory();
         StringBuilder pieLabels = new StringBuilder("[");
@@ -214,25 +206,6 @@ public class AdminServlet extends BaseServlet {
         pieData.append("]");
         request.setAttribute("chartCategoryLabels", pieLabels.toString());
         request.setAttribute("chartCategoryData", pieData.toString());
-
-        // : Thêm dữ liệu cho Biểu đồ Cột (Tổng quan Quảng Cáo - Doanh thu theo tháng)
-        int currentYear = java.time.Year.now().getValue();
-        java.util.Map<Integer, Double> revenueByMonth = adCampaignDAO.getRevenueByMonth(currentYear);
-        StringBuilder barLabels = new StringBuilder("[");
-        StringBuilder barData = new StringBuilder("[");
-        for (int i = 1; i <= 12; i++) {
-            if (i > 1) {
-                barLabels.append(",");
-                barData.append(",");
-            }
-            barLabels.append("\"Tháng ").append(i).append("\"");
-            barData.append(revenueByMonth.get(i));
-        }
-        barLabels.append("]");
-        barData.append("]");
-        request.setAttribute("chartRevenueLabels", barLabels.toString());
-        request.setAttribute("chartRevenueData", barData.toString());
-        request.setAttribute("currentYear", currentYear);
 
         forward(request, response, "/WEB-INF/views/admin/dashboard.jsp");
     }

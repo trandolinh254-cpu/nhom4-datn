@@ -39,22 +39,22 @@ public class EmailUtils {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(EMAIL));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Mã xác thực khôi phục mật khẩu - XYZ News");
+            message.setSubject("Mã xác thực khôi phục mật khẩu - Dòng Chảy Tin Tức");
 
             String htmlContent = "<div style=\"font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);\">"
                     + "    <div style=\"background-color: #006389; padding: 24px; text-align: center; color: white;\">"
-                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">XYZ NEWS</h2>"
+                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">DÒNG CHẢY TIN TỨC</h2>"
                     + "    </div>"
                     + "    <div style=\"padding: 30px; background-color: #ffffff; color: #333333; line-height: 1.6;\">"
                     + "        <h3 style=\"margin-top: 0; color: #006389; font-size: 18px;\">Chào bạn,</h3>"
-                    + "        <p style=\"font-size: 15px; margin-bottom: 24px;\">Bạn vừa yêu cầu khôi phục mật khẩu tại XYZ News. Mã xác thực (OTP) của bạn là:</p>"
+                    + "        <p style=\"font-size: 15px; margin-bottom: 24px;\">Bạn vừa yêu cầu khôi phục mật khẩu tại Dòng Chảy Tin Tức. Mã xác thực (OTP) của bạn là:</p>"
                     + "        <div style=\"background-color: #f5f8fa; border-left: 4px solid #006389; padding: 15px; border-radius: 6px; margin-bottom: 24px; text-align: center;\">"
                     + "            <span style=\"font-size: 24px; font-weight: bold; letter-spacing: 4px; color: #e11d48;\">" + otpCode + "</span>"
                     + "        </div>"
                     + "        <p style=\"font-size: 14px; color: #777777; font-style: italic;\">Mã có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã này cho bất kỳ ai.</p>"
                     + "    </div>"
                     + "    <div style=\"background-color: #f5f8fa; padding: 15px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #e1e8ed;\">"
-                    + "        Đây là email tự động từ hệ thống XYZ News. Vui lòng không phản hồi email này."
+                    + "        Đây là email tự động từ hệ thống Dòng Chảy Tin Tức. Vui lòng không phản hồi email này."
                     + "    </div>"
                     + "</div>";
 
@@ -87,11 +87,11 @@ public class EmailUtils {
             Message message = new MimeMessage(session); 
             message.setFrom(new InternetAddress(EMAIL)); 
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail)); 
-            message.setSubject("Bình luận của bạn có phản hồi mới - XYZ News"); 
+            message.setSubject("Bình luận của bạn có phản hồi mới - Dòng Chảy Tin Tức"); 
 
             String htmlContent = "<div style=\"font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);\">"
                     + "    <div style=\"background-color: #006389; padding: 24px; text-align: center; color: white;\">"
-                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">XYZ NEWS</h2>"
+                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">DÒNG CHẢY TIN TỨC</h2>"
                     + "    </div>"
                     + "    <div style=\"padding: 30px; background-color: #ffffff; color: #333333; line-height: 1.6;\">"
                     + "        <h3 style=\"margin-top: 0; color: #006389; font-size: 18px;\">Chào " + parentAuthorName + ",</h3>"
@@ -99,10 +99,10 @@ public class EmailUtils {
                     + "        <div style=\"background-color: #f5f8fa; border-left: 4px solid #006389; padding: 15px; border-radius: 6px; margin-bottom: 20px; font-style: italic; font-size: 15px; color: #555555;\">"
                     + "            \"" + replyContent + "\""
                     + "        </div>"
-                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã tham gia thảo luận tại XYZ News.</p>"
+                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã tham gia thảo luận tại Dòng Chảy Tin Tức.</p>"
                     + "    </div>"
                     + "    <div style=\"background-color: #f5f8fa; padding: 15px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #e1e8ed;\">"
-                    + "        Đây là email tự động từ hệ thống XYZ News. Vui lòng không phản hồi email này."
+                    + "        Đây là email tự động từ hệ thống Dòng Chảy Tin Tức. Vui lòng không phản hồi email này."
                     + "    </div>"
                     + "</div>";
 
@@ -135,11 +135,11 @@ public class EmailUtils {
             Message message = new MimeMessage(session); 
             message.setFrom(new InternetAddress(EMAIL)); 
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail)); 
-            message.setSubject("Tác giả bạn theo dõi vừa đăng bài viết mới - XYZ News"); 
+            message.setSubject("Tác giả bạn theo dõi vừa đăng bài viết mới - Dòng Chảy Tin Tức"); 
 
             String htmlContent = "<div style=\"font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);\">"
                     + "    <div style=\"background-color: #006389; padding: 24px; text-align: center; color: white;\">"
-                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">XYZ NEWS</h2>"
+                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">DÒNG CHẢY TIN TỨC</h2>"
                     + "    </div>"
                     + "    <div style=\"padding: 30px; background-color: #ffffff; color: #333333; line-height: 1.6;\">"
                     + "        <h3 style=\"margin-top: 0; color: #006389; font-size: 18px;\">Chào bạn,</h3>"
@@ -150,10 +150,10 @@ public class EmailUtils {
                     + "        <div style=\"text-align: center; margin-bottom: 20px;\">"
                     + "            <a href=\"" + articleLink + "\" style=\"display: inline-block; background-color: #006389; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 15px;\">Đọc bài viết ngay</a>"
                     + "        </div>"
-                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã đồng hành cùng XYZ News.</p>"
+                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã đồng hành cùng Dòng Chảy Tin Tức.</p>"
                     + "    </div>"
                     + "    <div style=\"background-color: #f5f8fa; padding: 15px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #e1e8ed;\">"
-                    + "        Đây là email tự động từ hệ thống XYZ News. Vui lòng không phản hồi email này."
+                    + "        Đây là email tự động từ hệ thống Dòng Chảy Tin Tức. Vui lòng không phản hồi email này."
                     + "    </div>"
                     + "</div>";
 
@@ -186,11 +186,11 @@ public class EmailUtils {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(EMAIL));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Bài viết của bạn đã được duyệt thành công! - XYZ News");
+            message.setSubject("Bài viết của bạn đã được duyệt thành công! - Dòng Chảy Tin Tức");
 
             String htmlContent = "<div style=\"font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);\">"
                     + "    <div style=\"background-color: #006389; padding: 24px; text-align: center; color: white;\">"
-                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">XYZ NEWS</h2>"
+                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">DÒNG CHẢY TIN TỨC</h2>"
                     + "    </div>"
                     + "    <div style=\"padding: 30px; background-color: #ffffff; color: #333333; line-height: 1.6;\">"
                     + "        <h3 style=\"margin-top: 0; color: #006389; font-size: 18px;\">Chào " + authorName + ",</h3>"
@@ -201,10 +201,10 @@ public class EmailUtils {
                     + "        <div style=\"text-align: center; margin-bottom: 20px;\">"
                     + "            <a href=\"" + articleLink + "\" style=\"display: inline-block; background-color: #006389; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 15px;\">Xem bài viết trên trang chủ</a>"
                     + "        </div>"
-                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã đóng góp nội dung chất lượng cho XYZ News.</p>"
+                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã đóng góp nội dung chất lượng cho Dòng Chảy Tin Tức.</p>"
                     + "    </div>"
                     + "    <div style=\"background-color: #f5f8fa; padding: 15px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #e1e8ed;\">"
-                    + "        Đây là email tự động từ hệ thống XYZ News. Vui lòng không phản hồi email này."
+                    + "        Đây là email tự động từ hệ thống Dòng Chảy Tin Tức. Vui lòng không phản hồi email này."
                     + "    </div>"
                     + "</div>";
 
@@ -237,25 +237,25 @@ public class EmailUtils {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(EMAIL));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Bản tin XYZ News - Bài viết mới nhất hôm nay");
+            message.setSubject("Bản tin Dòng Chảy Tin Tức - Bài viết mới nhất hôm nay");
 
             String htmlContent = "<div style=\"font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);\">"
                     + "    <div style=\"background-color: #006389; padding: 24px; text-align: center; color: white;\">"
-                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">XYZ NEWS</h2>"
+                    + "        <h2 style=\"margin: 0; font-size: 24px; font-weight: bold; letter-spacing: 1px;\">DÒNG CHẢY TIN TỨC</h2>"
                     + "    </div>"
                     + "    <div style=\"padding: 30px; background-color: #ffffff; color: #333333; line-height: 1.6;\">"
                     + "        <h3 style=\"margin-top: 0; color: #006389; font-size: 18px;\">Chào bạn đọc,</h3>"
-                    + "        <p style=\"font-size: 15px; margin-bottom: 20px;\">Bản tin XYZ News xin gửi tới bạn bài viết mới nhất vừa được phê duyệt và xuất bản hôm nay:</p>"
+                    + "        <p style=\"font-size: 15px; margin-bottom: 20px;\">Bản tin Dòng Chảy Tin Tức xin gửi tới bạn bài viết mới nhất vừa được phê duyệt và xuất bản hôm nay:</p>"
                     + "        <div style=\"background-color: #f5f8fa; border-left: 4px solid #006389; padding: 15px; border-radius: 6px; margin-bottom: 24px; font-size: 16px; font-weight: bold; color: #333333;\">"
                     + "            " + articleTitle
                     + "        </div>"
                     + "        <div style=\"text-align: center; margin-bottom: 20px;\">"
                     + "            <a href=\"" + articleLink + "\" style=\"display: inline-block; background-color: #006389; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 15px;\">Đọc bài viết ngay</a>"
                     + "        </div>"
-                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã đăng ký theo dõi bản tin của XYZ News.</p>"
+                    + "        <p style=\"font-size: 14px; color: #777777;\">Cảm ơn bạn đã đăng ký theo dõi bản tin của Dòng Chảy Tin Tức.</p>"
                     + "    </div>"
                     + "    <div style=\"background-color: #f5f8fa; padding: 15px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #e1e8ed;\">"
-                    + "        Đây là email tự động từ hệ thống XYZ News. Vui lòng không phản hồi email này."
+                    + "        Đây là email tự động từ hệ thống Dòng Chảy Tin Tức. Vui lòng không phản hồi email này."
                     + "    </div>"
                     + "</div>";
 

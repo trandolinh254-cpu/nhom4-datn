@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký Premium AI - XYZ News</title>
+    <title>Đăng ký Premium AI - Dòng Chảy Tin Tức</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -74,7 +74,7 @@
         <%-- Header trang --%>
         <header class="mb-10 border-b border-gray-200 pb-4">
             <h1 class="text-4xl font-serif font-bold text-gray-900 mb-2">
-                Đăng ký Premium AI XYZ News <!-- // FIX -->
+                Đăng ký Premium AI Dòng Chảy Tin Tức <!-- // FIX -->
                 <span class="text-primary font-light block md:inline text-2xl">— Trải nghiệm dịch vụ AI</span> <!-- // FIX -->
             </h1>
             <p class="text-lg text-gray-600 max-w-3xl leading-relaxed">
@@ -231,7 +231,7 @@
                                         <span class="col-span-2 font-bold text-gray-950">MB Bank (Ngân hàng Quân Đội)</span>
 
                                         <span class="text-gray-500">Chủ tài khoản:</span>
-                                        <span class="col-span-2 font-bold text-gray-950">CONG TY XYZ NEWS</span>
+                                        <span class="col-span-2 font-bold text-gray-950">CONG TY DÒNG CHẢY TIN TỨC</span>
 
                                         <span class="text-gray-500">Số tài khoản:</span>
                                         <span class="col-span-2 font-mono font-bold text-gray-950 flex items-center gap-2">
@@ -284,7 +284,7 @@
 
                     <p class="text-sm text-gray-500 italic mb-5 text-center">
                         Bằng việc đăng ký, bạn đồng ý với
-                        <a class="text-primary hover:underline" href="#">Điều khoản sử dụng</a> của XYZ News.
+                        <a class="text-primary hover:underline" href="#">Điều khoản sử dụng</a> của Dòng Chảy Tin Tức.
                     </p>
 
                     <%-- Nút thanh toán submit form --%>

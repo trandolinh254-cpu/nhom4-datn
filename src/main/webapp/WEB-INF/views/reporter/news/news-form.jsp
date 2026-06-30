@@ -7,7 +7,7 @@
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>${news != null ? 'Sửa tin tức' : 'Thêm tin tức'} - XYZ Reporter</title>
+                <title>${news != null ? 'Sửa tin tức' : 'Th�m tin tức'} - XYZ Reporter</title>
 
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
 
 
                 <style>
-                    /* // : SỬ DỤNG LẠI CHÍNH XÁC BỘ CSS CŨ BẠN ĐÃ CUNG CẤP */
+                    /* // : SỬ DỤNG LẠI CH�NH X�C BỘ CSS CŨ BẠN Đ� CUNG CẤP */
                     :root {
                         --primary: #006389;
                         --text-color: #333333;
@@ -213,7 +213,7 @@
             <div class="col-md-9 col-lg-10 ms-auto main-content">
                             <nav class="navbar navbar-expand-lg navbar-admin sticky-top">
                                 <div class="container-fluid">
-                                    <h4 class="mb-0">${news != null ? 'Sửa tin tức' : 'Thêm tin tức mới'}</h4>
+                                    <h4 class="mb-0">${news != null ? 'Sửa tin tức' : 'Th�m tin tức mới'}</h4>
                                     <div class="navbar-nav ms-auto">
                                         <a href="${pageContext.request.contextPath}/reporter/news"
                                             class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Quay
@@ -251,18 +251,18 @@
                                                     <c:if test="${news != null}"><input type="hidden" name="id"
                                                             value="${news.id}"></c:if>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Tiêu đề <span class="text-danger">*</span></label>
+                                                        <label class="form-label">Ti�u đề <span class="text-danger">*</span></label>
                                                         <input type="text" class="form-control" name="title"
-                                                            value="${news.title}" required placeholder="Nhập tiêu đề tin tức...">
+                                                            value="${news.title}" required placeholder="Nhập ti�u đề tin tức...">
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Mô tả ngắn (Summary) <span class="text-danger">*</span></label>
-                                                        <textarea class="form-control" name="summary" rows="3" required placeholder="Nhập mô tả tóm tắt ngắn của tin tức...">${news.summary}</textarea>
+                                                        <label class="form-label">M� tả ngắn (Summary) <span class="text-danger">*</span></label>
+                                                        <textarea class="form-control" name="summary" rows="3" required placeholder="Nhập m� tả t�m tắt ngắn của tin tức...">${news.summary}</textarea>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Chuyên mục chính <span class="text-danger">*</span></label>
+                                                        <label class="form-label">Chuy�n mục ch�nh <span class="text-danger">*</span></label>
                                                         <select class="form-select" id="categoryId" name="categoryId" required>
-                                                            <option value="">-- Chọn chuyên mục --</option>
+                                                            <option value="">-- Chọn chuy�n mục --</option>
                                                             <c:forEach var="cat" items="${categories}">
                                                                 <option value="${cat.id}" ${news.categoryId == cat.id ? 'selected' : ''}>${cat.name}</option>
                                                             </c:forEach>
@@ -270,50 +270,50 @@
                                                     </div>
 
                                                     <div class="mb-3">
-                                                        <label class="form-label">Danh mục con (Tùy chọn)</label>
+                                                        <label class="form-label">Danh mục con (T�y chọn)</label>
                                                         <select class="form-select" id="subCategoryId" name="subCategoryId">
-                                                            <option value="">-- Vui lòng chọn chuyên mục chính trước --</option>
+                                                            <option value="">-- Vui l�ng chọn chuy�n mục ch�nh trước --</option>
                                                         </select>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Lên lịch xuất bản (Tùy chọn)</label>
+                                                        <label class="form-label">L�n lịch xuất bản (T�y chọn)</label>
                                                         <fmt:formatDate value="${news.scheduledDate}" pattern="yyyy-MM-dd'T'HH:mm" var="formattedScheduledDate" />
                                                         <input type="datetime-local" class="form-control" name="scheduledDate" value="${formattedScheduledDate}">
-                                                        <small class="text-muted d-block mt-1">Lưu ý: Để trống nếu muốn tin tức xuất bản ngay khi được duyệt.</small>
+                                                        <small class="text-muted d-block mt-1">Lưu �: Để trống nếu muốn tin tức xuất bản ngay khi được duyệt.</small>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Nội dung bài viết <span class="text-danger">*</span></label>
+                                                        <label class="form-label">Nội dung b�i viết <span class="text-danger">*</span></label>
                                                         <textarea class="form-control" id="content" name="content" rows="12"
                                                             required>${news.content}</textarea>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <!-- Card Cấu hình SEO -->
+                                            <!-- Card Cấu h�nh SEO -->
                                             <div class="card mt-4">
                                                 <div class="card-header bg-light">
-                                                    <h5 class="mb-0 text-dark"><i class="fas fa-search"></i> Cấu hình SEO (Tùy chọn)</h5>
+                                                    <h5 class="mb-0 text-dark"><i class="fas fa-search"></i> Cấu h�nh SEO (T�y chọn)</h5>
                                                 </div>
                                                 <div class="card-body">
                                                     <div class="mb-3">
-                                                        <label class="form-label">URL Slug tùy chỉnh</label>
-                                                        <input type="text" class="form-control" name="slug" value="${news.slug}" placeholder="Ví dụ: tieu-de-bai-viet (Tự động tạo nếu để trống)">
+                                                        <label class="form-label">URL Slug t�y chỉnh</label>
+                                                        <input type="text" class="form-control" name="slug" value="${news.slug}" placeholder="V� dụ: tieu-de-bai-viet (Tự động tạo nếu để trống)">
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">SEO Meta Title</label>
-                                                        <input type="text" class="form-control" name="metaTitle" id="metaTitle" value="${news.metaTitle}" maxlength="65" placeholder="Tiêu đề hiển thị trên Google (Tự động điền nếu để trống)">
+                                                        <input type="text" class="form-control" name="metaTitle" id="metaTitle" value="${news.metaTitle}" maxlength="65" placeholder="Ti�u đề hiển thị tr�n Google (Tự động điền nếu để trống)">
                                                         <div class="progress mt-1" style="height: 5px;">
                                                             <div id="titleProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
                                                         </div>
-                                                        <small class="text-muted d-block mt-1"><span id="titleCount">0</span>/65 ký tự (Khuyên dùng: 50-60 ký tự)</small>
+                                                        <small class="text-muted d-block mt-1"><span id="titleCount">0</span>/65 k� tự (Khuy�n d�ng: 50-60 k� tự)</small>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label class="form-label">SEO Meta Description</label>
-                                                        <textarea class="form-control" name="metaDescription" id="metaDescription" rows="2" maxlength="160" placeholder="Mô tả hiển thị trên kết quả tìm kiếm (Tự động điền nếu để trống)">${news.metaDescription}</textarea>
+                                                        <textarea class="form-control" name="metaDescription" id="metaDescription" rows="2" maxlength="160" placeholder="M� tả hiển thị tr�n kết quả t�m kiếm (Tự động điền nếu để trống)">${news.metaDescription}</textarea>
                                                         <div class="progress mt-1" style="height: 5px;">
                                                             <div id="descProgress" class="progress-bar" role="progressbar" style="width: 0%"></div>
                                                         </div>
-                                                        <small class="text-muted d-block mt-1"><span id="descCount">0</span>/160 ký tự (Khuyên dùng: 120-150 ký tự)</small>
+                                                        <small class="text-muted d-block mt-1"><span id="descCount">0</span>/160 k� tự (Khuy�n d�ng: 120-150 k� tự)</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -322,7 +322,7 @@
                                         <div class="col-lg-4">
                                             <div class="card">
                                                 <div class="card-header">
-                                                    <h5 class="mb-0"><i class="fas fa-image"></i> Hình ảnh</h5>
+                                                    <h5 class="mb-0"><i class="fas fa-image"></i> H�nh ảnh</h5>
                                                 </div>
                                                 <div class="card-body">
                                                     <c:if test="${not empty news.image}">
@@ -337,7 +337,7 @@
 
                                                     <div class="upload-area" id="dropZone">
                                                         <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
-                                                        <h6>Kéo thả ảnh hoặc click để chọn</h6>
+                                                        <h6>K�o thả ảnh hoặc click để chọn</h6>
                                                         <input type="file" id="dropInput" name="image" accept="image/*"
                                                             style="display: none;">
                                                     </div>
@@ -350,17 +350,17 @@
                                                         <button type="button"
                                                             class="btn btn-sm btn-outline-danger mt-2 w-100"
                                                             onclick="removeImage()">
-                                                            <i class="fas fa-trash"></i> Hủy chọn ảnh này
+                                                            <i class="fas fa-trash"></i> Hủy chọn ảnh n�y
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                             <input type="hidden" name="status" id="formStatus" value="0">
                                             <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
-                                                <i class="fas fa-save me-2"></i> ${news != null ? 'CẬP NHẬT' : 'ĐĂNG BÀI'}
+                                                <i class="fas fa-save me-2"></i> ${news != null ? 'CẬP NHẬT' : 'ĐĂNG B�I'}
                                             </button>
                                             <button type="button" id="btnSaveDraft" class="btn btn-outline-secondary w-100 py-2 fw-bold mt-2">
-                                                <i class="fas fa-file-alt me-2"></i> LƯU BẢN NHÁP
+                                                <i class="fas fa-file-alt me-2"></i> LƯU BẢN NH�P
                                             </button>
                                         </div>
                                     </div>
@@ -378,7 +378,7 @@
                     const previewImg = document.getElementById('previewImg');
                     const currentImageArea = document.getElementById('currentImageArea');
 
-                    // 1. Click vào vùng dashed để chọn file
+                    // 1. Click v�o v�ng dashed để chọn file
                     dropZone.addEventListener('click', () => dropInput.click());
 
                     // 2. Khi chọn file từ cửa sổ Explorer
@@ -388,7 +388,7 @@
                         }
                     });
 
-                    // 3. Xử lý Kéo thả (Drag & Drop)
+                    // 3. Xử l� K�o thả (Drag & Drop)
                     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
                         dropZone.addEventListener(evt, e => {
                             e.preventDefault();
@@ -403,7 +403,7 @@
                         dropZone.classList.remove('dragover');
                         const file = e.dataTransfer.files[0];
                         if (file) {
-                            // // : Gán file từ sự kiện drop vào input file để submit form
+                            // // : G�n file từ sự kiện drop v�o input file để submit form
                             const dataTransfer = new DataTransfer();
                             dataTransfer.items.add(file);
                             dropInput.files = dataTransfer.files;
@@ -414,7 +414,7 @@
                     // 4. Hiển thị ảnh xem trước ngay lập tức
                     function handleFile(file) {
                         if (!file.type.startsWith('image/')) {
-                            alert('Vui lòng chỉ chọn file ảnh!');
+                            alert('Vui l�ng chỉ chọn file ảnh!');
                             return;
                         }
                         const reader = new FileReader();
@@ -422,7 +422,7 @@
                             previewImg.src = e.target.result;
                             imagePreview.style.display = 'block';
                             dropZone.style.display = 'none';
-                            if (currentImageArea) currentImageArea.style.display = 'none'; // Ẩn ảnh cũ khi đã chọn ảnh mới
+                            if (currentImageArea) currentImageArea.style.display = 'none'; // Ẩn ảnh cũ khi đ� chọn ảnh mới
                         };
                         reader.readAsDataURL(file);
                     }
@@ -450,19 +450,19 @@
                     function loadSubCategories() {
                         const selectedValue = categorySelect.value;
                         
-                        // Xóa dữ liệu cũ
+                        // X�a dữ liệu cũ
                         subCategorySelect.innerHTML = '<option value="">-- Chọn danh mục con --</option>';
                         
                         const subCats = subCategoryData[selectedValue];
 
                         if (subCats) {
                             subCats.forEach(subCat => {
-                                // Tạo thẻ option chuẩn DOM để không bị lỗi tàng hình chữ
+                                // Tạo thẻ option chuẩn DOM để kh�ng bị lỗi t�ng h�nh chữ
                                 let opt = document.createElement('option');
                                 opt.value = subCat;
                                 opt.text = subCat;
                                 
-                                // (Tùy chọn) Nếu đang sửa bài, tự động chọn lại mục cũ
+                                // (T�y chọn) Nếu đang sửa b�i, tự động chọn lại mục cũ
                                 if ("${news.subCategory}" === subCat) {
                                     opt.selected = true;
                                 }
@@ -470,14 +470,14 @@
                                 subCategorySelect.appendChild(opt);
                             });
                         } else {
-                            subCategorySelect.innerHTML = '<option value="">Không có danh mục con</option>';
+                            subCategorySelect.innerHTML = '<option value="">Kh�ng c� danh mục con</option>';
                         }
                     }
 
-                    // Lắng nghe sự kiện khi đổi chuyên mục
+                    // Lắng nghe sự kiện khi đổi chuy�n mục
                     categorySelect.addEventListener('change', loadSubCategories);
 
-                    // Kích hoạt ngay khi vừa mở trang (để load sẵn nếu đang ở trang Sửa bài)
+                    // K�ch hoạt ngay khi vừa mở trang (để load sẵn nếu đang ở trang Sửa b�i)
                     if (categorySelect.value !== "") {
                         loadSubCategories();
                     }
@@ -485,7 +485,7 @@
                     // Khởi tạo CKEditor 4 cho textarea content
                     CKEDITOR.replace('content');
 
-                    // Bộ đếm ký tự SEO Meta Title & Meta Description
+                    // Bộ đếm k� tự SEO Meta Title & Meta Description
                     function updateSEOIndicator() {
                         const titleInput = document.getElementById('metaTitle');
                         const descInput = document.getElementById('metaDescription');
@@ -533,16 +533,16 @@
                     // Chạy ngay khi mở trang để hiển thị thanh đo
                     updateSEOIndicator();
 
-                    // // FIX: Xử lý khi click nút Lưu nháp thủ công
+                    // // FIX: Xử l� khi click n�t Lưu nh�p thủ c�ng
                     var btnSaveDraft = document.getElementById("btnSaveDraft");
                     if (btnSaveDraft) {
                         btnSaveDraft.addEventListener("click", function() {
-                            document.getElementById("formStatus").value = "3"; // Đặt trạng thái là Bản nháp
-                            // // FIX: Cập nhật dữ liệu từ CKEditor vào textarea trước khi submit
+                            document.getElementById("formStatus").value = "3"; // Đặt trạng th�i l� Bản nh�p
+                            // // FIX: Cập nhật dữ liệu từ CKEditor v�o textarea trước khi submit
                             if (window.CKEDITOR && CKEDITOR.instances.content) {
                                 CKEDITOR.instances.content.updateElement();
                             }
-                            // Loại bỏ thuộc tính required tạm thời để cho phép lưu nháp khi chưa nhập đủ
+                            // Loại bỏ thuộc t�nh required tạm thời để cho ph�p lưu nh�p khi chưa nhập đủ
                             document.querySelectorAll("#newsForm [required]").forEach(function(el) {
                                 el.removeAttribute("required");
                             });
@@ -550,21 +550,21 @@
                         });
                     }
 
-                    // // FIX: Auto-save bài viết tự động mỗi 60 giây qua Ajax
+                    // // FIX: Auto-save b�i viết tự động mỗi 60 gi�y qua Ajax
                     setInterval(function() {
                         autoSaveDraft();
-                    }, 60000); // 60 giây
+                    }, 60000); // 60 gi�y
 
                     function autoSaveDraft() {
-                        // Lấy tiêu đề, nếu tiêu đề rỗng thì không tự động lưu để tránh rác DB
+                        // Lấy ti�u đề, nếu ti�u đề rỗng th� kh�ng tự động lưu để tr�nh r�c DB
                         var titleInput = document.querySelector('input[name="title"]');
                         var title = titleInput ? titleInput.value.trim() : "";
                         if (!title) {
-                            console.log("Tiêu đề trống, bỏ qua auto-save.");
+                            console.log("Ti�u đề trống, bỏ qua auto-save.");
                             return;
                         }
 
-                        // Cập nhật dữ liệu từ CKEditor vào textarea trước khi lấy giá trị
+                        // Cập nhật dữ liệu từ CKEditor v�o textarea trước khi lấy gi� trị
                         if (window.CKEDITOR && CKEDITOR.instances.content) {
                             CKEDITOR.instances.content.updateElement();
                         }
@@ -587,8 +587,8 @@
                         var dateInput = document.querySelector('input[name="scheduledDate"]');
                         var scheduledDate = dateInput ? dateInput.value : "";
 
-                        // Hiển thị trạng thái đang lưu
-                        showAutoSaveStatus("Đang tự động lưu nháp...");
+                        // Hiển thị trạng th�i đang lưu
+                        showAutoSaveStatus("Đang tự động lưu nh�p...");
 
                         // Gửi Ajax qua Fetch API
                         var params = new URLSearchParams();
@@ -613,7 +613,7 @@
                         .then(function(res) { return res.json(); })
                         .then(function(data) {
                             if (data.success) {
-                                // Nếu là bài viết mới và chưa có hidden input ID, tạo mới
+                                // Nếu l� b�i viết mới v� chưa c� hidden input ID, tạo mới
                                 if (!id && data.id) {
                                     var form = document.getElementById("newsForm");
                                     var input = document.createElement("input");
@@ -622,9 +622,9 @@
                                     input.value = data.id;
                                     form.appendChild(input);
                                 }
-                                showAutoSaveStatus("Đã tự động lưu nháp lúc " + new Date().toLocaleTimeString(), "success");
+                                showAutoSaveStatus("Đ� tự động lưu nh�p l�c " + new Date().toLocaleTimeString(), "success");
                             } else {
-                                showAutoSaveStatus("Lỗi tự động lưu nháp", "danger");
+                                showAutoSaveStatus("Lỗi tự động lưu nh�p", "danger");
                             }
                         })
                         .catch(function(err) {

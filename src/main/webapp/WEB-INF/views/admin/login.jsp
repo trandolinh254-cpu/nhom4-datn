@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cổng Nội Bộ - XYZ News</title>
+    <title>Cổng Nội Bộ - Dòng Chảy Tin Tức</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,7 +153,7 @@
                 <div class="login-card">
                     <div class="login-header">
                         <h3 class="mb-0">
-                            <i class="fas fa-shield-alt me-2 text-danger"></i> XYZ INTERNAL
+                            <i class="fas fa-shield-alt me-2 text-danger"></i> ĐĂNG NHẬP
                         </h3>
                         <p class="mb-0 mt-2">Cổng đăng nhập Quản trị & Tòa soạn</p>
                     </div>
@@ -197,7 +197,7 @@
                         </form>
 
                         <div class="text-center mt-4">
-                            <small class="text-muted">© 2025 XYZ News Internal System. Restricted Access.</small>
+                            <small class="text-muted">© 2025 Dòng Chảy Tin Tức Internal System. Restricted Access.</small>
                         </div>
                     </div>
                 </div>

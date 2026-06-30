@@ -172,7 +172,7 @@
                 <div class="login-card">
                     <div class="login-header">
                         <h3 class="mb-0">
-                            <i class="fas fa-layer-group me-2"></i> XYZ ADMIN
+                            <i class="fas fa-layer-group me-2"></i> DÒNG CHẢY ADMIN
                         </h3>
                         <p class="mb-0 mt-2">Hi</p>
                     </div>
@@ -248,7 +248,7 @@
 </div>
 
                         <div class="text-center mt-4">
-                            <small class="text-muted">© 2025 XYZ News. All rights reserved<a href="${pageContext.request.contextPath}/admin/login" style="color: inherit; text-decoration: none; cursor: default;">.</a></small>
+                            <small class="text-muted">© 2025 Dòng Chảy Tin Tức. All rights reserved<a href="${pageContext.request.contextPath}/admin/login" style="color: inherit; text-decoration: none; cursor: default;">.</a></small>
                         </div>
                     </div>
                 </div>

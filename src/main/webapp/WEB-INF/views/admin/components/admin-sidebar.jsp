@@ -89,7 +89,7 @@
 
 <div class="col-md-3 col-lg-2 px-0 sidebar-dark position-fixed h-100 overflow-auto custom-scrollbar">
     <div class="admin-brand">
-        <i class="fas fa-layer-group text-primary me-2"></i> XYZ ADMIN
+        <i class="fas fa-layer-group text-primary me-2"></i> DÒNG CHẢY ADMIN
     </div>
 
     <nav class="nav flex-column mt-2">
@@ -115,20 +115,6 @@
                 <i class="fas fa-envelope-open-text main-icon text-secondary"></i> Đăng ký nhận tin
             </a>
             
-            <a class="nav-link ${param.activeMenu == 'orders_premium' ? 'active' : ''}" 
-               href="${pageContext.request.contextPath}/admin/orders/premium">
-                <i class="fas fa-shopping-cart main-icon text-warning"></i> Quản lý đăng ký
-            </a>
-
-            <a class="nav-link ${fn:contains(param.activeMenu, 'ads_') ? 'active' : ''}" 
-               href="#adsMainDropdown" data-bs-toggle="collapse" role="button" aria-expanded="${fn:contains(param.activeMenu, 'ads_') ? 'true' : 'false'}">
-                <i class="fas fa-bullhorn main-icon text-primary"></i> Quản lý quảng cáo
-                <i class="fas fa-chevron-down arrow-icon"></i>
-            </a>
-            
-            <div class="collapse collapse-level-1 ${fn:contains(param.activeMenu, 'ads_') ? 'show' : ''}" id="adsMainDropdown">
-                <jsp:include page="/WEB-INF/views/admin/ads/ads-submenu.jsp" />
-            </div>
         </c:if>
         <%-- ĐÓNG CẤU HÌNH ADMIN TẠI ĐÂY --%>
         

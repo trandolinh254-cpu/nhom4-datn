@@ -6,7 +6,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div class="col-span-1 md:col-span-2">
                 <a href="${pageContext.request.contextPath}/" class="text-[32px] font-serif font-bold text-primary uppercase tracking-wider no-underline inline-block mb-4" style="color: #006389;">
-                    XYZ NEWS
+                    DÒNG CHẢY TIN TỨC
                 </a>
                 <p class="text-sm text-gray-600 mb-2">Giấy phép hoạt động báo điện tử tiếng Việt, tiếng Anh Số 01/GP-BTTTT do Bộ Thông tin và Truyền thông cấp ngày 01/01/2026.</p>
                 <p class="text-sm text-gray-600 mb-2"><strong>Tổng biên tập:</strong> FPT Polytechnic</p>
@@ -26,8 +26,8 @@
             <div>
                 <h4 class="font-bold text-gray-800 mb-4 border-b pb-2">LIÊN HỆ</h4>
                 <div class="text-2xl font-bold text-primary mb-2">1900 1234</div>
-                <p class="text-sm text-gray-600 mb-2"><strong>Email:</strong> toasoan@xyznews.vn</p>
-                <p class="text-sm text-gray-600"><strong>Quảng cáo:</strong> quangcao@xyznews.vn</p>
+                <p class="text-sm text-gray-600 mb-2"><strong>Email:</strong> toasoan@dongchaytintuc.vn</p>
+                <p class="text-sm text-gray-600"><strong>Quảng cáo:</strong> quangcao@dongchaytintuc.vn</p>
                 
                 <div class="mt-4">
                     <h5 class="text-sm font-bold text-gray-800 mb-2">Theo dõi chúng tôi</h5>
@@ -41,7 +41,7 @@
         </div>
         
         <div class="border-t border-gray-300 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center text-[12px] text-gray-500">
-            <p>&copy; 2026 XYZ News. Toàn bộ bản quyền thuộc FPT Polytechnic.</p>
+            <p>&copy; 2026 Dòng Chảy Tin Tức. Toàn bộ bản quyền thuộc FPT Polytechnic.</p>
             <div class="flex gap-4 mt-4 md:mt-0">
                 <a href="#" class="hover:text-gray-800 transition no-underline">Điều khoản sử dụng</a>
                 <a href="#" class="hover:text-gray-800 transition no-underline">Chính sách bảo mật</a>
